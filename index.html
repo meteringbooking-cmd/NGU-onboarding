@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU Onboarding</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #005EB8;
+            --primary-dark: #003d7a;
+            --accent: #00A3E0;
+            --bg-dark: #0A1628;
+            --bg-card: #1a2942;
+            --text-light: #E8EDF2;
+            --text-muted: #8B9AAE;
+            --border: #2a3f5f;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .logo {
+            max-height: 64px;
+            margin-bottom: 2rem;
+            display: block;
+            margin-left: auto;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0,163,224,0.15);
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,163,224,0.35);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .error-msg {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            text-align: center;
+            min-height: 1.2rem;
+        }
+        .hidden { display: none !important; }
+        #dashboard {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        #signOutBtn {
+            margin-top: 2rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            color: var(--text-light);
+        }
+        #signOutBtn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo hidden" id="logoImg">
+
+    <div class="card" id="loginCard">
+        <h1>NGU Onboarding</h1>
+        <p class="subtitle">Sign in to continue</p>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="name@company.com" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <button class="btn btn-primary" id="signInBtn">Sign In</button>
+
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        <h1>Welcome to the Onboarding Platform</h1>
+        <p style="color:var(--text-muted); margin:2rem 0;">(Dashboard / content coming soon)</p>
+        <button class="btn" id="signOutBtn">Sign Out</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import {
+            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+        // ── REPLACE WITH YOUR OWN FIREBASE CONFIG ────────────────────────────────
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+            authDomain: "oesperformance-a54c0.firebaseapp.com",
+            projectId: "oesperformance-a54c0",
+            storageBucket: "oesperformance-a54c0.firebasestorage.app",
+            messagingSenderId: "484894102454",
+            appId: "1:484894102454:web:17535ee497eac2d90d6717"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loginCard   = document.getElementById('loginCard');
+        const dashboard   = document.getElementById('dashboard');
+        const logo        = document.getElementById('logoImg');
+        const errorMsg    = document.getElementById('errorMsg');
+        const signInBtn   = document.getElementById('signInBtn');
+        const signOutBtn  = document.getElementById('signOutBtn');
+
+        // Show logo once (you can move to always visible later)
+        logo.classList.remove('hidden');
+
+        // ── Auth state listener ─────────────────────────────────────────────────
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Logged in
+                loginCard.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                errorMsg.textContent = '';
+            } else {
+                // Logged out
+                loginCard.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+        });
+
+        // ── Sign In ─────────────────────────────────────────────────────────────
+        signInBtn.addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            const pass  = document.getElementById('password').value;
+
+            if (!email || !pass) {
+                errorMsg.textContent = 'Please enter email and password';
+                return;
+            }
+
+            signInBtn.disabled = true;
+            signInBtn.textContent = 'Signing in...';
+            errorMsg.textContent = '';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                // onAuthStateChanged will handle UI update
+            } catch (err) {
+                let msg = 'Login failed';
+                if (err.code === 'auth/invalid-credential') msg = 'Invalid email or password';
+                if (err.code === 'auth/user-not-found')    msg = 'No account found';
+                if (err.code === 'auth/too-many-requests') msg = 'Too many attempts — try again later';
+                errorMsg.textContent = msg;
+            }
+
+            signInBtn.disabled = false;
+            signInBtn.textContent = 'Sign In';
+        });
+
+        // ── Sign Out ────────────────────────────────────────────────────────────
+        signOutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+    </script>
+</body>
+</html>
