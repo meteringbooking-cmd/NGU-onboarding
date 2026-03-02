@@ -96,6 +96,7 @@
             color: white;
             font-size: 1rem;
             transition: all 0.2s;
+            font-family: inherit;
         }
         input:focus {
             outline: none;
@@ -110,6 +111,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.25s;
+            font-family: inherit;
         }
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -118,6 +120,15 @@
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0,163,224,0.35);
+        }
+        .btn-secondary {
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            color: var(--text-light);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
         .btn:disabled {
             opacity: 0.5;
@@ -167,6 +178,40 @@
             line-height: 1.5;
         }
 
+        .info-box {
+            background: rgba(0,163,224,0.1);
+            border: 1px solid rgba(0,163,224,0.3);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            color: #bae6fd;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .badge-success {
+            background: rgba(16,185,129,0.2);
+            color: #6ee7b7;
+        }
+        .badge-error {
+            background: rgba(239,68,68,0.2);
+            color: #fca5a5;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .card { padding: 2rem 1.5rem; }
@@ -189,6 +234,12 @@
 
     <div class="card">
         <h2>Create New User</h2>
+
+        <div class="info-box">
+            ℹ️ This form creates a <strong>real Firebase Authentication account</strong> so the user can log in to <code>index.html</code>.
+            It also saves their profile to Firestore.
+        </div>
+
         <div class="form-grid">
             <div class="form-group">
                 <label>Full Name</label>
@@ -204,15 +255,19 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" id="createUserBtn" style="margin-top: 2rem;">
-            Create User
-        </button>
+        <div style="display:flex; gap:1rem; align-items:center; margin-top:2rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="createUserBtn">Create User</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Back to Login</button>
+        </div>
 
-        <div id="createMsg" class="error-msg"></div>
+        <div id="createMsg"></div>
     </div>
 
     <div class="card">
-        <h2>Existing Users</h2>
+        <div class="header-actions">
+            <h2 style="margin-bottom:0;">Existing Users</h2>
+            <button class="btn btn-secondary" style="padding:0.6rem 1.2rem; font-size:0.9rem;" id="refreshBtn">↻ Refresh</button>
+        </div>
         <div id="usersTable">
             <p style="text-align:center; color:var(--text-muted); padding:3rem 0;">
                 Loading users...
@@ -224,10 +279,14 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import {
-        getFirestore, collection, addDoc, getDocs, serverTimestamp
+        getAuth,
+        createUserWithEmailAndPassword,
+        updateProfile
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    // ── REPLACE WITH YOUR OWN FIREBASE CONFIG ────────────────────────────────
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
         authDomain: "oesperformance-a54c0.firebaseapp.com",
@@ -235,41 +294,57 @@
         storageBucket: "oesperformance-a54c0.firebasestorage.app",
         messagingSenderId: "484894102454",
         appId: "1:484894102454:web:17535ee497eac2d90d6717"
-        // measurementId: "..."   ← add if needed
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    const colRef = collection(db, "NGUO Database");
-
+    const colRef    = collection(db, "NGUO Database");
     const createBtn = document.getElementById('createUserBtn');
     const msgEl     = document.getElementById('createMsg');
     const tableEl   = document.getElementById('usersTable');
 
+    // ── Load users from Firestore ─────────────────────────────────────────────
     async function loadUsers() {
+        tableEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading users...</p>';
         try {
             const snap = await getDocs(colRef);
-            let html = '<table><thead><tr><th>Name</th><th>Email</th><th>Created</th></tr></thead><tbody>';
 
             if (snap.empty) {
-                html = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No users found</p>';
-            } else {
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    const date = d.createdAt
-                        ? new Date(d.createdAt.toMillis()).toLocaleString([], {dateStyle:'medium', timeStyle:'short'})
-                        : '—';
-                    html += `<tr>
-                        <td>${d.name || '—'}</td>
-                        <td>${d.email || '—'}</td>
-                        <td>${date}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
+                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No users found</p>';
+                return;
             }
 
-            tableEl.innerHTML = html;
+            let rows = '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                const date = d.createdAt
+                    ? new Date(d.createdAt.toMillis()).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+                    : '—';
+                const authBadge = d.authUid
+                    ? `<span class="badge badge-success">✓ Auth</span>`
+                    : `<span class="badge badge-error">No Auth</span>`;
+                rows += `<tr>
+                    <td>${d.name || '—'}</td>
+                    <td>${d.email || '—'}</td>
+                    <td>${authBadge}</td>
+                    <td>${date}</td>
+                </tr>`;
+            });
+
+            tableEl.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Auth Status</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>`;
         } catch (err) {
             tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">
                 Error loading users: ${err.message}
@@ -277,6 +352,7 @@
         }
     }
 
+    // ── Create user ───────────────────────────────────────────────────────────
     createBtn.addEventListener('click', async () => {
         const name  = document.getElementById('displayName').value.trim();
         const email = document.getElementById('newEmail').value.trim();
@@ -285,8 +361,14 @@
         msgEl.className = 'error-msg';
         msgEl.textContent = '';
 
-        if (!name || !email || !pass || pass.length < 6) {
-            msgEl.textContent = 'Please fill all fields (password ≥ 6 characters)';
+        if (!name || !email || !pass) {
+            msgEl.className = 'error-msg';
+            msgEl.textContent = 'Please fill in all fields.';
+            return;
+        }
+        if (pass.length < 6) {
+            msgEl.className = 'error-msg';
+            msgEl.textContent = 'Password must be at least 6 characters.';
             return;
         }
 
@@ -294,32 +376,50 @@
         createBtn.textContent = 'Creating...';
 
         try {
+            // 1. Create Firebase Auth account
+            const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+
+            // 2. Set display name on the auth profile
+            await updateProfile(userCred.user, { displayName: name });
+
+            // 3. Save profile to Firestore with the Auth UID
             await addDoc(colRef, {
                 name,
                 email,
-                passwordPlain: pass,           // ← only for debugging – remove in production!
+                authUid: userCred.user.uid,
                 createdAt: serverTimestamp()
             });
 
             msgEl.className = 'success-msg';
-            msgEl.textContent = 'User record created ✓ (note: actual auth account must still be created in Firebase console)';
-            loadUsers();
+            msgEl.textContent = `✓ User "${name}" created successfully — they can now log in to index.html.`;
 
             // Clear form
             document.getElementById('displayName').value = '';
-            document.getElementById('newEmail').value = '';
+            document.getElementById('newEmail').value    = '';
             document.getElementById('newPassword').value = '';
+
+            loadUsers();
+
         } catch (err) {
             let txt = err.message;
-            if (err.code === 'permission-denied') {
-                txt = 'Permission denied – check Firestore security rules';
+            if (err.code === 'auth/email-already-in-use') {
+                txt = 'This email already has a Firebase Auth account.';
+            } else if (err.code === 'auth/invalid-email') {
+                txt = 'Invalid email address.';
+            } else if (err.code === 'auth/weak-password') {
+                txt = 'Password is too weak (min. 6 characters).';
+            } else if (err.code === 'permission-denied') {
+                txt = 'Firestore permission denied – check security rules.';
             }
+            msgEl.className = 'error-msg';
             msgEl.textContent = txt;
         }
 
         createBtn.disabled = false;
         createBtn.textContent = 'Create User';
     });
+
+    document.getElementById('refreshBtn').addEventListener('click', loadUsers);
 
     // Initial load
     loadUsers();
