@@ -29,9 +29,10 @@
             color: var(--text-light);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
+            padding: 2rem 1rem;
         }
         body::before {
             content: '';
@@ -42,26 +43,30 @@
             pointer-events: none;
             z-index: -1;
         }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
         .logo {
-            max-height: 64px;
-            margin-bottom: 2rem;
+            max-height: 90px;
+            width: auto;
             display: block;
-            margin-left: auto;
+            margin: 0 auto;
         }
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 2.5rem;
+            padding: 2.5rem 2rem;
             width: 100%;
             max-width: 420px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         h1 {
-            font-size: 2rem;
+            font-size: 2.1rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
             background: linear-gradient(90deg, var(--accent), #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -71,21 +76,21 @@
             color: var(--text-muted);
             font-family: 'DM Mono', monospace;
             font-size: 0.95rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.2rem;
         }
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.6rem;
         }
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.55rem;
             font-weight: 600;
             font-size: 0.95rem;
             color: var(--text-light);
         }
         input {
             width: 100%;
-            padding: 0.9rem 1rem;
+            padding: 0.95rem 1.1rem;
             background: var(--bg-dark);
             border: 2px solid var(--border);
             border-radius: 10px;
@@ -101,7 +106,7 @@
         }
         .btn {
             width: 100%;
-            padding: 1rem;
+            padding: 1.05rem;
             border: none;
             border-radius: 12px;
             font-size: 1.05rem;
@@ -124,31 +129,42 @@
         .error-msg {
             color: var(--error);
             font-size: 0.9rem;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
             text-align: center;
-            min-height: 1.2rem;
+            min-height: 1.3rem;
         }
         .hidden { display: none !important; }
+
         #dashboard {
             text-align: center;
-            padding: 4rem 1rem;
+            padding: 5rem 1.5rem;
+            max-width: 700px;
         }
         #signOutBtn {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             background: var(--bg-dark);
             border: 2px solid var(--border);
             color: var(--text-light);
+            padding: 1rem 2.5rem;
         }
         #signOutBtn:hover {
             border-color: var(--accent);
             color: var(--accent);
         }
+
+        @media (max-width: 480px) {
+            .logo { max-height: 70px; }
+            h1 { font-size: 1.8rem; }
+            .card { padding: 2rem 1.5rem; }
+        }
     </style>
 </head>
 <body>
 
-    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
-         alt="NGU Logo" class="logo hidden" id="logoImg">
+    <div class="logo-container">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+             alt="NGU Logo" class="logo" id="logoImg">
+    </div>
 
     <div class="card" id="loginCard">
         <h1>NGU Onboarding</h1>
@@ -171,7 +187,9 @@
 
     <div id="dashboard" class="hidden">
         <h1>Welcome to the Onboarding Platform</h1>
-        <p style="color:var(--text-muted); margin:2rem 0;">(Dashboard / content coming soon)</p>
+        <p style="color:var(--text-muted); margin:2.5rem 0; font-size:1.1rem;">
+            (Dashboard / content coming soon)
+        </p>
         <button class="btn" id="signOutBtn">Sign Out</button>
     </div>
 
@@ -189,6 +207,7 @@
             storageBucket: "oesperformance-a54c0.firebasestorage.app",
             messagingSenderId: "484894102454",
             appId: "1:484894102454:web:17535ee497eac2d90d6717"
+            // measurementId: "..."   ← add if needed
         };
 
         const app = initializeApp(firebaseConfig);
@@ -196,23 +215,17 @@
 
         const loginCard   = document.getElementById('loginCard');
         const dashboard   = document.getElementById('dashboard');
-        const logo        = document.getElementById('logoImg');
         const errorMsg    = document.getElementById('errorMsg');
         const signInBtn   = document.getElementById('signInBtn');
         const signOutBtn  = document.getElementById('signOutBtn');
 
-        // Show logo once (you can move to always visible later)
-        logo.classList.remove('hidden');
-
         // ── Auth state listener ─────────────────────────────────────────────────
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Logged in
                 loginCard.classList.add('hidden');
                 dashboard.classList.remove('hidden');
                 errorMsg.textContent = '';
             } else {
-                // Logged out
                 loginCard.classList.remove('hidden');
                 dashboard.classList.add('hidden');
             }
@@ -234,7 +247,6 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                // onAuthStateChanged will handle UI update
             } catch (err) {
                 let msg = 'Login failed';
                 if (err.code === 'auth/invalid-credential') msg = 'Invalid email or password';
