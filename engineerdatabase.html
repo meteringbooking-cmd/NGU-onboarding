@@ -374,7 +374,6 @@
                     <td>${contractBadge(d.contract)}</td>
                     <td>${d.ftl || '—'}</td>
                     <td>${startDate}</td>
-                    <td>${statusBadge(d.status)}</td>
                     <td onclick="event.stopPropagation()">
                         <div class="action-btns">
                             <button class="btn-onboard ${isOnboarding ? 'active' : ''}"
@@ -396,7 +395,7 @@
                         <thead><tr>
                             <th>Name</th><th>Email</th><th>Contact</th>
                             <th>Contract</th><th>FTL</th><th>Start Date</th>
-                            <th>Status</th><th style="text-align:right;">Actions</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr></thead>
                         <tbody>${rows}</tbody>
                     </table>
