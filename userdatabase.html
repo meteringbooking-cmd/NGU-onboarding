@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Manage Users</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reuse most styles from previous file — abbreviated here */
+        :root { /* same variables as index.html */ }
+        body { /* same as index */ padding:2rem; }
+        .container { max-width:900px; margin:0 auto; }
+        .card { /* same */ }
+        h1 { /* same gradient style */ }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+        @media (max-width:600px) { .form-grid { grid-template-columns:1fr; } }
+        /* ... copy rest of styles from index.html (btn, input, label, error-msg, etc.) ... */
+        table { width:100%; border-collapse:collapse; margin-top:2rem; }
+        th, td { padding:0.9rem; text-align:left; border-bottom:1px solid var(--border); }
+        th { background:rgba(0,163,224,0.1); font-weight:600; }
+        .btn-delete { background:#991b1b; color:white; border:none; padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.85rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Manage Users</h1>
+    <p style="color:var(--text-muted); margin-bottom:2rem;">Add / view users (admin only)</p>
+
+    <div class="card">
+        <h2 style="margin-bottom:1.5rem;">Create New User</h2>
+        <div class="form-grid">
+            <div>
+                <label>Full Name</label>
+                <input type="text" id="displayName" placeholder="John Smith" required>
+            </div>
+            <div>
+                <label>Email</label>
+                <input type="email" id="newEmail" placeholder="john@company.com" required>
+            </div>
+            <div>
+                <label>Password</label>
+                <input type="text" id="newPassword" placeholder="at-least-6-characters" required>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="createUserBtn" style="margin-top:1.5rem; width:auto; padding:0.9rem 2rem;">
+            Create User
+        </button>
+        <div id="createError" class="error-msg"></div>
+    </div>
+
+    <div class="card" style="margin-top:2rem;">
+        <h2>Existing Users</h2>
+        <div id="usersTable"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+        getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = { /* ← COPY YOUR CONFIG HERE */ };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const colRef = collection(db, "NGUO Database");
+
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            document.body.innerHTML = '<h1 style="text-align:center;padding:4rem;">Please <a href="index.html">sign in</a> first.</h1>';
+        }
+    });
+
+    // Load users from Firestore
+    async function loadUsers() {
+        const snap = await getDocs(colRef);
+        let html = '<table><thead><tr><th>Name</th><th>Email</th><th>Created</th></tr></thead><tbody>';
+        snap.forEach(doc => {
+            const d = doc.data();
+            html += `<tr>
+                <td>${d.name || '—'}</td>
+                <td>${d.email || '—'}</td>
+                <td>${d.createdAt ? new Date(d.createdAt.toMillis()).toLocaleString() : '—'}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        if (snap.empty) html = '<p style="text-align:center;padding:2rem;color:var(--text-muted);">No users yet</p>';
+        document.getElementById('usersTable').innerHTML = html;
+    }
+
+    document.getElementById('createUserBtn').addEventListener('click', async () => {
+        const name  = document.getElementById('displayName').value.trim();
+        const email = document.getElementById('newEmail').value.trim();
+        const pass  = document.getElementById('newPassword').value;
+
+        const errEl = document.getElementById('createError');
+        errEl.textContent = '';
+
+        if (!name || !email || !pass || pass.length < 6) {
+            errEl.textContent = 'Please fill all fields (password ≥ 6 chars)';
+            return;
+        }
+
+        const btn = document.getElementById('createUserBtn');
+        btn.disabled = true;
+        btn.textContent = 'Creating...';
+
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, pass);
+            await addDoc(colRef, {
+                name,
+                email,
+                uid: cred.user.uid,
+                createdAt: serverTimestamp()
+            });
+            errEl.textContent = 'User created ✓';
+            errEl.style.color = 'var(--success)';
+            loadUsers();
+
+            // Optional: sign out admin after creating or keep session
+            // await signOut(auth);
+        } catch (err) {
+            errEl.textContent = err.message.includes('email-already-in-use')
+                ? 'Email already in use'
+                : err.message;
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Create User';
+    });
+
+    // Initial load
+    loadUsers();
+</script>
+</body>
+</html>
