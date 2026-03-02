@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU Onboarding</title>
+    <title>NGU — Engineer Database</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +21,7 @@
             --border: #2a3f5f;
             --success: #10B981;
             --error: #EF4444;
+            --warning: #F59E0B;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -28,11 +29,7 @@
             background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
             color: var(--text-light);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
+            padding: 2rem 1.5rem;
         }
         body::before {
             content: '';
@@ -43,294 +40,566 @@
             pointer-events: none;
             z-index: -1;
         }
-        .logo-container { text-align: center; margin-bottom: 2.5rem; }
-        .logo { max-height: 90px; width: auto; display: block; margin: 0 auto; }
-
-        /* ── Login card ── */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .logo { max-height: 70px; display: block; margin: 0 auto 2.5rem; }
         h1 {
-            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.6rem;
+            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem;
             background: linear-gradient(90deg, var(--accent), #60a5fa);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .subtitle {
-            text-align: center; color: var(--text-muted);
-            font-family: 'DM Mono', monospace; font-size: 0.95rem; margin-bottom: 2.2rem;
+        .subtitle { text-align: center; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 3rem; }
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 2.5rem; margin-bottom: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
         }
-        .form-group { margin-bottom: 1.6rem; }
-        label { display: block; margin-bottom: 0.55rem; font-weight: 600; font-size: 0.95rem; color: var(--text-light); }
-        input {
+        .card h2 { font-size: 1.45rem; margin-bottom: 1.8rem; color: var(--text-light); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.6rem; }
+        .form-group label { display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 0.95rem; }
+        input, select {
             width: 100%; padding: 0.95rem 1.1rem; background: var(--bg-dark);
             border: 2px solid var(--border); border-radius: 10px; color: white;
-            font-size: 1rem; font-family: inherit; transition: all 0.2s;
+            font-size: 1rem; transition: all 0.2s; font-family: inherit;
+            appearance: none; -webkit-appearance: none;
         }
-        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,163,224,0.15); }
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1.1rem center;
+            padding-right: 2.5rem; cursor: pointer;
+        }
+        select option { background: var(--bg-card); color: var(--text-light); }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,163,224,0.15); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
         .btn {
-            padding: 1.05rem; border: none; border-radius: 12px;
+            padding: 1rem 2.2rem; border: none; border-radius: 12px;
             font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit;
         }
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; }
         .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,163,224,0.35); }
+        .btn-secondary { background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-light); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-success { background: rgba(16,185,129,0.15); border: 2px solid rgba(16,185,129,0.4); color: #6ee7b7; }
+        .btn-success:hover { background: rgba(16,185,129,0.25); border-color: var(--success); }
+        .btn-danger { background: rgba(239,68,68,0.12); border: 2px solid rgba(239,68,68,0.35); color: #fca5a5; }
+        .btn-danger:hover { background: rgba(239,68,68,0.22); border-color: var(--error); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 1.3rem; }
-        .hidden { display: none !important; }
+        .error-msg { color: var(--error); margin-top: 1rem; font-size: 0.95rem; }
+        .success-msg { color: var(--success); margin-top: 1rem; font-size: 0.95rem; }
 
-        /* ── Dashboard ── */
-        #dashboard {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            width: 100%;
-            max-width: 700px;
-        }
-        #dashboard h1 { margin-bottom: 0.5rem; }
-        #dashboard .subtitle { margin-bottom: 2.5rem; }
+        /* ── Table ── */
+        .table-wrap { overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 900px; }
+        th, td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background: rgba(0,163,224,0.08); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.4px; white-space: nowrap; }
+        tbody tr { cursor: pointer; transition: background 0.15s; }
+        tbody tr:hover { background: rgba(0,163,224,0.08); }
+        tbody tr.selected { background: rgba(0,163,224,0.14); outline: 1px solid rgba(0,163,224,0.35); }
 
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+        /* Contract badges */
+        .badge { display: inline-block; padding: 0.22rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+        .badge-ss-oes  { background: rgba(0,163,224,0.18); color: #7dd3fc; }
+        .badge-ss-sp   { background: rgba(99,102,241,0.2);  color: #c4b5fd; }
+        .badge-cal-sp  { background: rgba(16,185,129,0.18); color: #6ee7b7; }
+        .badge-onboarding { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .badge-pending    { background: rgba(139,154,174,0.15); color: #8B9AAE; }
+
+        /* Action buttons in table */
+        .action-btns { display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: nowrap; }
+        .action-btns button {
+            padding: 0.4rem 0.9rem; font-size: 0.8rem; font-weight: 600;
+            border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
+            transition: all 0.18s; white-space: nowrap;
         }
-        .dash-btn {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            color: var(--text-light);
+        .btn-onboard { background: rgba(16,185,129,0.15); border: 1.5px solid rgba(16,185,129,0.4); color: #6ee7b7; }
+        .btn-onboard:hover { background: rgba(16,185,129,0.28); border-color: var(--success); }
+        .btn-onboard.active { background: rgba(245,158,11,0.18); border-color: rgba(245,158,11,0.5); color: #fcd34d; cursor: default; }
+        .btn-delete { background: rgba(239,68,68,0.1); border: 1.5px solid rgba(239,68,68,0.3); color: #fca5a5; }
+        .btn-delete:hover { background: rgba(239,68,68,0.22); border-color: var(--error); }
+
+        .protected-bar {
+            background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.3);
+            border-radius: 12px; padding: 1rem 1.4rem; margin: 0 0 2.5rem;
+            color: #bae6fd; font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+
+        /* ── Edit Panel ── */
+        #editPanel {
+            display: none;
+            background: rgba(0,10,25,0.6);
+            border: 2px solid var(--accent);
             border-radius: 14px;
-            padding: 1.2rem 1rem;
-            font-size: 0.97rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.22s;
-            font-family: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
+            padding: 1.8rem;
+            margin-top: 1.8rem;
+            animation: slideIn 0.2s ease;
         }
-        .dash-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,163,224,0.2); }
-        .dash-btn .btn-icon { font-size: 1.6rem; }
-        .dash-btn .btn-label { font-size: 0.9rem; }
+        @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+        #editPanel h3 { font-size: 1.1rem; margin-bottom: 0.3rem; color: var(--accent); }
+        .edit-subtitle { color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1.5rem; font-family: 'DM Mono', monospace; }
+        .edit-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
+        #editMsg { font-size: 0.9rem; }
 
-        .dash-btn.admin { border-color: rgba(0,94,184,0.4); }
-        .dash-btn.admin:hover { border-color: #60a5fa; color: #60a5fa; }
-
-        .dash-btn.locked {
-            opacity: 0.32;
-            cursor: not-allowed;
-            filter: grayscale(1);
-            pointer-events: none;
+        /* ── Confirm overlay ── */
+        .overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.7);
+            align-items: center; justify-content: center;
         }
-        .dash-btn.locked .lock-icon {
-            display: inline;
+        .overlay.active { display: flex; }
+        .confirm-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem; max-width: 420px; width: 90%;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .lock-icon { display: none; font-size: 0.8rem; margin-left: 4px; }
+        .confirm-box h3 { margin-bottom: 0.8rem; font-size: 1.2rem; color: #fca5a5; }
+        .confirm-box p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .confirm-actions { display: flex; gap: 1rem; justify-content: center; }
 
-        .dash-btn.signout {
-            background: transparent;
-            border-color: rgba(239,68,68,0.3);
-            color: #fca5a5;
-            grid-column: 1 / -1;
-            padding: 0.8rem;
-            font-size: 0.9rem;
-        }
-        .dash-btn.signout:hover { border-color: var(--error); color: var(--error); transform: none; box-shadow: none; }
-
-        .section-label {
-            text-align: left;
-            color: var(--text-muted);
-            font-family: 'DM Mono', monospace;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 1.8rem 0 0.75rem;
-        }
-
-        @media (max-width: 480px) {
-            .logo { max-height: 70px; }
-            h1 { font-size: 1.8rem; }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
             .card { padding: 2rem 1.5rem; }
-            .btn-group { grid-template-columns: 1fr; }
-            .dash-btn.signout { grid-column: 1; }
         }
     </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
-             alt="NGU Logo" class="logo">
-    </div>
+<div class="container">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo">
 
-    <!-- ── Login ── -->
-    <div class="card" id="loginCard">
-        <h1>NGU Onboarding</h1>
-        <p class="subtitle">Sign in to continue</p>
+    <h1>Engineer Database</h1>
+    <p class="subtitle">Manage NGU Onboarding engineers</p>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="name@company.com" autocomplete="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
-        </div>
-
-        <button class="btn btn-primary" id="signInBtn">Sign In</button>
-        <div class="error-msg" id="errorMsg"></div>
-    </div>
-
-    <!-- ── Dashboard ── -->
-    <div id="dashboard" class="hidden">
-        <h1>NGU Onboarding</h1>
-        <p class="subtitle">Welcome back — what would you like to do?</p>
-
-        <!-- Engineer section -->
-        <p class="section-label">Engineer Management</p>
-        <div class="btn-group">
-            <button class="dash-btn" id="addEngineerBtn">
-                <span class="btn-icon">👷</span>
-                <span class="btn-label">Add Engineer</span>
-            </button>
-            <button class="dash-btn" id="documentsBtn">
-                <span class="btn-icon">📄</span>
-                <span class="btn-label">Engineer Documents<span class="lock-icon">🔒</span></span>
-            </button>
-            <button class="dash-btn" id="personalDetailsBtn">
-                <span class="btn-icon">👤</span>
-                <span class="btn-label">Engineer Personal Details<span class="lock-icon">🔒</span></span>
-            </button>
-            <button class="dash-btn" id="contractBtn">
-                <span class="btn-icon">📋</span>
-                <span class="btn-label">View / Amend Contracts<span class="lock-icon">🔒</span></span>
-            </button>
-        </div>
-
-        <!-- Admin section -->
-        <p class="section-label">Administration</p>
-        <div class="btn-group">
-            <button class="dash-btn admin" id="manageUsersBtn">
-                <span class="btn-icon">🔧</span>
-                <span class="btn-label">Manage Admin Users</span>
-            </button>
-            <button class="dash-btn signout" id="signOutBtn">Sign Out</button>
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" id="signOutBtn">Sign Out</button>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import {
-            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-        import {
-            getFirestore, collection, query, where, getDocs
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    <!-- ── Add Engineer ── -->
+    <div class="card">
+        <h2>Add New Engineer</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Engineer Name</label>
+                <input type="text" id="engName" placeholder="Jane Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="engEmail" placeholder="jane@company.com" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Number</label>
+                <input type="tel" id="engPhone" placeholder="+44 7700 000000" required>
+            </div>
+            <div class="form-group">
+                <label>Contract</label>
+                <select id="engContract">
+                    <option value="" disabled selected>Select contract…</option>
+                    <option value="Sureserve - OES">Sureserve - OES</option>
+                    <option value="Sureserve - SP">Sureserve - SP</option>
+                    <option value="Calisen - SP">Calisen - SP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>FTL</label>
+                <select id="engFTL">
+                    <option value="" disabled selected>Select FTL…</option>
+                    <option value="Richard Wiecko">Richard Wiecko</option>
+                    <option value="Scott Carson">Scott Carson</option>
+                    <option value="Stuart Whyte">Stuart Whyte</option>
+                    <option value="Tom Green">Tom Green</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Proposed Start Date</label>
+                <input type="date" id="engStartDate" required>
+            </div>
+        </div>
+        <div style="display:flex; gap:1rem; align-items:center; margin-top:2rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="addEngineerBtn">Add Engineer</button>
+        </div>
+        <div id="addMsg"></div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
-            authDomain: "oesperformance-a54c0.firebaseapp.com",
-            projectId: "oesperformance-a54c0",
-            storageBucket: "oesperformance-a54c0.firebasestorage.app",
-            messagingSenderId: "484894102454",
-            appId: "1:484894102454:web:17535ee497eac2d90d6717"
-        };
+    <!-- ── Engineer List ── -->
+    <div class="card">
+        <div class="header-actions">
+            <h2 style="margin-bottom:0;">Engineers</h2>
+            <button class="btn btn-secondary" style="padding:0.6rem 1.2rem; font-size:0.9rem;" id="refreshBtn">↻ Refresh</button>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem;">Click a row to edit. Use the buttons on the right to begin onboarding or delete.</p>
 
-        const app  = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db   = getFirestore(app);
+        <div id="engineersTable">
+            <p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading engineers...</p>
+        </div>
 
-        const loginCard  = document.getElementById('loginCard');
-        const dashboard  = document.getElementById('dashboard');
-        const errorMsg   = document.getElementById('errorMsg');
-        const signInBtn  = document.getElementById('signInBtn');
+        <!-- ── Edit Panel ── -->
+        <div id="editPanel">
+            <h3 id="editTitle">Edit Engineer</h3>
+            <p class="edit-subtitle" id="editSubtitle">Update the fields below and save</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Engineer Name</label>
+                    <input type="text" id="editName" placeholder="Jane Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="editEmail" placeholder="jane@company.com">
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="editPhone" placeholder="+44 7700 000000">
+                </div>
+                <div class="form-group">
+                    <label>Contract</label>
+                    <select id="editContract">
+                        <option value="" disabled>Select contract…</option>
+                        <option value="Sureserve - OES">Sureserve - OES</option>
+                        <option value="Sureserve - SP">Sureserve - SP</option>
+                        <option value="Calisen - SP">Calisen - SP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>FTL</label>
+                    <select id="editFTL">
+                        <option value="" disabled>Select FTL…</option>
+                        <option value="Richard Wiecko">Richard Wiecko</option>
+                        <option value="Scott Carson">Scott Carson</option>
+                        <option value="Stuart Whyte">Stuart Whyte</option>
+                        <option value="Tom Green">Tom Green</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Proposed Start Date</label>
+                    <input type="date" id="editStartDate">
+                </div>
+            </div>
+            <div class="edit-actions">
+                <button class="btn btn-primary" id="saveEditBtn" style="padding:0.8rem 1.8rem; font-size:0.95rem;">Save Changes</button>
+                <button class="btn btn-secondary" id="cancelEditBtn" style="padding:0.8rem 1.4rem; font-size:0.95rem;">Cancel</button>
+                <span id="editMsg"></span>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // Buttons that are permission-gated: { buttonId: permissionKey }
-        const GATED_BTNS = {
-            documentsBtn:      'documents',
-            personalDetailsBtn: 'personaldetails',
-            contractBtn:       'contract'
-        };
+<!-- ── Delete confirm overlay ── -->
+<div class="overlay" id="deleteOverlay">
+    <div class="confirm-box">
+        <h3>Delete Engineer?</h3>
+        <p id="deleteConfirmText">This will mark the engineer as deleted. They will no longer appear in the list.</p>
+        <div class="confirm-actions">
+            <button class="btn btn-danger" id="confirmDeleteBtn" style="padding:0.8rem 1.6rem;">Yes, Delete</button>
+            <button class="btn btn-secondary" id="cancelDeleteBtn" style="padding:0.8rem 1.4rem;">Cancel</button>
+        </div>
+    </div>
+</div>
 
-        async function applyPermissions(user) {
-            try {
-                const q    = query(collection(db, "NGUO Database"), where("authUid", "==", user.uid));
-                const snap = await getDocs(q);
-                const perms = snap.empty ? {} : (snap.docs[0].data().permissions || {});
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, doc, updateDoc,
+        serverTimestamp, query, orderBy, where
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-                Object.entries(GATED_BTNS).forEach(([btnId, permKey]) => {
-                    const btn = document.getElementById(btnId);
-                    if (!btn) return;
-                    if (!perms[permKey]) {
-                        btn.classList.add('locked');
-                    } else {
-                        btn.classList.remove('locked');
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
+
+    const colRef  = collection(db, "NGUO - Engineers");
+    const addBtn  = document.getElementById('addEngineerBtn');
+    const msgEl   = document.getElementById('addMsg');
+    const tableEl = document.getElementById('engineersTable');
+
+    let allEngineers  = [];
+    let selectedDocId = null;
+    let pendingDeleteId = null;
+
+    // ── Contract badge ────────────────────────────────────────────────────────
+    function contractBadge(contract) {
+        const map = { 'Sureserve - OES': 'badge-ss-oes', 'Sureserve - SP': 'badge-ss-sp', 'Calisen - SP': 'badge-cal-sp' };
+        return `<span class="badge ${map[contract] || 'badge-ss-oes'}">${contract || '—'}</span>`;
+    }
+
+    function statusBadge(status) {
+        if (status === 'onboarding') return `<span class="badge badge-onboarding">⚡ Onboarding</span>`;
+        return `<span class="badge badge-pending">Pending</span>`;
+    }
+
+    // ── Load engineers (exclude deleted) ─────────────────────────────────────
+    async function loadEngineers() {
+        tableEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading engineers...</p>';
+        closeEditPanel();
+        try {
+            const q    = query(colRef, orderBy('createdAt', 'desc'));
+            const snap = await getDocs(q);
+
+            // Filter out deleted records
+            allEngineers = snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(d => d.status !== 'deleted');
+
+            if (allEngineers.length === 0) {
+                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers added yet</p>';
+                return;
+            }
+
+            let rows = '';
+            allEngineers.forEach(d => {
+                const startDate = d.startDate
+                    ? new Date(d.startDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+                    : '—';
+                const isOnboarding = d.status === 'onboarding';
+
+                rows += `<tr data-id="${d.id}">
+                    <td><strong>${d.name || '—'}</strong></td>
+                    <td>${d.email || '—'}</td>
+                    <td>${d.phone || '—'}</td>
+                    <td>${contractBadge(d.contract)}</td>
+                    <td>${d.ftl || '—'}</td>
+                    <td>${startDate}</td>
+                    <td>${statusBadge(d.status)}</td>
+                    <td onclick="event.stopPropagation()">
+                        <div class="action-btns">
+                            <button class="btn-onboard ${isOnboarding ? 'active' : ''}"
+                                data-id="${d.id}"
+                                ${isOnboarding ? 'disabled title="Already onboarding"' : ''}>
+                                ${isOnboarding ? '⚡ Onboarding' : '▶ Begin Onboard'}
+                            </button>
+                            <button class="btn-delete" data-id="${d.id}" data-name="${d.name || 'this engineer'}">
+                                🗑 Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+
+            tableEl.innerHTML = `
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>Name</th><th>Email</th><th>Contact</th>
+                            <th>Contract</th><th>FTL</th><th>Start Date</th>
+                            <th>Status</th><th style="text-align:right;">Actions</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>`;
+
+            // Row click → open edit panel
+            tableEl.querySelectorAll('tbody tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    const wasSelected = row.classList.contains('selected');
+                    tableEl.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+                    if (wasSelected) { closeEditPanel(); return; }
+                    row.classList.add('selected');
+                    const eng = allEngineers.find(e => e.id === row.dataset.id);
+                    if (eng) openEditPanel(eng);
+                });
+            });
+
+            // Begin Onboard buttons
+            tableEl.querySelectorAll('.btn-onboard:not(.active)').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    btn.disabled = true;
+                    btn.textContent = 'Saving...';
+                    try {
+                        await updateDoc(doc(db, "NGUO - Engineers", id), {
+                            status: 'onboarding',
+                            onboardingStartedAt: serverTimestamp()
+                        });
+                        loadEngineers();
+                    } catch (err) {
+                        btn.disabled = false;
+                        btn.textContent = '▶ Begin Onboard';
+                        alert('Error: ' + err.message);
                     }
                 });
-            } catch (err) {
-                console.warn('Could not load permissions:', err);
-            }
+            });
+
+            // Delete buttons
+            tableEl.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    pendingDeleteId = btn.dataset.id;
+                    document.getElementById('deleteConfirmText').textContent =
+                        `This will mark "${btn.dataset.name}" as deleted. They will no longer appear in the list.`;
+                    document.getElementById('deleteOverlay').classList.add('active');
+                });
+            });
+
+        } catch (err) {
+            tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">Error: ${err.message}</p>`;
+        }
+    }
+
+    // ── Edit panel ────────────────────────────────────────────────────────────
+    function openEditPanel(eng) {
+        selectedDocId = eng.id;
+        document.getElementById('editTitle').textContent    = `Editing — ${eng.name}`;
+        document.getElementById('editSubtitle').textContent = eng.email || '';
+        document.getElementById('editName').value      = eng.name      || '';
+        document.getElementById('editEmail').value     = eng.email     || '';
+        document.getElementById('editPhone').value     = eng.phone     || '';
+        document.getElementById('editContract').value  = eng.contract  || '';
+        document.getElementById('editFTL').value       = eng.ftl       || '';
+        document.getElementById('editStartDate').value = eng.startDate || '';
+        document.getElementById('editMsg').textContent = '';
+        document.getElementById('editMsg').className   = '';
+        const panel = document.getElementById('editPanel');
+        panel.style.display = 'block';
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+
+    function closeEditPanel() {
+        selectedDocId = null;
+        document.getElementById('editPanel').style.display = 'none';
+        if (tableEl.querySelectorAll) tableEl.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+    }
+
+    document.getElementById('cancelEditBtn').addEventListener('click', closeEditPanel);
+
+    document.getElementById('saveEditBtn').addEventListener('click', async () => {
+        if (!selectedDocId) return;
+        const saveBtn = document.getElementById('saveEditBtn');
+        const editMsg = document.getElementById('editMsg');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+        editMsg.textContent = '';
+
+        const updates = {
+            name:      document.getElementById('editName').value.trim(),
+            email:     document.getElementById('editEmail').value.trim(),
+            phone:     document.getElementById('editPhone').value.trim(),
+            contract:  document.getElementById('editContract').value,
+            ftl:       document.getElementById('editFTL').value,
+            startDate: document.getElementById('editStartDate').value,
+            updatedAt: serverTimestamp()
+        };
+
+        if (!updates.name || !updates.email || !updates.phone || !updates.contract || !updates.ftl || !updates.startDate) {
+            editMsg.className   = 'error-msg';
+            editMsg.textContent = 'Please fill in all fields.';
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+            return;
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                loginCard.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                errorMsg.textContent = '';
-                await applyPermissions(user);
-            } else {
-                loginCard.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-            }
-        });
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", selectedDocId), updates);
+            editMsg.className   = 'success-msg';
+            editMsg.textContent = `✓ Changes saved for ${updates.name}`;
+            // Update local cache
+            const idx = allEngineers.findIndex(e => e.id === selectedDocId);
+            if (idx !== -1) allEngineers[idx] = { ...allEngineers[idx], ...updates };
+            // Refresh table row name
+            const row = tableEl.querySelector(`tr[data-id="${selectedDocId}"]`);
+            if (row) { row.cells[0].innerHTML = `<strong>${updates.name}</strong>`; row.cells[1].textContent = updates.email; row.cells[2].textContent = updates.phone; row.cells[3].innerHTML = contractBadge(updates.contract); row.cells[4].textContent = updates.ftl; }
+            document.getElementById('editTitle').textContent = `Editing — ${updates.name}`;
+        } catch (err) {
+            editMsg.className   = 'error-msg';
+            editMsg.textContent = 'Error saving: ' + err.message;
+        }
 
-        signInBtn.addEventListener('click', async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass  = document.getElementById('password').value;
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+    });
 
-            if (!email || !pass) { errorMsg.textContent = 'Please enter email and password'; return; }
+    // ── Delete confirm ────────────────────────────────────────────────────────
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+        if (!pendingDeleteId) return;
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.disabled = true;
+        btn.textContent = 'Deleting...';
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", pendingDeleteId), {
+                status: 'deleted',
+                deletedAt: serverTimestamp()
+            });
+            document.getElementById('deleteOverlay').classList.remove('active');
+            pendingDeleteId = null;
+            loadEngineers();
+        } catch (err) {
+            alert('Error deleting: ' + err.message);
+        }
+        btn.disabled = false;
+        btn.textContent = 'Yes, Delete';
+    });
 
-            signInBtn.disabled = true;
-            signInBtn.textContent = 'Signing in...';
-            errorMsg.textContent = '';
+    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+        document.getElementById('deleteOverlay').classList.remove('active');
+        pendingDeleteId = null;
+    });
 
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                let msg = 'Login failed – check credentials';
-                if (err.code?.includes('invalid-credential') || err.code?.includes('wrong-password')) msg = 'Invalid email or password';
-                else if (err.code?.includes('user-not-found')) msg = 'No account with this email';
-                else if (err.code?.includes('too-many-requests')) msg = 'Too many attempts – wait a moment';
-                else msg = err.message || msg;
-                errorMsg.textContent = msg;
-            }
+    // Close overlay on backdrop click
+    document.getElementById('deleteOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('deleteOverlay').classList.remove('active');
+            pendingDeleteId = null;
+        }
+    });
 
-            signInBtn.disabled = false;
-            signInBtn.textContent = 'Sign In';
-        });
+    // ── Add engineer ──────────────────────────────────────────────────────────
+    addBtn.addEventListener('click', async () => {
+        const name      = document.getElementById('engName').value.trim();
+        const email     = document.getElementById('engEmail').value.trim();
+        const phone     = document.getElementById('engPhone').value.trim();
+        const contract  = document.getElementById('engContract').value;
+        const ftl       = document.getElementById('engFTL').value;
+        const startDate = document.getElementById('engStartDate').value;
 
-        // Allow pressing Enter to sign in
-        document.getElementById('password').addEventListener('keydown', e => {
-            if (e.key === 'Enter') signInBtn.click();
-        });
+        msgEl.className = 'error-msg';
+        msgEl.textContent = '';
 
-        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
-        document.getElementById('addEngineerBtn').addEventListener('click', () => window.location.href = 'engineerdatabase.html');
-        document.getElementById('documentsBtn').addEventListener('click', () => window.location.href = 'documents.html');
-        document.getElementById('personalDetailsBtn').addEventListener('click', () => window.location.href = 'personaldetails.html');
-        document.getElementById('contractBtn').addEventListener('click', () => window.location.href = 'contract.html');
-        document.getElementById('manageUsersBtn').addEventListener('click', () => window.location.href = 'userdatabase.html');
-    </script>
+        if (!name || !email || !phone || !contract || !ftl || !startDate) {
+            msgEl.textContent = 'Please fill in all fields.'; return;
+        }
+
+        addBtn.disabled = true;
+        addBtn.textContent = 'Adding...';
+
+        try {
+            await addDoc(colRef, { name, email, phone, contract, ftl, startDate, status: 'pending', createdAt: serverTimestamp() });
+            msgEl.className = 'success-msg';
+            msgEl.textContent = `✓ Engineer "${name}" added successfully.`;
+            document.getElementById('engName').value      = '';
+            document.getElementById('engEmail').value     = '';
+            document.getElementById('engPhone').value     = '';
+            document.getElementById('engContract').value  = '';
+            document.getElementById('engFTL').value       = '';
+            document.getElementById('engStartDate').value = '';
+            loadEngineers();
+        } catch (err) {
+            msgEl.className = 'error-msg';
+            msgEl.textContent = err.code === 'permission-denied' ? 'Firestore permission denied.' : err.message;
+        }
+
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add Engineer';
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
+    document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
+
+    loadEngineers();
+</script>
 </body>
 </html>
