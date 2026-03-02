@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Document Review</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #005EB8;
+            --accent: #00A3E0;
+            --bg-dark: #0A1628;
+            --bg-card: #1a2942;
+            --bg-input: #0d1f3a;
+            --text-light: #E8EDF2;
+            --text-muted: #8B9AAE;
+            --border: #2a3f5f;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
+            pointer-events: none; z-index: -1;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+        .logo { max-height: 70px; display: block; margin: 0 auto 2.5rem; }
+        h1 {
+            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 3rem; }
+
+        .protected-bar {
+            background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.3);
+            border-radius: 12px; padding: 1rem 1.4rem; margin: 0 0 2.5rem;
+            color: #bae6fd; font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem 2.5rem;
+            margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .card-header h2 { font-size: 1.3rem; font-weight: 700; }
+
+        .btn {
+            padding: 0.7rem 1.6rem; border: none; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: all 0.22s; font-family: inherit;
+        }
+        .btn-secondary { background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-light); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-accept  { background: rgba(16,185,129,0.15); border: 2px solid rgba(16,185,129,0.4); color: #6ee7b7; }
+        .btn-accept:hover  { background: rgba(16,185,129,0.28); border-color: var(--success); }
+        .btn-accept.active { background: rgba(16,185,129,0.3); border-color: var(--success); }
+        .btn-decline { background: rgba(239,68,68,0.12); border: 2px solid rgba(239,68,68,0.35); color: #fca5a5; }
+        .btn-decline:hover  { background: rgba(239,68,68,0.22); border-color: var(--error); }
+        .btn-decline.active { background: rgba(239,68,68,0.25); border-color: var(--error); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── Engineers table ── */
+        .eng-table { width: 100%; border-collapse: collapse; }
+        .eng-table th {
+            padding: 0.75rem 1rem; text-align: center;
+            background: rgba(0,163,224,0.08); font-weight: 600;
+            text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+        .eng-table th:first-child { text-align: left; }
+        .eng-table td {
+            padding: 1rem 1rem; border-bottom: 1px solid var(--border);
+            text-align: center; vertical-align: middle;
+        }
+        .eng-table td:first-child { text-align: left; }
+        .eng-table tbody tr { cursor: pointer; transition: background 0.15s; }
+        .eng-table tbody tr:hover { background: rgba(0,163,224,0.07); }
+        .eng-table tbody tr.selected { background: rgba(0,163,224,0.13); outline: 1px solid rgba(0,163,224,0.35); }
+
+        .eng-name { font-weight: 700; font-size: 1rem; }
+        .eng-contract { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
+
+        /* ── Doc tick ── */
+        .doc-tick {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 1rem; font-weight: 700; transition: all 0.2s;
+        }
+        .tick-none    { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+        .tick-uploaded { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .tick-accepted { background: rgba(16,185,129,0.5); color: white; box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+        .tick-declined { background: rgba(239,68,68,0.3);  color: #fca5a5; }
+
+        /* ── Detail panel ── */
+        #detailPanel {
+            display: none;
+            background: rgba(0,10,25,0.7);
+            border: 2px solid var(--accent);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            animation: slideIn 0.2s ease;
+        }
+        @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+        .detail-top {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .detail-name { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+        .detail-meta { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+        .detail-meta-item label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); display: block; margin-bottom: 0.2rem; }
+        .detail-meta-item span  { font-size: 0.95rem; font-weight: 600; }
+
+        /* ── Doc review cards ── */
+        .doc-review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem; }
+        .doc-review-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.2rem; transition: border-color 0.2s;
+        }
+        .doc-review-card.accepted { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.04); }
+        .doc-review-card.declined { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.04); }
+        .doc-review-card.not-uploaded { opacity: 0.5; }
+
+        .doc-card-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
+        .doc-card-icon { font-size: 1.4rem; }
+        .doc-card-title { font-weight: 700; font-size: 0.95rem; }
+        .doc-card-status { font-size: 0.75rem; margin-top: 0.1rem; }
+
+        .doc-preview-link {
+            display: block; width: 100%; padding: 0.65rem;
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--accent); text-decoration: none;
+            font-size: 0.85rem; text-align: center; margin-bottom: 0.9rem;
+            transition: all 0.18s; font-weight: 600;
+        }
+        .doc-preview-link:hover { border-color: var(--accent); background: rgba(0,163,224,0.08); }
+        .doc-preview-link.disabled { color: var(--text-muted); pointer-events: none; cursor: default; }
+
+        .doc-actions { display: flex; gap: 0.5rem; }
+        .doc-actions button { flex: 1; padding: 0.5rem 0.4rem; font-size: 0.8rem; font-weight: 600; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.18s; }
+
+        /* Decline note */
+        .decline-note-wrap { display: none; margin-top: 0.8rem; }
+        .decline-note-wrap textarea {
+            width: 100%; padding: 0.7rem; background: var(--bg-dark);
+            border: 2px solid rgba(239,68,68,0.4); border-radius: 8px;
+            color: var(--text-light); font-size: 0.85rem; font-family: inherit;
+            resize: vertical; min-height: 70px;
+        }
+        .decline-note-wrap textarea:focus { outline: none; border-color: var(--error); }
+        .decline-save-btn {
+            margin-top: 0.5rem; width: 100%; padding: 0.55rem;
+            background: rgba(239,68,68,0.15); border: 2px solid rgba(239,68,68,0.4);
+            color: #fca5a5; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+        }
+        .decline-save-btn:hover { background: rgba(239,68,68,0.25); }
+
+        .existing-note {
+            margin-top: 0.6rem; padding: 0.6rem 0.8rem;
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 8px; font-size: 0.82rem; color: #fca5a5; line-height: 1.4;
+        }
+        .existing-note strong { display: block; margin-bottom: 0.2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; }
+
+        .no-engineers { text-align: center; padding: 3rem 0; color: var(--text-muted); }
+
+        @media (max-width: 700px) {
+            .eng-table th:nth-child(n+3), .eng-table td:nth-child(n+3) { display: none; }
+            .doc-review-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo">
+
+    <h1>Document Review</h1>
+    <p class="subtitle">Engineers currently onboarding</p>
+
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" id="signOutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Onboarding Engineers</h2>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.1rem; font-size:0.88rem;" id="refreshBtn">↻ Refresh</button>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem;">
+            Click an engineer's name to review their uploaded documents.
+        </p>
+
+        <div id="engineerList">
+            <p class="no-engineers">Loading engineers…</p>
+        </div>
+
+        <!-- Detail panel -->
+        <div id="detailPanel">
+            <div class="detail-top">
+                <div>
+                    <div class="detail-name" id="detailName"></div>
+                    <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.2rem;" id="detailContract"></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:0.45rem 1rem; font-size:0.85rem;" id="closeDetailBtn">✕ Close</button>
+            </div>
+
+            <div class="detail-meta" id="detailMeta"></div>
+
+            <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Documents</h3>
+            <div class="doc-review-grid" id="docReviewGrid"></div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
+
+    const DOC_TYPES = [
+        { key: 'licence', label: 'Driving Licence', icon: '🪪' },
+        { key: 'certs',   label: 'Certificates',    icon: '📜' },
+        { key: 'address', label: 'Proof of Address', icon: '🏠' },
+        { key: 'bank',    label: 'Bank Details',     icon: '🏦', bankOnly: true }
+    ];
+
+    let engineers    = [];
+    let selectedId   = null;
+
+    // ── Load onboarding engineers ─────────────────────────────────────────────
+    async function loadEngineers() {
+        document.getElementById('engineerList').innerHTML = '<p class="no-engineers">Loading…</p>';
+        closeDetail();
+        try {
+            const q    = query(collection(db, "NGUO - Engineers"), where("status", "==", "onboarding"));
+            const snap = await getDocs(q);
+            engineers  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            if (engineers.length === 0) {
+                document.getElementById('engineerList').innerHTML =
+                    '<p class="no-engineers">No engineers currently onboarding.</p>';
+                return;
+            }
+
+            renderTable();
+        } catch (err) {
+            document.getElementById('engineerList').innerHTML =
+                `<p class="no-engineers" style="color:var(--error)">Error: ${err.message}</p>`;
+        }
+    }
+
+    // ── Render table ──────────────────────────────────────────────────────────
+    function renderTable() {
+        let rows = '';
+        engineers.forEach(eng => {
+            const ticks = DOC_TYPES.map(dt => {
+                const uploaded  = dt.bankOnly ? !!(eng.bank_name && eng.bank_accountNo) : !!eng[`docs_${dt.key}`];
+                const review    = eng[`review_${dt.key}`];
+                let cls = 'tick-none', symbol = '✓';
+                if (uploaded && review === 'accepted') { cls = 'tick-accepted'; symbol = '✓'; }
+                else if (uploaded && review === 'declined') { cls = 'tick-declined'; symbol = '✗'; }
+                else if (uploaded) { cls = 'tick-uploaded'; symbol = '✓'; }
+                return `<td><span class="doc-tick ${cls}" title="${dt.label}">${symbol}</span></td>`;
+            }).join('');
+
+            rows += `<tr data-id="${eng.id}">
+                <td>
+                    <div class="eng-name">${eng.name || '—'}</div>
+                    <div class="eng-contract">${eng.contract || ''} · ${eng.ftl || ''}</div>
+                </td>
+                ${ticks}
+            </tr>`;
+        });
+
+        document.getElementById('engineerList').innerHTML = `
+            <table class="eng-table">
+                <thead><tr>
+                    <th>Engineer</th>
+                    <th>Driving Licence</th>
+                    <th>Certificates</th>
+                    <th>Proof of Address</th>
+                    <th>Bank Details</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+
+        document.querySelectorAll('.eng-table tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                const wasSelected = row.classList.contains('selected');
+                document.querySelectorAll('.eng-table tbody tr').forEach(r => r.classList.remove('selected'));
+                if (wasSelected) { closeDetail(); return; }
+                row.classList.add('selected');
+                const eng = engineers.find(e => e.id === row.dataset.id);
+                if (eng) openDetail(eng);
+            });
+        });
+    }
+
+    // ── Open detail panel ─────────────────────────────────────────────────────
+    function openDetail(eng) {
+        selectedId = eng.id;
+
+        document.getElementById('detailName').textContent     = eng.name || '—';
+        document.getElementById('detailContract').textContent = `${eng.contract || ''} · FTL: ${eng.ftl || ''}`;
+
+        // Meta info
+        const startFormatted = eng.startDate
+            ? new Date(eng.startDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+            : '—';
+        document.getElementById('detailMeta').innerHTML = `
+            <div class="detail-meta-item"><label>Email</label><span>${eng.email || '—'}</span></div>
+            <div class="detail-meta-item"><label>Phone</label><span>${eng.phone || '—'}</span></div>
+            <div class="detail-meta-item"><label>Start Date</label><span>${startFormatted}</span></div>
+        `;
+
+        // Doc review cards
+        const grid = document.getElementById('docReviewGrid');
+        grid.innerHTML = '';
+
+        DOC_TYPES.forEach(dt => {
+            const uploaded  = dt.bankOnly
+                ? !!(eng.bank_name && eng.bank_accountNo)
+                : !!eng[`docs_${dt.key}`];
+            const fileUrl   = dt.bankOnly ? null : eng[`docs_${dt.key}`];
+            const filename  = dt.bankOnly ? null : eng[`docs_${dt.key}_filename`];
+            const review    = eng[`review_${dt.key}`] || '';
+            const note      = eng[`review_${dt.key}_note`] || '';
+
+            let statusText = 'Not uploaded';
+            let statusColor = 'var(--text-muted)';
+            if (uploaded && review === 'accepted') { statusText = '✓ Accepted'; statusColor = 'var(--success)'; }
+            else if (uploaded && review === 'declined') { statusText = '✗ Declined'; statusColor = 'var(--error)'; }
+            else if (uploaded) { statusText = 'Uploaded — awaiting review'; statusColor = 'var(--warning)'; }
+
+            const card = document.createElement('div');
+            card.className = `doc-review-card${review ? ' ' + review : ''}${!uploaded ? ' not-uploaded' : ''}`;
+            card.dataset.key = dt.key;
+
+            // Bank details shows just a summary, no file link
+            const previewHtml = dt.bankOnly
+                ? `<div style="padding:0.6rem; background:var(--bg-input); border-radius:8px; font-size:0.85rem; margin-bottom:0.9rem; color:${uploaded ? 'var(--text-light)' : 'var(--text-muted)'}">
+                    ${uploaded ? `<strong>${eng.bank_name}</strong><br><span style="color:var(--text-muted)">${eng.bank_bankName || ''}</span>` : 'No bank details submitted'}
+                   </div>`
+                : `<a href="${fileUrl || '#'}" target="_blank" class="doc-preview-link${!uploaded ? ' disabled' : ''}">
+                    ${uploaded ? `📎 ${filename || 'View Document'}` : 'No file uploaded'}
+                   </a>`;
+
+            card.innerHTML = `
+                <div class="doc-card-header">
+                    <div class="doc-card-icon">${dt.icon}</div>
+                    <div>
+                        <div class="doc-card-title">${dt.label}</div>
+                        <div class="doc-card-status" style="color:${statusColor}">${statusText}</div>
+                    </div>
+                </div>
+                ${previewHtml}
+                <div class="doc-actions">
+                    <button class="btn-accept${review === 'accepted' ? ' active' : ''}"
+                        ${!uploaded ? 'disabled' : ''}
+                        onclick="reviewDoc('${eng.id}', '${dt.key}', 'accepted')">
+                        ✓ Accept
+                    </button>
+                    <button class="btn-decline${review === 'declined' ? ' active' : ''}"
+                        ${!uploaded ? 'disabled' : ''}
+                        onclick="toggleDeclineNote('${dt.key}')">
+                        ✗ Decline
+                    </button>
+                </div>
+                <div class="decline-note-wrap" id="note-wrap-${dt.key}" ${review === 'declined' ? 'style="display:block"' : ''}>
+                    <textarea id="note-input-${dt.key}" placeholder="Reason for declining…">${note}</textarea>
+                    <button class="decline-save-btn" onclick="reviewDoc('${eng.id}', '${dt.key}', 'declined')">Save & Decline</button>
+                </div>
+                ${review === 'declined' && note ? `<div class="existing-note"><strong>Decline reason</strong>${note}</div>` : ''}
+            `;
+            grid.appendChild(card);
+        });
+
+        const panel = document.getElementById('detailPanel');
+        panel.style.display = 'block';
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+
+    function closeDetail() {
+        selectedId = null;
+        document.getElementById('detailPanel').style.display = 'none';
+        document.querySelectorAll('.eng-table tbody tr').forEach(r => r.classList.remove('selected'));
+    }
+
+    document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
+
+    // ── Toggle decline note textarea ──────────────────────────────────────────
+    window.toggleDeclineNote = function(key) {
+        const wrap = document.getElementById(`note-wrap-${key}`);
+        const isVisible = wrap.style.display === 'block';
+        wrap.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) wrap.querySelector('textarea').focus();
+    };
+
+    // ── Accept / Decline a document ───────────────────────────────────────────
+    window.reviewDoc = async function(engId, key, decision) {
+        const note     = document.getElementById(`note-input-${key}`)?.value?.trim() || '';
+        const updates  = {
+            [`review_${key}`]: decision,
+            [`review_${key}_at`]: serverTimestamp()
+        };
+        if (decision === 'declined') updates[`review_${key}_note`] = note;
+        else updates[`review_${key}_note`] = '';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", engId), updates);
+
+            // Update local cache
+            const eng = engineers.find(e => e.id === engId);
+            if (eng) {
+                eng[`review_${key}`] = decision;
+                if (decision === 'declined') eng[`review_${key}_note`] = note;
+                else eng[`review_${key}_note`] = '';
+            }
+
+            // Re-render table row ticks and reopen detail
+            renderTable();
+            // Re-select the row
+            const row = document.querySelector(`.eng-table tbody tr[data-id="${engId}"]`);
+            if (row) { row.classList.add('selected'); }
+            const updatedEng = engineers.find(e => e.id === engId);
+            if (updatedEng) openDetail(updatedEng);
+
+        } catch (err) {
+            alert('Error saving review: ' + err.message);
+        }
+    };
+
+    document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    });
+
+    loadEngineers();
+</script>
+</body>
+</html>
