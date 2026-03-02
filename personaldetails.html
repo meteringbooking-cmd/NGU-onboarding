@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU — Document Review</title>
+    <title>NGU — Personal Details</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,45 +71,41 @@
         }
         .btn-secondary { background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-light); }
         .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-        .btn-accept  { background: rgba(16,185,129,0.15); border: 2px solid rgba(16,185,129,0.4); color: #6ee7b7; }
-        .btn-accept:hover  { background: rgba(16,185,129,0.28); border-color: var(--success); }
-        .btn-accept.active { background: rgba(16,185,129,0.3); border-color: var(--success); }
-        .btn-decline { background: rgba(239,68,68,0.12); border: 2px solid rgba(239,68,68,0.35); color: #fca5a5; }
-        .btn-decline:hover  { background: rgba(239,68,68,0.22); border-color: var(--error); }
-        .btn-decline.active { background: rgba(239,68,68,0.25); border-color: var(--error); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* ── Engineers table ── */
         .eng-table { width: 100%; border-collapse: collapse; }
         .eng-table th {
-            padding: 0.75rem 1rem; text-align: center;
+            padding: 0.75rem 1rem; text-align: left;
             background: rgba(0,163,224,0.08); font-weight: 600;
             text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.5px;
             border-bottom: 1px solid var(--border);
         }
-        .eng-table th:first-child { text-align: left; }
-        .eng-table td {
-            padding: 1rem 1rem; border-bottom: 1px solid var(--border);
-            text-align: center; vertical-align: middle;
-        }
-        .eng-table td:first-child { text-align: left; }
+        .eng-table th.center { text-align: center; }
+        .eng-table td { padding: 1rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .eng-table td.center { text-align: center; }
         .eng-table tbody tr { cursor: pointer; transition: background 0.15s; }
         .eng-table tbody tr:hover { background: rgba(0,163,224,0.07); }
         .eng-table tbody tr.selected { background: rgba(0,163,224,0.13); outline: 1px solid rgba(0,163,224,0.35); }
 
         .eng-name { font-weight: 700; font-size: 1rem; }
-        .eng-contract { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
+        .eng-sub  { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
 
-        /* ── Doc tick ── */
-        .doc-tick {
+        /* Bank submitted indicator */
+        .bank-indicator {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 32px; height: 32px; border-radius: 50%;
-            font-size: 1rem; font-weight: 700; transition: all 0.2s;
+            width: 32px; height: 32px; border-radius: 50%; font-size: 1rem;
         }
-        .tick-none    { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
-        .tick-uploaded { background: rgba(16,185,129,0.2); color: #6ee7b7; }
-        .tick-accepted { background: rgba(16,185,129,0.5); color: white; box-shadow: 0 0 8px rgba(16,185,129,0.4); }
-        .tick-declined { background: rgba(239,68,68,0.3);  color: #fca5a5; }
+        .bank-yes  { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .bank-no   { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+
+        /* Payroll badge */
+        .payroll-badge {
+            display: inline-block; padding: 0.25rem 0.8rem;
+            border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+        }
+        .payroll-yes { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .payroll-no  { background: rgba(139,154,174,0.1); color: var(--text-muted); }
 
         /* ── Detail panel ── */
         #detailPanel {
@@ -128,67 +124,75 @@
             margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
         }
         .detail-name { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
-        .detail-meta { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+        .detail-sub  { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; }
+
+        /* Meta row */
+        .detail-meta { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; }
         .detail-meta-item label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); display: block; margin-bottom: 0.2rem; }
         .detail-meta-item span  { font-size: 0.95rem; font-weight: 600; }
 
-        /* ── Doc review cards ── */
-        .doc-review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem; }
-        .doc-review-card {
+        /* Bank details card */
+        .bank-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.2rem; transition: border-color 0.2s;
+            border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
         }
-        .doc-review-card.accepted { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.04); }
-        .doc-review-card.declined { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.04); }
-        .doc-review-card.not-uploaded { opacity: 0.5; }
-
-        .doc-card-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
-        .doc-card-icon { font-size: 1.4rem; }
-        .doc-card-title { font-weight: 700; font-size: 0.95rem; }
-        .doc-card-status { font-size: 0.75rem; margin-top: 0.1rem; }
-
-        .doc-preview-link {
-            display: block; width: 100%; padding: 0.65rem;
+        .bank-card h3 {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-muted); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
+        .bank-field label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); display: block; margin-bottom: 0.3rem; }
+        .bank-field .value {
+            font-size: 1rem; font-weight: 700;
+            font-family: 'DM Mono', monospace;
+            color: var(--text-light);
             background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--accent); text-decoration: none;
-            font-size: 0.85rem; text-align: center; margin-bottom: 0.9rem;
-            transition: all 0.18s; font-weight: 600;
+            border-radius: 8px; padding: 0.65rem 0.9rem;
         }
-        .doc-preview-link:hover { border-color: var(--accent); background: rgba(0,163,224,0.08); }
-        .doc-preview-link.disabled { color: var(--text-muted); pointer-events: none; cursor: default; }
+        .bank-field .value.empty { color: var(--text-muted); font-weight: 400; font-family: inherit; }
 
-        .doc-actions { display: flex; gap: 0.5rem; }
-        .doc-actions button { flex: 1; padding: 0.5rem 0.4rem; font-size: 0.8rem; font-weight: 600; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.18s; }
+        .no-bank-msg {
+            text-align: center; padding: 2rem;
+            color: var(--text-muted); font-size: 0.95rem;
+        }
+        .no-bank-msg .icon { font-size: 2rem; margin-bottom: 0.5rem; }
 
-        /* Decline note */
-        .decline-note-wrap { display: none; margin-top: 0.8rem; }
-        .decline-note-wrap textarea {
-            width: 100%; padding: 0.7rem; background: var(--bg-dark);
-            border: 2px solid rgba(239,68,68,0.4); border-radius: 8px;
-            color: var(--text-light); font-size: 0.85rem; font-family: inherit;
-            resize: vertical; min-height: 70px;
+        /* Payroll action */
+        .payroll-section {
+            display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+            padding: 1.2rem 1.4rem;
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 12px;
         }
-        .decline-note-wrap textarea:focus { outline: none; border-color: var(--error); }
-        .decline-save-btn {
-            margin-top: 0.5rem; width: 100%; padding: 0.55rem;
-            background: rgba(239,68,68,0.15); border: 2px solid rgba(239,68,68,0.4);
-            color: #fca5a5; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; font-family: inherit; transition: all 0.18s;
-        }
-        .decline-save-btn:hover { background: rgba(239,68,68,0.25); }
+        .payroll-section .payroll-label { flex: 1; min-width: 180px; }
+        .payroll-section .payroll-label strong { display: block; font-size: 0.97rem; margin-bottom: 0.2rem; }
+        .payroll-section .payroll-label span  { font-size: 0.83rem; color: var(--text-muted); }
 
-        .existing-note {
-            margin-top: 0.6rem; padding: 0.6rem 0.8rem;
-            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 8px; font-size: 0.82rem; color: #fca5a5; line-height: 1.4;
+        .btn-payroll {
+            background: linear-gradient(135deg, #005EB8 0%, #10B981 100%);
+            color: white; padding: 0.8rem 1.8rem; border-radius: 10px;
+            border: none; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; font-family: inherit; transition: all 0.22s;
+            white-space: nowrap;
         }
-        .existing-note strong { display: block; margin-bottom: 0.2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; }
+        .btn-payroll:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16,185,129,0.3); }
+        .btn-payroll.done {
+            background: rgba(16,185,129,0.2); border: 2px solid rgba(16,185,129,0.4);
+            color: #6ee7b7; cursor: default; transform: none; box-shadow: none;
+        }
+        .btn-payroll:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .payroll-timestamp { font-size: 0.8rem; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-top: 0.3rem; }
+
+        .save-msg { font-size: 0.88rem; }
+        .save-msg.ok  { color: var(--success); }
+        .save-msg.err { color: var(--error); }
 
         .no-engineers { text-align: center; padding: 3rem 0; color: var(--text-muted); }
 
-        @media (max-width: 700px) {
-            .eng-table th:nth-child(n+3), .eng-table td:nth-child(n+3) { display: none; }
-            .doc-review-grid { grid-template-columns: 1fr; }
+        @media (max-width: 600px) {
+            .card { padding: 1.5rem; }
+            .bank-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -197,8 +201,8 @@
     <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
          alt="NGU Logo" class="logo">
 
-    <h1>Document Review</h1>
-    <p class="subtitle">Engineers currently onboarding</p>
+    <h1>Personal Details</h1>
+    <p class="subtitle">Bank details for onboarding engineers</p>
 
     <div class="protected-bar">
         🔒 <strong>Protected page</strong> — only signed-in users can access this.
@@ -214,7 +218,7 @@
             <button class="btn btn-secondary" style="padding:0.5rem 1.1rem; font-size:0.88rem;" id="refreshBtn">↻ Refresh</button>
         </div>
         <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem;">
-            Click an engineer's name to review their uploaded documents.
+            Click an engineer to view their bank details and mark them as added to payroll.
         </p>
 
         <div id="engineerList">
@@ -226,15 +230,29 @@
             <div class="detail-top">
                 <div>
                     <div class="detail-name" id="detailName"></div>
-                    <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.2rem;" id="detailContract"></div>
+                    <div class="detail-sub" id="detailSub"></div>
                 </div>
                 <button class="btn btn-secondary" style="padding:0.45rem 1rem; font-size:0.85rem;" id="closeDetailBtn">✕ Close</button>
             </div>
 
+            <!-- Contact info -->
             <div class="detail-meta" id="detailMeta"></div>
 
-            <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Documents</h3>
-            <div class="doc-review-grid" id="docReviewGrid"></div>
+            <!-- Bank details -->
+            <div id="bankSection"></div>
+
+            <!-- Payroll action -->
+            <div class="payroll-section" id="payrollSection">
+                <div class="payroll-label">
+                    <strong>Payroll Status</strong>
+                    <span>Mark this engineer as added to your payroll system</span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.3rem;">
+                    <button class="btn-payroll" id="payrollBtn">✓ Added to Payroll</button>
+                    <div class="payroll-timestamp" id="payrollTimestamp"></div>
+                    <span class="save-msg" id="payrollMsg"></span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -260,15 +278,8 @@
 
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
-    const DOC_TYPES = [
-        { key: 'licence', label: 'Driving Licence', icon: '🪪' },
-        { key: 'certs',   label: 'Certificates',    icon: '📜' },
-        { key: 'address', label: 'Proof of Address', icon: '🏠' },
-        { key: 'bank',    label: 'Bank Details',     icon: '🏦', bankOnly: true }
-    ];
-
-    let engineers    = [];
-    let selectedId   = null;
+    let engineers  = [];
+    let selectedId = null;
 
     // ── Load onboarding engineers ─────────────────────────────────────────────
     async function loadEngineers() {
@@ -284,7 +295,6 @@
                     '<p class="no-engineers">No engineers currently onboarding.</p>';
                 return;
             }
-
             renderTable();
         } catch (err) {
             document.getElementById('engineerList').innerHTML =
@@ -296,22 +306,30 @@
     function renderTable() {
         let rows = '';
         engineers.forEach(eng => {
-            const ticks = DOC_TYPES.map(dt => {
-                const uploaded  = dt.bankOnly ? !!(eng.bank_name && eng.bank_accountNo) : !!eng[`docs_${dt.key}`];
-                const review    = eng[`review_${dt.key}`];
-                let cls = 'tick-none', symbol = '✓';
-                if (uploaded && review === 'accepted') { cls = 'tick-accepted'; symbol = '✓'; }
-                else if (uploaded && review === 'declined') { cls = 'tick-declined'; symbol = '✗'; }
-                else if (uploaded) { cls = 'tick-uploaded'; symbol = '✓'; }
-                return `<td><span class="doc-tick ${cls}" title="${dt.label}">${symbol}</span></td>`;
-            }).join('');
+            const hasBank    = !!(eng.bank_name && eng.bank_accountNo);
+            const onPayroll  = !!eng.payroll_added;
+            const startDate  = eng.startDate
+                ? new Date(eng.startDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+                : '—';
 
             rows += `<tr data-id="${eng.id}">
                 <td>
                     <div class="eng-name">${eng.name || '—'}</div>
-                    <div class="eng-contract">${eng.contract || ''} · ${eng.ftl || ''}</div>
+                    <div class="eng-sub">${eng.contract || ''} · ${eng.ftl || ''}</div>
                 </td>
-                ${ticks}
+                <td>${eng.email || '—'}</td>
+                <td>${eng.phone || '—'}</td>
+                <td>${startDate}</td>
+                <td class="center">
+                    <span class="bank-indicator ${hasBank ? 'bank-yes' : 'bank-no'}" title="${hasBank ? 'Bank details submitted' : 'No bank details yet'}">
+                        ${hasBank ? '✓' : '–'}
+                    </span>
+                </td>
+                <td class="center">
+                    <span class="payroll-badge ${onPayroll ? 'payroll-yes' : 'payroll-no'}">
+                        ${onPayroll ? '✓ On Payroll' : 'Pending'}
+                    </span>
+                </td>
             </tr>`;
         });
 
@@ -319,10 +337,11 @@
             <table class="eng-table">
                 <thead><tr>
                     <th>Engineer</th>
-                    <th>Driving Licence</th>
-                    <th>Certificates</th>
-                    <th>Proof of Address</th>
-                    <th>Bank Details</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Start Date</th>
+                    <th class="center">Bank Details</th>
+                    <th class="center">Payroll</th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
             </table>`;
@@ -343,8 +362,8 @@
     function openDetail(eng) {
         selectedId = eng.id;
 
-        document.getElementById('detailName').textContent     = eng.name || '—';
-        document.getElementById('detailContract').textContent = `${eng.contract || ''} · FTL: ${eng.ftl || ''}`;
+        document.getElementById('detailName').textContent = eng.name || '—';
+        document.getElementById('detailSub').textContent  = `${eng.contract || ''} · FTL: ${eng.ftl || ''}`;
 
         // Meta info
         const startFormatted = eng.startDate
@@ -356,67 +375,65 @@
             <div class="detail-meta-item"><label>Start Date</label><span>${startFormatted}</span></div>
         `;
 
-        // Doc review cards
-        const grid = document.getElementById('docReviewGrid');
-        grid.innerHTML = '';
+        // Bank details section
+        const bankSection = document.getElementById('bankSection');
+        const hasBank = !!(eng.bank_name && eng.bank_accountNo);
 
-        DOC_TYPES.forEach(dt => {
-            const uploaded  = dt.bankOnly
-                ? !!(eng.bank_name && eng.bank_accountNo)
-                : !!eng[`docs_${dt.key}`];
-            const fileUrl   = dt.bankOnly ? null : eng[`docs_${dt.key}`];
-            const filename  = dt.bankOnly ? null : eng[`docs_${dt.key}_filename`];
-            const review    = eng[`review_${dt.key}`] || '';
-            const note      = eng[`review_${dt.key}_note`] || '';
-
-            let statusText = 'Not uploaded';
-            let statusColor = 'var(--text-muted)';
-            if (uploaded && review === 'accepted') { statusText = '✓ Accepted'; statusColor = 'var(--success)'; }
-            else if (uploaded && review === 'declined') { statusText = '✗ Declined'; statusColor = 'var(--error)'; }
-            else if (uploaded) { statusText = 'Uploaded — awaiting review'; statusColor = 'var(--warning)'; }
-
-            const card = document.createElement('div');
-            card.className = `doc-review-card${review ? ' ' + review : ''}${!uploaded ? ' not-uploaded' : ''}`;
-            card.dataset.key = dt.key;
-
-            // Bank details shows just a summary, no file link
-            const previewHtml = dt.bankOnly
-                ? `<div style="padding:0.6rem; background:var(--bg-input); border-radius:8px; font-size:0.85rem; margin-bottom:0.9rem; color:${uploaded ? 'var(--text-light)' : 'var(--text-muted)'}">
-                    ${uploaded ? `<strong>${eng.bank_name}</strong><br><span style="color:var(--text-muted)">${eng.bank_bankName || ''}</span>` : 'No bank details submitted'}
-                   </div>`
-                : `<a href="${fileUrl || '#'}" target="_blank" class="doc-preview-link${!uploaded ? ' disabled' : ''}">
-                    ${uploaded ? `📎 ${filename || 'View Document'}` : 'No file uploaded'}
-                   </a>`;
-
-            card.innerHTML = `
-                <div class="doc-card-header">
-                    <div class="doc-card-icon">${dt.icon}</div>
-                    <div>
-                        <div class="doc-card-title">${dt.label}</div>
-                        <div class="doc-card-status" style="color:${statusColor}">${statusText}</div>
+        if (hasBank) {
+            bankSection.innerHTML = `
+                <div class="bank-card">
+                    <h3>🏦 Bank Details</h3>
+                    <div class="bank-grid">
+                        <div class="bank-field">
+                            <label>Name on Account</label>
+                            <div class="value">${eng.bank_name || '—'}</div>
+                        </div>
+                        <div class="bank-field">
+                            <label>Bank Name</label>
+                            <div class="value">${eng.bank_bankName || '—'}</div>
+                        </div>
+                        <div class="bank-field">
+                            <label>Sort Code</label>
+                            <div class="value">${eng.bank_sortCode || '—'}</div>
+                        </div>
+                        <div class="bank-field">
+                            <label>Account Number</label>
+                            <div class="value">${eng.bank_accountNo || '—'}</div>
+                        </div>
                     </div>
-                </div>
-                ${previewHtml}
-                <div class="doc-actions">
-                    <button class="btn-accept${review === 'accepted' ? ' active' : ''}"
-                        ${!uploaded ? 'disabled' : ''}
-                        onclick="reviewDoc('${eng.id}', '${dt.key}', 'accepted')">
-                        ✓ Accept
-                    </button>
-                    <button class="btn-decline${review === 'declined' ? ' active' : ''}"
-                        ${!uploaded ? 'disabled' : ''}
-                        onclick="toggleDeclineNote('${dt.key}')">
-                        ✗ Decline
-                    </button>
-                </div>
-                <div class="decline-note-wrap" id="note-wrap-${dt.key}" ${review === 'declined' ? 'style="display:block"' : ''}>
-                    <textarea id="note-input-${dt.key}" placeholder="Reason for declining…">${note}</textarea>
-                    <button class="decline-save-btn" onclick="reviewDoc('${eng.id}', '${dt.key}', 'declined')">Save & Decline</button>
-                </div>
-                ${review === 'declined' && note ? `<div class="existing-note"><strong>Decline reason</strong>${note}</div>` : ''}
-            `;
-            grid.appendChild(card);
-        });
+                </div>`;
+        } else {
+            bankSection.innerHTML = `
+                <div class="bank-card">
+                    <h3>🏦 Bank Details</h3>
+                    <div class="no-bank-msg">
+                        <div class="icon">⏳</div>
+                        <div>This engineer hasn't submitted their bank details yet.</div>
+                    </div>
+                </div>`;
+        }
+
+        // Payroll button
+        const payrollBtn       = document.getElementById('payrollBtn');
+        const payrollTimestamp = document.getElementById('payrollTimestamp');
+        const payrollMsg       = document.getElementById('payrollMsg');
+
+        payrollMsg.textContent = '';
+
+        if (eng.payroll_added) {
+            payrollBtn.textContent = '✓ Added to Payroll';
+            payrollBtn.className   = 'btn-payroll done';
+            payrollBtn.disabled    = true;
+            if (eng.payroll_added_at?.toMillis) {
+                const dt = new Date(eng.payroll_added_at.toMillis());
+                payrollTimestamp.textContent = `Added ${dt.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })} at ${dt.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}`;
+            }
+        } else {
+            payrollBtn.textContent = '✓ Added to Payroll';
+            payrollBtn.className   = 'btn-payroll';
+            payrollBtn.disabled    = false;
+            payrollTimestamp.textContent = '';
+        }
 
         const panel = document.getElementById('detailPanel');
         panel.style.display = 'block';
@@ -431,47 +448,51 @@
 
     document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
 
-    // ── Toggle decline note textarea ──────────────────────────────────────────
-    window.toggleDeclineNote = function(key) {
-        const wrap = document.getElementById(`note-wrap-${key}`);
-        const isVisible = wrap.style.display === 'block';
-        wrap.style.display = isVisible ? 'none' : 'block';
-        if (!isVisible) wrap.querySelector('textarea').focus();
-    };
+    // ── Mark as added to payroll ──────────────────────────────────────────────
+    document.getElementById('payrollBtn').addEventListener('click', async () => {
+        if (!selectedId) return;
+        const btn     = document.getElementById('payrollBtn');
+        const msgEl   = document.getElementById('payrollMsg');
+        const tsEl    = document.getElementById('payrollTimestamp');
 
-    // ── Accept / Decline a document ───────────────────────────────────────────
-    window.reviewDoc = async function(engId, key, decision) {
-        const note     = document.getElementById(`note-input-${key}`)?.value?.trim() || '';
-        const updates  = {
-            [`review_${key}`]: decision,
-            [`review_${key}_at`]: serverTimestamp()
-        };
-        if (decision === 'declined') updates[`review_${key}_note`] = note;
-        else updates[`review_${key}_note`] = '';
+        btn.disabled    = true;
+        btn.textContent = 'Saving…';
+        msgEl.textContent = '';
 
         try {
-            await updateDoc(doc(db, "NGUO - Engineers", engId), updates);
+            await updateDoc(doc(db, "NGUO - Engineers", selectedId), {
+                payroll_added:    true,
+                payroll_added_at: serverTimestamp()
+            });
 
             // Update local cache
-            const eng = engineers.find(e => e.id === engId);
+            const eng = engineers.find(e => e.id === selectedId);
             if (eng) {
-                eng[`review_${key}`] = decision;
-                if (decision === 'declined') eng[`review_${key}_note`] = note;
-                else eng[`review_${key}_note`] = '';
+                eng.payroll_added    = true;
+                eng.payroll_added_at = { toMillis: () => Date.now() };
             }
 
-            // Re-render table row ticks and reopen detail
+            btn.textContent = '✓ Added to Payroll';
+            btn.className   = 'btn-payroll done';
+
+            const now = new Date();
+            tsEl.textContent = `Added ${now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })} at ${now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}`;
+
+            msgEl.className   = 'save-msg ok';
+            msgEl.textContent = '✓ Saved';
+
+            // Refresh table badge
             renderTable();
-            // Re-select the row
-            const row = document.querySelector(`.eng-table tbody tr[data-id="${engId}"]`);
-            if (row) { row.classList.add('selected'); }
-            const updatedEng = engineers.find(e => e.id === engId);
-            if (updatedEng) openDetail(updatedEng);
+            const row = document.querySelector(`.eng-table tbody tr[data-id="${selectedId}"]`);
+            if (row) row.classList.add('selected');
 
         } catch (err) {
-            alert('Error saving review: ' + err.message);
+            btn.disabled    = false;
+            btn.textContent = '✓ Added to Payroll';
+            msgEl.className   = 'save-msg err';
+            msgEl.textContent = 'Error: ' + err.message;
         }
-    };
+    });
 
     document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
     document.getElementById('signOutBtn').addEventListener('click', async () => {
