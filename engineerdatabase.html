@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Engineer Database</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #005EB8;
+            --primary-dark: #003d7a;
+            --accent: #00A3E0;
+            --bg-dark: #0A1628;
+            --bg-card: #1a2942;
+            --text-light: #E8EDF2;
+            --text-muted: #8B9AAE;
+            --border: #2a3f5f;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .logo {
+            max-height: 70px;
+            display: block;
+            margin: 0 auto 2.5rem;
+        }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+        .card h2 { font-size: 1.45rem; margin-bottom: 1.8rem; color: var(--text-light); }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.6rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.95rem 1.1rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        select option { background: var(--bg-card); color: var(--text-light); }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0,163,224,0.15);
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.6);
+            cursor: pointer;
+        }
+        .btn {
+            padding: 1rem 2.2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,163,224,0.35);
+        }
+        .btn-secondary {
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            color: var(--text-light);
+        }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .error-msg { color: var(--error); margin-top: 1rem; font-size: 0.95rem; }
+        .success-msg { color: var(--success); margin-top: 1rem; font-size: 0.95rem; }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 800px; }
+        th, td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th {
+            background: rgba(0,163,224,0.08);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+        tr:hover { background: rgba(0,163,224,0.06); }
+
+        /* Contract badge colours */
+        .badge {
+            display: inline-block;
+            padding: 0.22rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-ss-oes  { background: rgba(0,163,224,0.18); color: #7dd3fc; }
+        .badge-ss-sp   { background: rgba(99,102,241,0.2);  color: #c4b5fd; }
+        .badge-cal-sp  { background: rgba(16,185,129,0.18); color: #6ee7b7; }
+
+        .protected-bar {
+            background: rgba(0,163,224,0.1);
+            border: 1px solid rgba(0,163,224,0.3);
+            border-radius: 12px;
+            padding: 1rem 1.4rem;
+            margin: 0 0 2.5rem;
+            color: #bae6fd;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .card { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo">
+
+    <h1>Engineer Database</h1>
+    <p class="subtitle">Manage NGU Onboarding engineers</p>
+
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" id="signOutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- ── Add Engineer ─────────────────────────────────────────────────── -->
+    <div class="card">
+        <h2>Add New Engineer</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Engineer Name</label>
+                <input type="text" id="engName" placeholder="Jane Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="engEmail" placeholder="jane@company.com" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Number</label>
+                <input type="tel" id="engPhone" placeholder="+44 7700 000000" required>
+            </div>
+            <div class="form-group">
+                <label>Contract</label>
+                <select id="engContract">
+                    <option value="" disabled selected>Select contract…</option>
+                    <option value="Sureserve - OES">Sureserve - OES</option>
+                    <option value="Sureserve - SP">Sureserve - SP</option>
+                    <option value="Calisen - SP">Calisen - SP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>FTL</label>
+                <select id="engFTL">
+                    <option value="" disabled selected>Select FTL…</option>
+                    <option value="Richard Wiecko">Richard Wiecko</option>
+                    <option value="Scott Carson">Scott Carson</option>
+                    <option value="Stuart Whyte">Stuart Whyte</option>
+                    <option value="Tom Green">Tom Green</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Proposed Start Date</label>
+                <input type="date" id="engStartDate" required>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:1rem; align-items:center; margin-top:2rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="addEngineerBtn">Add Engineer</button>
+        </div>
+
+        <div id="addMsg"></div>
+    </div>
+
+    <!-- ── Engineer List ────────────────────────────────────────────────── -->
+    <div class="card">
+        <div class="header-actions">
+            <h2 style="margin-bottom:0;">Engineers</h2>
+            <button class="btn btn-secondary" style="padding:0.6rem 1.2rem; font-size:0.9rem;" id="refreshBtn">↻ Refresh</button>
+        </div>
+        <div id="engineersTable">
+            <p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading engineers...</p>
+        </div>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+        getAuth, onAuthStateChanged, signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    // ── Auth gate ─────────────────────────────────────────────────────────────
+    onAuthStateChanged(auth, (user) => {
+        if (!user) window.location.href = 'index.html';
+    });
+
+    const colRef   = collection(db, "NGUO - Engineers");
+    const addBtn   = document.getElementById('addEngineerBtn');
+    const msgEl    = document.getElementById('addMsg');
+    const tableEl  = document.getElementById('engineersTable');
+
+    // ── Contract badge helper ─────────────────────────────────────────────────
+    function contractBadge(contract) {
+        const map = {
+            'Sureserve - OES': 'badge-ss-oes',
+            'Sureserve - SP':  'badge-ss-sp',
+            'Calisen - SP':    'badge-cal-sp',
+        };
+        const cls = map[contract] || 'badge-ss-oes';
+        return `<span class="badge ${cls}">${contract || '—'}</span>`;
+    }
+
+    // ── Load engineers ────────────────────────────────────────────────────────
+    async function loadEngineers() {
+        tableEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading engineers...</p>';
+        try {
+            const q    = query(colRef, orderBy('createdAt', 'desc'));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers added yet</p>';
+                return;
+            }
+
+            let rows = '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                const added = d.createdAt
+                    ? new Date(d.createdAt.toMillis()).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+                    : '—';
+                const startDate = d.startDate
+                    ? new Date(d.startDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+                    : '—';
+
+                rows += `<tr>
+                    <td><strong>${d.name || '—'}</strong></td>
+                    <td>${d.email || '—'}</td>
+                    <td>${d.phone || '—'}</td>
+                    <td>${contractBadge(d.contract)}</td>
+                    <td>${d.ftl || '—'}</td>
+                    <td>${startDate}</td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">${added}</td>
+                </tr>`;
+            });
+
+            tableEl.innerHTML = `
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Contact</th>
+                                <th>Contract</th>
+                                <th>FTL</th>
+                                <th>Start Date</th>
+                                <th>Added</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>`;
+        } catch (err) {
+            tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">
+                Error loading engineers: ${err.message}
+            </p>`;
+        }
+    }
+
+    // ── Add engineer ──────────────────────────────────────────────────────────
+    addBtn.addEventListener('click', async () => {
+        const name      = document.getElementById('engName').value.trim();
+        const email     = document.getElementById('engEmail').value.trim();
+        const phone     = document.getElementById('engPhone').value.trim();
+        const contract  = document.getElementById('engContract').value;
+        const ftl       = document.getElementById('engFTL').value;
+        const startDate = document.getElementById('engStartDate').value;
+
+        msgEl.className = 'error-msg';
+        msgEl.textContent = '';
+
+        if (!name || !email || !phone || !contract || !ftl || !startDate) {
+            msgEl.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        addBtn.disabled = true;
+        addBtn.textContent = 'Adding...';
+
+        try {
+            await addDoc(colRef, {
+                name,
+                email,
+                phone,
+                contract,
+                ftl,
+                startDate,
+                createdAt: serverTimestamp()
+            });
+
+            msgEl.className = 'success-msg';
+            msgEl.textContent = `✓ Engineer "${name}" added successfully.`;
+
+            // Clear form
+            document.getElementById('engName').value      = '';
+            document.getElementById('engEmail').value     = '';
+            document.getElementById('engPhone').value     = '';
+            document.getElementById('engContract').value  = '';
+            document.getElementById('engFTL').value       = '';
+            document.getElementById('engStartDate').value = '';
+
+            loadEngineers();
+        } catch (err) {
+            msgEl.className = 'error-msg';
+            let txt = err.message;
+            if (err.code === 'permission-denied') txt = 'Firestore permission denied — check security rules.';
+            msgEl.textContent = txt;
+        }
+
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add Engineer';
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    });
+
+    loadEngineers();
+</script>
+</body>
+</html>
