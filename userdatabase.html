@@ -227,9 +227,9 @@
     <h1>User Database</h1>
     <p class="subtitle">Manage NGU Onboarding accounts</p>
 
-    <div class="warning-box">
-        ⚠️ <strong>This page is public</strong> — anyone with the link can see all users and create new accounts.
-        Use only for testing or in a protected environment.
+    <div class="warning-box" style="background:rgba(0,163,224,0.1); border-color:rgba(0,163,224,0.3); color:#bae6fd; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <button class="btn btn-secondary" id="signOutBtn" style="padding:0.5rem 1.2rem; font-size:0.9rem;">Sign Out</button>
     </div>
 
     <div class="card">
@@ -281,7 +281,10 @@
     import {
         getAuth,
         createUserWithEmailAndPassword,
-        updateProfile
+        signInWithEmailAndPassword,
+        updateProfile,
+        onAuthStateChanged,
+        signOut
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
         getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy
@@ -299,6 +302,13 @@
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db   = getFirestore(app);
+
+    // ── Auth gate: redirect to login if not signed in ─────────────────────────
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = 'index.html';
+        }
+    });
 
     const colRef    = collection(db, "NGUO Database");
     const createBtn = document.getElementById('createUserBtn');
@@ -376,22 +386,62 @@
         createBtn.textContent = 'Creating...';
 
         try {
-            // 1. Create Firebase Auth account
-            const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+            let userCred;
+            let wasLinked = false;
 
-            // 2. Set display name on the auth profile
+            try {
+                // Attempt 1: Create a brand new Auth account
+                userCred = await createUserWithEmailAndPassword(auth, email, pass);
+            } catch (createErr) {
+                if (createErr.code === 'auth/email-already-in-use') {
+                    // Attempt 2: Auth account exists — sign in to retrieve the UID
+                    msgEl.className = 'success-msg';
+                    msgEl.textContent = '⟳ Auth account already exists — linking to Firestore profile...';
+                    try {
+                        userCred = await signInWithEmailAndPassword(auth, email, pass);
+                        wasLinked = true;
+                    } catch (signInErr) {
+                        // Password is wrong for the existing account
+                        if (signInErr.code?.includes('wrong-password') || signInErr.code?.includes('invalid-credential')) {
+                            msgEl.className = 'error-msg';
+                            msgEl.textContent = '⚠️ An Auth account exists for this email but the password is incorrect. Use the correct password to link it, or reset it in the Firebase console.';
+                        } else {
+                            msgEl.className = 'error-msg';
+                            msgEl.textContent = signInErr.message;
+                        }
+                        createBtn.disabled = false;
+                        createBtn.textContent = 'Create User';
+                        return;
+                    }
+                } else {
+                    throw createErr; // Rethrow any other error
+                }
+            }
+
+            // Update display name on auth profile
             await updateProfile(userCred.user, { displayName: name });
 
-            // 3. Save profile to Firestore with the Auth UID
-            await addDoc(colRef, {
-                name,
-                email,
-                authUid: userCred.user.uid,
-                createdAt: serverTimestamp()
-            });
+            // Check if a Firestore record already exists for this UID
+            const existingSnap = await getDocs(colRef);
+            const alreadyInFirestore = existingSnap.docs.some(d => d.data().authUid === userCred.user.uid);
+
+            if (!alreadyInFirestore) {
+                await addDoc(colRef, {
+                    name,
+                    email,
+                    authUid: userCred.user.uid,
+                    createdAt: serverTimestamp()
+                });
+            }
 
             msgEl.className = 'success-msg';
-            msgEl.textContent = `✓ User "${name}" created successfully — they can now log in to index.html.`;
+            if (wasLinked && alreadyInFirestore) {
+                msgEl.textContent = `✓ "${name}" already fully set up — Auth account and Firestore record both exist.`;
+            } else if (wasLinked) {
+                msgEl.textContent = `✓ Linked! Existing Auth account for "${email}" is now connected to a Firestore profile.`;
+            } else {
+                msgEl.textContent = `✓ User "${name}" created successfully — they can now log in to index.html.`;
+            }
 
             // Clear form
             document.getElementById('displayName').value = '';
@@ -402,9 +452,7 @@
 
         } catch (err) {
             let txt = err.message;
-            if (err.code === 'auth/email-already-in-use') {
-                txt = 'This email already has a Firebase Auth account.';
-            } else if (err.code === 'auth/invalid-email') {
+            if (err.code === 'auth/invalid-email') {
                 txt = 'Invalid email address.';
             } else if (err.code === 'auth/weak-password') {
                 txt = 'Password is too weak (min. 6 characters).';
@@ -420,6 +468,10 @@
     });
 
     document.getElementById('refreshBtn').addEventListener('click', loadUsers);
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    });
 
     // Initial load
     loadUsers();
