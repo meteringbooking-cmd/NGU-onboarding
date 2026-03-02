@@ -156,6 +156,17 @@
             background: rgba(0,163,224,0.06);
         }
 
+        .warning-box {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 1.5rem 0 2.5rem;
+            color: #fecaca;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .card { padding: 2rem 1.5rem; }
@@ -170,6 +181,11 @@
 
     <h1>User Database</h1>
     <p class="subtitle">Manage NGU Onboarding accounts</p>
+
+    <div class="warning-box">
+        ⚠️ <strong>This page is public</strong> — anyone with the link can see all users and create new accounts.
+        Use only for testing or in a protected environment.
+    </div>
 
     <div class="card">
         <h2>Create New User</h2>
@@ -208,9 +224,6 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import {
-        getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import {
         getFirestore, collection, addDoc, getDocs, serverTimestamp
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -222,10 +235,10 @@
         storageBucket: "oesperformance-a54c0.firebasestorage.app",
         messagingSenderId: "484894102454",
         appId: "1:484894102454:web:17535ee497eac2d90d6717"
+        // measurementId: "..."   ← add if needed
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db   = getFirestore(app);
 
     const colRef = collection(db, "NGUO Database");
@@ -233,16 +246,6 @@
     const createBtn = document.getElementById('createUserBtn');
     const msgEl     = document.getElementById('createMsg');
     const tableEl   = document.getElementById('usersTable');
-
-    // Protect page – redirect if not logged in
-    onAuthStateChanged(auth, user => {
-        if (!user) {
-            document.body.innerHTML = `
-                <div style="text-align:center; padding:6rem 1rem;">
-                    <h1>Please <a href="index.html" style="color:var(--accent);">sign in</a> first.</h1>
-                </div>`;
-        }
-    });
 
     async function loadUsers() {
         try {
@@ -291,26 +294,26 @@
         createBtn.textContent = 'Creating...';
 
         try {
-            const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await addDoc(colRef, {
                 name,
                 email,
-                uid: cred.user.uid,
+                passwordPlain: pass,           // ← only for debugging – remove in production!
                 createdAt: serverTimestamp()
             });
 
             msgEl.className = 'success-msg';
-            msgEl.textContent = 'User created successfully ✓';
+            msgEl.textContent = 'User record created ✓ (note: actual auth account must still be created in Firebase console)';
             loadUsers();
 
-            // Optional: clear form
+            // Clear form
             document.getElementById('displayName').value = '';
             document.getElementById('newEmail').value = '';
             document.getElementById('newPassword').value = '';
         } catch (err) {
             let txt = err.message;
-            if (err.code === 'auth/email-already-in-use') txt = 'This email is already in use';
-            if (err.code === 'auth/invalid-email')       txt = 'Invalid email format';
+            if (err.code === 'permission-denied') {
+                txt = 'Permission denied – check Firestore security rules';
+            }
             msgEl.textContent = txt;
         }
 
