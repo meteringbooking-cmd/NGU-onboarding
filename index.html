@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU Onboarding</title>
+    <title>NGU — Manage Users</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,11 +28,7 @@
             background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
             color: var(--text-light);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
+            padding: 2rem 1.5rem;
         }
         body::before {
             content: '';
@@ -43,30 +39,20 @@
             pointer-events: none;
             z-index: -1;
         }
-        .logo-container {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .logo {
-            max-height: 90px;
-            width: auto;
-            display: block;
+        .container {
+            max-width: 1000px;
             margin: 0 auto;
         }
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        .logo {
+            max-height: 70px;
+            display: block;
+            margin: 0 auto 2.5rem;
         }
         h1 {
             font-size: 2.1rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
             background: linear-gradient(90deg, var(--accent), #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -75,18 +61,31 @@
             text-align: center;
             color: var(--text-muted);
             font-family: 'DM Mono', monospace;
-            font-size: 0.95rem;
-            margin-bottom: 2.2rem;
+            margin-bottom: 3rem;
         }
-        .form-group {
-            margin-bottom: 1.6rem;
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
         }
-        label {
+        .card h2 {
+            font-size: 1.45rem;
+            margin-bottom: 1.8rem;
+            color: var(--text-light);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.6rem;
+        }
+        .form-group label {
             display: block;
-            margin-bottom: 0.55rem;
+            margin-bottom: 0.6rem;
             font-weight: 600;
             font-size: 0.95rem;
-            color: var(--text-light);
         }
         input {
             width: 100%;
@@ -96,7 +95,6 @@
             border-radius: 10px;
             color: white;
             font-size: 1rem;
-            font-family: inherit;
             transition: all 0.2s;
         }
         input:focus {
@@ -105,8 +103,7 @@
             box-shadow: 0 0 0 4px rgba(0,163,224,0.15);
         }
         .btn {
-            width: 100%;
-            padding: 1.05rem;
+            padding: 1rem 2.2rem;
             border: none;
             border-radius: 12px;
             font-size: 1.05rem;
@@ -128,141 +125,201 @@
         }
         .error-msg {
             color: var(--error);
-            font-size: 0.9rem;
-            margin-top: 0.8rem;
-            text-align: center;
-            min-height: 1.3rem;
+            margin-top: 1rem;
+            font-size: 0.95rem;
         }
-        .hidden { display: none !important; }
-
-        #dashboard {
-            text-align: center;
-            padding: 5rem 1.5rem;
-            max-width: 700px;
-        }
-        #signOutBtn {
-            margin-top: 2.5rem;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            color: var(--text-light);
-            padding: 1rem 2.5rem;
-        }
-        #signOutBtn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        .success-msg {
+            color: var(--success);
+            margin-top: 1rem;
+            font-size: 0.95rem;
         }
 
-        @media (max-width: 480px) {
-            .logo { max-height: 70px; }
-            h1 { font-size: 1.8rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 1rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: rgba(0,163,224,0.08);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.4px;
+        }
+        tr:hover {
+            background: rgba(0,163,224,0.06);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
             .card { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
-             alt="NGU Logo" class="logo" id="logoImg">
-    </div>
+<div class="container">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo">
 
-    <div class="card" id="loginCard">
-        <h1>NGU Onboarding</h1>
-        <p class="subtitle">Sign in to continue</p>
+    <h1>User Database</h1>
+    <p class="subtitle">Manage NGU Onboarding accounts</p>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="name@company.com" autocomplete="email" required>
+    <div class="card">
+        <h2>Create New User</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="displayName" placeholder="John Smith" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="newEmail" placeholder="john@company.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" id="newPassword" placeholder="Minimum 6 characters" required>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+        <button class="btn btn-primary" id="createUserBtn" style="margin-top: 2rem;">
+            Create User
+        </button>
+
+        <div id="createMsg" class="error-msg"></div>
+    </div>
+
+    <div class="card">
+        <h2>Existing Users</h2>
+        <div id="usersTable">
+            <p style="text-align:center; color:var(--text-muted); padding:3rem 0;">
+                Loading users...
+            </p>
         </div>
-
-        <button class="btn btn-primary" id="signInBtn">Sign In</button>
-
-        <div class="error-msg" id="errorMsg"></div>
     </div>
+</div>
 
-    <div id="dashboard" class="hidden">
-        <h1>Welcome to the Onboarding Platform</h1>
-        <p style="color:var(--text-muted); margin:2.5rem 0; font-size:1.1rem;">
-            (Dashboard / content coming soon)
-        </p>
-        <button class="btn" id="signOutBtn">Sign Out</button>
-    </div>
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+        getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import {
-            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    // ── REPLACE WITH YOUR OWN FIREBASE CONFIG ────────────────────────────────
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
 
-        // ── REPLACE WITH YOUR OWN FIREBASE CONFIG ────────────────────────────────
-        const firebaseConfig = {
-            apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
-            authDomain: "oesperformance-a54c0.firebaseapp.com",
-            projectId: "oesperformance-a54c0",
-            storageBucket: "oesperformance-a54c0.firebasestorage.app",
-            messagingSenderId: "484894102454",
-            appId: "1:484894102454:web:17535ee497eac2d90d6717"
-            // measurementId: "..."   ← add if needed
-        };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    const colRef = collection(db, "NGUO Database");
 
-        const loginCard   = document.getElementById('loginCard');
-        const dashboard   = document.getElementById('dashboard');
-        const errorMsg    = document.getElementById('errorMsg');
-        const signInBtn   = document.getElementById('signInBtn');
-        const signOutBtn  = document.getElementById('signOutBtn');
+    const createBtn = document.getElementById('createUserBtn');
+    const msgEl     = document.getElementById('createMsg');
+    const tableEl   = document.getElementById('usersTable');
 
-        // ── Auth state listener ─────────────────────────────────────────────────
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginCard.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                errorMsg.textContent = '';
+    // Protect page – redirect if not logged in
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            document.body.innerHTML = `
+                <div style="text-align:center; padding:6rem 1rem;">
+                    <h1>Please <a href="index.html" style="color:var(--accent);">sign in</a> first.</h1>
+                </div>`;
+        }
+    });
+
+    async function loadUsers() {
+        try {
+            const snap = await getDocs(colRef);
+            let html = '<table><thead><tr><th>Name</th><th>Email</th><th>Created</th></tr></thead><tbody>';
+
+            if (snap.empty) {
+                html = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No users found</p>';
             } else {
-                loginCard.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-            }
-        });
-
-        // ── Sign In ─────────────────────────────────────────────────────────────
-        signInBtn.addEventListener('click', async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass  = document.getElementById('password').value;
-
-            if (!email || !pass) {
-                errorMsg.textContent = 'Please enter email and password';
-                return;
-            }
-
-            signInBtn.disabled = true;
-            signInBtn.textContent = 'Signing in...';
-            errorMsg.textContent = '';
-
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                let msg = 'Login failed';
-                if (err.code === 'auth/invalid-credential') msg = 'Invalid email or password';
-                if (err.code === 'auth/user-not-found')    msg = 'No account found';
-                if (err.code === 'auth/too-many-requests') msg = 'Too many attempts — try again later';
-                errorMsg.textContent = msg;
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const date = d.createdAt
+                        ? new Date(d.createdAt.toMillis()).toLocaleString([], {dateStyle:'medium', timeStyle:'short'})
+                        : '—';
+                    html += `<tr>
+                        <td>${d.name || '—'}</td>
+                        <td>${d.email || '—'}</td>
+                        <td>${date}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
             }
 
-            signInBtn.disabled = false;
-            signInBtn.textContent = 'Sign In';
-        });
+            tableEl.innerHTML = html;
+        } catch (err) {
+            tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">
+                Error loading users: ${err.message}
+            </p>`;
+        }
+    }
 
-        // ── Sign Out ────────────────────────────────────────────────────────────
-        signOutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-        });
-    </script>
+    createBtn.addEventListener('click', async () => {
+        const name  = document.getElementById('displayName').value.trim();
+        const email = document.getElementById('newEmail').value.trim();
+        const pass  = document.getElementById('newPassword').value;
+
+        msgEl.className = 'error-msg';
+        msgEl.textContent = '';
+
+        if (!name || !email || !pass || pass.length < 6) {
+            msgEl.textContent = 'Please fill all fields (password ≥ 6 characters)';
+            return;
+        }
+
+        createBtn.disabled = true;
+        createBtn.textContent = 'Creating...';
+
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, pass);
+            await addDoc(colRef, {
+                name,
+                email,
+                uid: cred.user.uid,
+                createdAt: serverTimestamp()
+            });
+
+            msgEl.className = 'success-msg';
+            msgEl.textContent = 'User created successfully ✓';
+            loadUsers();
+
+            // Optional: clear form
+            document.getElementById('displayName').value = '';
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newPassword').value = '';
+        } catch (err) {
+            let txt = err.message;
+            if (err.code === 'auth/email-already-in-use') txt = 'This email is already in use';
+            if (err.code === 'auth/invalid-email')       txt = 'Invalid email format';
+            msgEl.textContent = txt;
+        }
+
+        createBtn.disabled = false;
+        createBtn.textContent = 'Create User';
+    });
+
+    // Initial load
+    loadUsers();
+</script>
 </body>
 </html>
