@@ -218,6 +218,10 @@
                 <label>Proposed Start Date</label>
                 <input type="date" id="engStartDate" required>
             </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" id="engPassword" placeholder="Set a password for this engineer" required>
+            </div>
         </div>
         <div style="display:flex; gap:1rem; align-items:center; margin-top:2rem; flex-wrap:wrap;">
             <button class="btn btn-primary" id="addEngineerBtn">Add Engineer</button>
@@ -564,11 +568,12 @@
         const contract  = document.getElementById('engContract').value;
         const ftl       = document.getElementById('engFTL').value;
         const startDate = document.getElementById('engStartDate').value;
+        const password  = document.getElementById('engPassword').value.trim();
 
         msgEl.className = 'error-msg';
         msgEl.textContent = '';
 
-        if (!name || !email || !phone || !contract || !ftl || !startDate) {
+        if (!name || !email || !phone || !contract || !ftl || !startDate || !password) {
             msgEl.textContent = 'Please fill in all fields.'; return;
         }
 
@@ -576,7 +581,7 @@
         addBtn.textContent = 'Adding...';
 
         try {
-            await addDoc(colRef, { name, email, phone, contract, ftl, startDate, status: 'pending', createdAt: serverTimestamp() });
+            await addDoc(colRef, { name, email, phone, contract, ftl, startDate, password, status: 'pending', createdAt: serverTimestamp() });
             msgEl.className = 'success-msg';
             msgEl.textContent = `✓ Engineer "${name}" added successfully.`;
             document.getElementById('engName').value      = '';
@@ -585,6 +590,7 @@
             document.getElementById('engContract').value  = '';
             document.getElementById('engFTL').value       = '';
             document.getElementById('engStartDate').value = '';
+            document.getElementById('engPassword').value  = '';
             loadEngineers();
         } catch (err) {
             msgEl.className = 'error-msg';
