@@ -43,16 +43,10 @@
             pointer-events: none;
             z-index: -1;
         }
-        .logo-container {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .logo {
-            max-height: 90px;
-            width: auto;
-            display: block;
-            margin: 0 auto;
-        }
+        .logo-container { text-align: center; margin-bottom: 2.5rem; }
+        .logo { max-height: 90px; width: auto; display: block; margin: 0 auto; }
+
+        /* ── Login card ── */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -63,103 +57,102 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         h1 {
-            font-size: 2.1rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 0.6rem;
+            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.6rem;
             background: linear-gradient(90deg, var(--accent), #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-family: 'DM Mono', monospace;
-            font-size: 0.95rem;
-            margin-bottom: 2.2rem;
+            text-align: center; color: var(--text-muted);
+            font-family: 'DM Mono', monospace; font-size: 0.95rem; margin-bottom: 2.2rem;
         }
-        .form-group {
-            margin-bottom: 1.6rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.55rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-light);
-        }
+        .form-group { margin-bottom: 1.6rem; }
+        label { display: block; margin-bottom: 0.55rem; font-weight: 600; font-size: 0.95rem; color: var(--text-light); }
         input {
-            width: 100%;
-            padding: 0.95rem 1.1rem;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.2s;
+            width: 100%; padding: 0.95rem 1.1rem; background: var(--bg-dark);
+            border: 2px solid var(--border); border-radius: 10px; color: white;
+            font-size: 1rem; font-family: inherit; transition: all 0.2s;
         }
-        input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(0,163,224,0.15);
-        }
+        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,163,224,0.15); }
         .btn {
-            width: 100%;
-            padding: 1.05rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s;
+            padding: 1.05rem; border: none; border-radius: 12px;
+            font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit;
         }
         .btn-primary {
+            width: 100%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
         }
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,163,224,0.35);
-        }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .error-msg {
-            color: var(--error);
-            font-size: 0.9rem;
-            margin-top: 0.8rem;
-            text-align: center;
-            min-height: 1.3rem;
-        }
-        .success-msg {
-            color: var(--success);
-            font-size: 0.9rem;
-            margin-top: 0.8rem;
-            text-align: center;
-        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,163,224,0.35); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 1.3rem; }
         .hidden { display: none !important; }
+
+        /* ── Dashboard ── */
         #dashboard {
             text-align: center;
-            padding: 5rem 1.5rem;
+            padding: 3rem 1.5rem;
+            width: 100%;
             max-width: 700px;
         }
-        #signOutBtn, #manageUsersBtn {
-            margin: 1.2rem 0.8rem;
-            background: var(--bg-dark);
+        #dashboard h1 { margin-bottom: 0.5rem; }
+        #dashboard .subtitle { margin-bottom: 2.5rem; }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .dash-btn {
+            background: var(--bg-card);
             border: 2px solid var(--border);
             color: var(--text-light);
-            padding: 1rem 2.5rem;
+            border-radius: 14px;
+            padding: 1.2rem 1rem;
+            font-size: 0.97rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s;
+            font-family: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
         }
-        #signOutBtn:hover, #manageUsersBtn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        .dash-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,163,224,0.2); }
+        .dash-btn .btn-icon { font-size: 1.6rem; }
+        .dash-btn .btn-label { font-size: 0.9rem; }
+
+        .dash-btn.admin { border-color: rgba(0,94,184,0.4); }
+        .dash-btn.admin:hover { border-color: #60a5fa; color: #60a5fa; }
+
+        .dash-btn.signout {
+            background: transparent;
+            border-color: rgba(239,68,68,0.3);
+            color: #fca5a5;
+            grid-column: 1 / -1;
+            padding: 0.8rem;
+            font-size: 0.9rem;
         }
+        .dash-btn.signout:hover { border-color: var(--error); color: var(--error); transform: none; box-shadow: none; }
+
+        .section-label {
+            text-align: left;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 1.8rem 0 0.75rem;
+        }
+
         @media (max-width: 480px) {
             .logo { max-height: 70px; }
             h1 { font-size: 1.8rem; }
             .card { padding: 2rem 1.5rem; }
+            .btn-group { grid-template-columns: 1fr; }
+            .dash-btn.signout { grid-column: 1; }
         }
     </style>
 </head>
@@ -170,6 +163,7 @@
              alt="NGU Logo" class="logo">
     </div>
 
+    <!-- ── Login ── -->
     <div class="card" id="loginCard">
         <h1>NGU Onboarding</h1>
         <p class="subtitle">Sign in to continue</p>
@@ -178,26 +172,49 @@
             <label for="email">Email</label>
             <input type="email" id="email" placeholder="name@company.com" autocomplete="email" required>
         </div>
-
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
         </div>
 
         <button class="btn btn-primary" id="signInBtn">Sign In</button>
-
         <div class="error-msg" id="errorMsg"></div>
     </div>
 
+    <!-- ── Dashboard ── -->
     <div id="dashboard" class="hidden">
-        <h1>Welcome to NGU Onboarding</h1>
-        <p style="color:var(--text-muted); margin:2.5rem 0; font-size:1.1rem;">
-            Onboarding dashboard (content to be added)
-        </p>
-        <div>
-            <button class="btn" id="Add EngineerBtn">Add Engineer</button>            
-            <button class="btn" id="manageadminUsersBtn">Manage Admin Users</button>
-            <button class="btn" id="signOutBtn">Sign Out</button>
+        <h1>NGU Onboarding</h1>
+        <p class="subtitle">Welcome back — what would you like to do?</p>
+
+        <!-- Engineer section -->
+        <p class="section-label">Engineer Management</p>
+        <div class="btn-group">
+            <button class="dash-btn" id="addEngineerBtn">
+                <span class="btn-icon">👷</span>
+                <span class="btn-label">Add Engineer</span>
+            </button>
+            <button class="dash-btn" id="documentsBtn">
+                <span class="btn-icon">📄</span>
+                <span class="btn-label">Engineer Documents</span>
+            </button>
+            <button class="dash-btn" id="personalDetailsBtn">
+                <span class="btn-icon">👤</span>
+                <span class="btn-label">Engineer Personal Details</span>
+            </button>
+            <button class="dash-btn" id="contractBtn">
+                <span class="btn-icon">📋</span>
+                <span class="btn-label">View / Amend Contracts</span>
+            </button>
+        </div>
+
+        <!-- Admin section -->
+        <p class="section-label">Administration</p>
+        <div class="btn-group">
+            <button class="dash-btn admin" id="manageUsersBtn">
+                <span class="btn-icon">🔧</span>
+                <span class="btn-label">Manage Admin Users</span>
+            </button>
+            <button class="dash-btn signout" id="signOutBtn">Sign Out</button>
         </div>
     </div>
 
@@ -207,7 +224,6 @@
             getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
         } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-        // ── REPLACE WITH YOUR OWN CONFIG ──
         const firebaseConfig = {
             apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
             authDomain: "oesperformance-a54c0.firebaseapp.com",
@@ -217,15 +233,13 @@
             appId: "1:484894102454:web:17535ee497eac2d90d6717"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app  = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        const loginCard   = document.getElementById('loginCard');
-        const dashboard   = document.getElementById('dashboard');
-        const errorMsg    = document.getElementById('errorMsg');
-        const signInBtn   = document.getElementById('signInBtn');
-        const signOutBtn  = document.getElementById('signOutBtn');
-        const manageBtn   = document.getElementById('manageUsersBtn');
+        const loginCard  = document.getElementById('loginCard');
+        const dashboard  = document.getElementById('dashboard');
+        const errorMsg   = document.getElementById('errorMsg');
+        const signInBtn  = document.getElementById('signInBtn');
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -242,10 +256,7 @@
             const email = document.getElementById('email').value.trim();
             const pass  = document.getElementById('password').value;
 
-            if (!email || !pass) {
-                errorMsg.textContent = 'Please enter email and password';
-                return;
-            }
+            if (!email || !pass) { errorMsg.textContent = 'Please enter email and password'; return; }
 
             signInBtn.disabled = true;
             signInBtn.textContent = 'Signing in...';
@@ -255,15 +266,10 @@
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
                 let msg = 'Login failed – check credentials';
-                if (err.code?.includes('invalid-credential') || err.code?.includes('wrong-password')) {
-                    msg = 'Invalid email or password';
-                } else if (err.code?.includes('user-not-found')) {
-                    msg = 'No account with this email';
-                } else if (err.code?.includes('too-many-requests')) {
-                    msg = 'Too many attempts – wait a moment';
-                } else {
-                    msg = err.message || msg;
-                }
+                if (err.code?.includes('invalid-credential') || err.code?.includes('wrong-password')) msg = 'Invalid email or password';
+                else if (err.code?.includes('user-not-found')) msg = 'No account with this email';
+                else if (err.code?.includes('too-many-requests')) msg = 'Too many attempts – wait a moment';
+                else msg = err.message || msg;
                 errorMsg.textContent = msg;
             }
 
@@ -271,13 +277,17 @@
             signInBtn.textContent = 'Sign In';
         });
 
-        signOutBtn.addEventListener('click', async () => {
-            await signOut(auth);
+        // Allow pressing Enter to sign in
+        document.getElementById('password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') signInBtn.click();
         });
 
-        manageBtn.addEventListener('click', () => {
-            window.location.href = 'userdatabase.html';
-        });
+        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+        document.getElementById('addEngineerBtn').addEventListener('click', () => window.location.href = 'engineerdatabase.html');
+        document.getElementById('documentsBtn').addEventListener('click', () => window.location.href = 'documents.html');
+        document.getElementById('personalDetailsBtn').addEventListener('click', () => window.location.href = 'personaldetails.html');
+        document.getElementById('contractBtn').addEventListener('click', () => window.location.href = 'contract.html');
+        document.getElementById('manageUsersBtn').addEventListener('click', () => window.location.href = 'userdatabase.html');
     </script>
 </body>
 </html>
