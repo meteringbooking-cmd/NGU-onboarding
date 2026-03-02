@@ -127,6 +127,17 @@
         .dash-btn.admin { border-color: rgba(0,94,184,0.4); }
         .dash-btn.admin:hover { border-color: #60a5fa; color: #60a5fa; }
 
+        .dash-btn.locked {
+            opacity: 0.32;
+            cursor: not-allowed;
+            filter: grayscale(1);
+            pointer-events: none;
+        }
+        .dash-btn.locked .lock-icon {
+            display: inline;
+        }
+        .lock-icon { display: none; font-size: 0.8rem; margin-left: 4px; }
+
         .dash-btn.signout {
             background: transparent;
             border-color: rgba(239,68,68,0.3);
@@ -195,15 +206,15 @@
             </button>
             <button class="dash-btn" id="documentsBtn">
                 <span class="btn-icon">📄</span>
-                <span class="btn-label">Engineer Documents</span>
+                <span class="btn-label">Engineer Documents<span class="lock-icon">🔒</span></span>
             </button>
             <button class="dash-btn" id="personalDetailsBtn">
                 <span class="btn-icon">👤</span>
-                <span class="btn-label">Engineer Personal Details</span>
+                <span class="btn-label">Engineer Personal Details<span class="lock-icon">🔒</span></span>
             </button>
             <button class="dash-btn" id="contractBtn">
                 <span class="btn-icon">📋</span>
-                <span class="btn-label">View / Amend Contracts</span>
+                <span class="btn-label">View / Amend Contracts<span class="lock-icon">🔒</span></span>
             </button>
         </div>
 
@@ -223,6 +234,9 @@
         import {
             getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
         } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import {
+            getFirestore, collection, query, where, getDocs
+        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
@@ -235,17 +249,46 @@
 
         const app  = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db   = getFirestore(app);
 
         const loginCard  = document.getElementById('loginCard');
         const dashboard  = document.getElementById('dashboard');
         const errorMsg   = document.getElementById('errorMsg');
         const signInBtn  = document.getElementById('signInBtn');
 
-        onAuthStateChanged(auth, (user) => {
+        // Buttons that are permission-gated: { buttonId: permissionKey }
+        const GATED_BTNS = {
+            documentsBtn:      'documents',
+            personalDetailsBtn: 'personaldetails',
+            contractBtn:       'contract'
+        };
+
+        async function applyPermissions(user) {
+            try {
+                const q    = query(collection(db, "NGUO Database"), where("authUid", "==", user.uid));
+                const snap = await getDocs(q);
+                const perms = snap.empty ? {} : (snap.docs[0].data().permissions || {});
+
+                Object.entries(GATED_BTNS).forEach(([btnId, permKey]) => {
+                    const btn = document.getElementById(btnId);
+                    if (!btn) return;
+                    if (!perms[permKey]) {
+                        btn.classList.add('locked');
+                    } else {
+                        btn.classList.remove('locked');
+                    }
+                });
+            } catch (err) {
+                console.warn('Could not load permissions:', err);
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 loginCard.classList.add('hidden');
                 dashboard.classList.remove('hidden');
                 errorMsg.textContent = '';
+                await applyPermissions(user);
             } else {
                 loginCard.classList.remove('hidden');
                 dashboard.classList.add('hidden');
