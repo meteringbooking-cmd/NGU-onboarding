@@ -1,14 +1,16 @@
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+const EMAILJS_PUBLIC_KEY = 'ziLnha91scpGjFABh'; const EMAILJS_SERVICE_ID = 'service_gmlx02k'; const EMAILJS_TEMPLATE_ID = 'template_xkortjd'; emailjs.init 'ziLnha91scpGjFABh';
+// Send email notification try { await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { engineer_name: currentEngineer.name, to_email: 'barryddixon@outlook.com', message: ${currentEngineer.name} has uploaded their bank details to the onboarding platform. }); } catch (emailErr) { console.warn('Email notification failed (bank details were still saved):', emailErr); }
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>NGU — Engineer Portal</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #005EB8;
@@ -39,7 +41,6 @@
                 radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
             pointer-events: none; z-index: -1;
         }
-
         /* ── Login Screen ── */
         #loginScreen {
             min-height: 100vh;
@@ -65,7 +66,6 @@
             text-align: center; color: var(--text-muted);
             font-family: 'DM Mono', monospace; font-size: 0.85rem; margin-bottom: 2rem;
         }
-
         /* ── Portal Screen ── */
         #portalScreen { display: none; max-width: 860px; margin: 0 auto; }
         .portal-header {
@@ -77,7 +77,6 @@
             font-size: 1.1rem; font-weight: 600; color: var(--accent);
             font-family: 'DM Mono', monospace;
         }
-
         /* ── Progress Bar ── */
         .progress-bar {
             display: grid; grid-template-columns: repeat(4, 1fr);
@@ -99,7 +98,6 @@
             background: rgba(0,163,224,0.12); border-color: rgba(0,163,224,0.5);
             color: var(--accent);
         }
-
         /* ── Cards ── */
         .card {
             background: var(--bg-card); border: 1px solid var(--border);
@@ -115,13 +113,12 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem; flex-shrink: 0;
         }
-        .icon-blue  { background: rgba(0,163,224,0.15); }
+        .icon-blue { background: rgba(0,163,224,0.15); }
         .icon-green { background: rgba(16,185,129,0.15); }
         .icon-amber { background: rgba(245,158,11,0.15); }
         .icon-purple{ background: rgba(139,92,246,0.15); }
         .card-header h2 { font-size: 1.2rem; font-weight: 700; }
-        .card-header p  { font-size: 0.83rem; color: var(--text-muted); margin-top: 0.1rem; }
-
+        .card-header p { font-size: 0.83rem; color: var(--text-muted); margin-top: 0.1rem; }
         /* ── Form elements ── */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -133,7 +130,6 @@
             font-family: inherit; transition: all 0.2s;
         }
         input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,163,224,0.15); }
-
         /* ── Upload zones ── */
         .upload-zone {
             border: 2px dashed var(--border);
@@ -155,7 +151,7 @@
         }
         .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
         .upload-label { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.3rem; }
-        .upload-hint  { font-size: 0.78rem; color: var(--text-muted); }
+        .upload-hint { font-size: 0.78rem; color: var(--text-muted); }
         .upload-filename {
             font-size: 0.82rem; color: #6ee7b7; margin-top: 0.5rem;
             font-family: 'DM Mono', monospace; word-break: break-all;
@@ -165,10 +161,9 @@
             font-size: 0.78rem; font-weight: 600; padding: 0.2rem 0.7rem;
             border-radius: 20px;
         }
-        .status-saved   { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .status-saved { background: rgba(16,185,129,0.2); color: #6ee7b7; }
         .status-pending { background: rgba(245,158,11,0.2); color: #fcd34d; }
-        .status-none    { background: rgba(139,154,174,0.1); color: var(--text-muted); }
-
+        .status-none { background: rgba(139,154,174,0.1); color: var(--text-muted); }
         /* ── Buttons ── */
         .btn {
             padding: 0.9rem 2rem; border: none; border-radius: 12px;
@@ -191,19 +186,14 @@
         }
         .btn-save:hover { background: rgba(16,185,129,0.25); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .save-row { display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; }
         .save-msg { font-size: 0.9rem; }
-        .save-msg.ok  { color: var(--success); }
+        .save-msg.ok { color: var(--success); }
         .save-msg.err { color: var(--error); }
-
         .error-msg { color: var(--error); font-size: 0.88rem; margin-top: 0.6rem; text-align: center; min-height: 1.2rem; }
-
         .divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1.5rem; }
-
         /* Upload grid */
         .upload-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
-
         /* Loading spinner */
         .spinner {
             width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
@@ -211,7 +201,6 @@
             animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         /* Sign out bar */
         .signout-bar {
             background: rgba(0,163,224,0.08); border: 1px solid rgba(0,163,224,0.2);
@@ -220,16 +209,14 @@
             margin-bottom: 1.5rem; font-size: 0.88rem; color: var(--text-muted);
             flex-wrap: wrap; gap: 0.5rem;
         }
-
         @media (max-width: 600px) {
             .upload-grid { grid-template-columns: 1fr; }
-            .form-grid   { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
             .progress-bar { grid-template-columns: repeat(2,1fr); }
         }
     </style>
 </head>
 <body>
-
 <!-- ══════════════ LOGIN SCREEN ══════════════ -->
 <div id="loginScreen">
     <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
@@ -237,7 +224,6 @@
     <div class="login-card">
         <h1>Engineer Portal</h1>
         <p class="tagline">Upload your documents to get started</p>
-
         <div class="form-group" style="margin-bottom:1.2rem;">
             <label>Email Address</label>
             <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
@@ -250,21 +236,17 @@
         <div class="error-msg" id="loginError"></div>
     </div>
 </div>
-
 <!-- ══════════════ PORTAL SCREEN ══════════════ -->
 <div id="portalScreen">
-
     <div class="portal-header">
         <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
              alt="NGU Logo" class="logo-sm">
         <span class="welcome-name" id="welcomeName"></span>
     </div>
-
     <div class="signout-bar">
         <span>🔒 You are securely signed in to your onboarding portal</span>
         <button class="btn btn-secondary" style="padding:0.4rem 1rem; font-size:0.85rem;" id="signOutBtn">Sign Out</button>
     </div>
-
     <!-- Progress -->
     <div class="progress-bar">
         <div class="prog-step" id="prog-licence">Driving Licence</div>
@@ -272,7 +254,6 @@
         <div class="prog-step" id="prog-address">Proof of Address</div>
         <div class="prog-step" id="prog-bank">Bank Details</div>
     </div>
-
     <!-- ── DOCUMENTS CARD ── -->
     <div class="card">
         <div class="card-header">
@@ -284,7 +265,6 @@
         </div>
         <hr class="divider">
         <div class="upload-grid">
-
             <!-- Driving Licence -->
             <div>
                 <div class="upload-zone" id="zone-licence">
@@ -299,7 +279,6 @@
                 </div>
                 <button class="btn btn-save" style="width:100%; margin-top:0.6rem; padding:0.6rem;" id="upload-btn-licence" onclick="uploadFile('licence')" disabled>Upload</button>
             </div>
-
             <!-- Certificates -->
             <div>
                 <div class="upload-zone" id="zone-certs">
@@ -314,7 +293,6 @@
                 </div>
                 <button class="btn btn-save" style="width:100%; margin-top:0.6rem; padding:0.6rem;" id="upload-btn-certs" onclick="uploadFile('certs')" disabled>Upload</button>
             </div>
-
             <!-- Proof of Address -->
             <div>
                 <div class="upload-zone" id="zone-address">
@@ -329,10 +307,8 @@
                 </div>
                 <button class="btn btn-save" style="width:100%; margin-top:0.6rem; padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
             </div>
-
         </div>
     </div>
-
     <!-- ── BANK DETAILS CARD ── -->
     <div class="card">
         <div class="card-header">
@@ -366,16 +342,13 @@
             <span class="save-msg" id="bankMsg"></span>
         </div>
     </div>
-
 </div>
-
 <script type="module">
-    import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
-
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
         authDomain: "oesperformance-a54c0.firebaseapp.com",
@@ -384,155 +357,125 @@
         messagingSenderId: "484894102454",
         appId: "1:484894102454:web:17535ee497eac2d90d6717"
     };
-
-    const app     = initializeApp(firebaseConfig);
-    const db      = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
     const storage = getStorage(app);
-
     let currentEngineer = null; // { docId, name, email, ... }
-
     // ── Expose helpers to window for inline onclick ───────────────────────────
     window.handleFileSelect = handleFileSelect;
-    window.uploadFile       = uploadFile;
-
+    window.uploadFile = uploadFile;
     // ── Login ─────────────────────────────────────────────────────────────────
     document.getElementById('loginBtn').addEventListener('click', doLogin);
     document.getElementById('loginPassword').addEventListener('keydown', e => {
         if (e.key === 'Enter') doLogin();
     });
-
     async function doLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const pass  = document.getElementById('loginPassword').value;
+        const pass = document.getElementById('loginPassword').value;
         const errEl = document.getElementById('loginError');
-        const btn   = document.getElementById('loginBtn');
-
+        const btn = document.getElementById('loginBtn');
         errEl.textContent = '';
         if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; return; }
-
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span>Signing in…';
-
         try {
             // Look up engineer by email in Firestore
-            const q    = query(collection(db, "NGUO - Engineers"), where("email", "==", email));
+            const q = query(collection(db, "NGUO - Engineers"), where("email", "==", email));
             const snap = await getDocs(q);
-
             if (snap.empty) {
                 errEl.textContent = 'No engineer account found for this email.';
                 btn.disabled = false; btn.textContent = 'Sign In'; return;
             }
-
-            const engineerDoc  = snap.docs[0];
+            const engineerDoc = snap.docs[0];
             const engineerData = engineerDoc.data();
-
             // Check password (plain text match against stored password)
             if (engineerData.password !== pass) {
                 errEl.textContent = 'Incorrect password. Please try again.';
                 btn.disabled = false; btn.textContent = 'Sign In'; return;
             }
-
             // Check engineer is not deleted
             if (engineerData.status === 'deleted') {
                 errEl.textContent = 'This account is no longer active.';
                 btn.disabled = false; btn.textContent = 'Sign In'; return;
             }
-
             currentEngineer = { docId: engineerDoc.id, ...engineerData };
             showPortal();
-
         } catch (err) {
             errEl.textContent = 'Login error: ' + err.message;
         }
-
         btn.disabled = false;
         btn.textContent = 'Sign In';
     }
-
     // ── Show portal ───────────────────────────────────────────────────────────
     function showPortal() {
-        document.getElementById('loginScreen').style.display  = 'none';
+        document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('portalScreen').style.display = 'block';
-        document.getElementById('welcomeName').textContent    = `👋 ${currentEngineer.name}`;
-
+        document.getElementById('welcomeName').textContent = `👋 ${currentEngineer.name}`;
         // Load existing data
         loadExistingData();
     }
-
     function loadExistingData() {
         const d = currentEngineer;
-
         // Documents status
         setDocStatus('licence', d.docs_licence);
-        setDocStatus('certs',   d.docs_certs);
+        setDocStatus('certs', d.docs_certs);
         setDocStatus('address', d.docs_address);
-
         // Bank details
-        if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
-        if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
-        if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
+        if (d.bank_name) document.getElementById('bankName').value = d.bank_name;
+        if (d.bank_bankName) document.getElementById('bankBankName').value = d.bank_bankName;
+        if (d.bank_sortCode) document.getElementById('bankSortCode').value = d.bank_sortCode;
         if (d.bank_accountNo) document.getElementById('bankAccountNo').value = d.bank_accountNo;
-
         updateProgress();
     }
-
     function setDocStatus(key, fileUrl) {
         const statusEl = document.getElementById(`status-${key}`);
-        const zoneEl   = document.getElementById(`zone-${key}`);
+        const zoneEl = document.getElementById(`zone-${key}`);
         if (fileUrl) {
             statusEl.textContent = '✓ Uploaded';
-            statusEl.className   = 'upload-status status-saved';
+            statusEl.className = 'upload-status status-saved';
             zoneEl.classList.add('has-file');
             const fname = document.getElementById(`fname-${key}`);
             fname.textContent = 'Previously uploaded — click to replace';
         } else {
             statusEl.textContent = 'Not uploaded';
-            statusEl.className   = 'upload-status status-none';
+            statusEl.className = 'upload-status status-none';
         }
     }
-
     // ── File select handler ───────────────────────────────────────────────────
     function handleFileSelect(key, input) {
         if (!input.files || !input.files[0]) return;
-        const file   = input.files[0];
-        const fname  = document.getElementById(`fname-${key}`);
-        const zone   = document.getElementById(`zone-${key}`);
-        const upBtn  = document.getElementById(`upload-btn-${key}`);
+        const file = input.files[0];
+        const fname = document.getElementById(`fname-${key}`);
+        const zone = document.getElementById(`zone-${key}`);
+        const upBtn = document.getElementById(`upload-btn-${key}`);
         const status = document.getElementById(`status-${key}`);
-
         if (file.size > 10 * 1024 * 1024) {
             alert('File is too large. Maximum size is 10MB.');
             input.value = ''; return;
         }
-
-        fname.textContent  = `📎 ${file.name}`;
+        fname.textContent = `📎 ${file.name}`;
         zone.classList.remove('has-file');
         status.textContent = 'Ready to upload';
-        status.className   = 'upload-status status-pending';
-        upBtn.disabled     = false;
+        status.className = 'upload-status status-pending';
+        upBtn.disabled = false;
     }
-
     // ── Upload file to Firebase Storage ──────────────────────────────────────
     async function uploadFile(key) {
-        const input  = document.getElementById(`file-${key}`);
-        const upBtn  = document.getElementById(`upload-btn-${key}`);
+        const input = document.getElementById(`file-${key}`);
+        const upBtn = document.getElementById(`upload-btn-${key}`);
         const status = document.getElementById(`status-${key}`);
-        const zone   = document.getElementById(`zone-${key}`);
-
+        const zone = document.getElementById(`zone-${key}`);
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
-
-        upBtn.disabled    = true;
-        upBtn.innerHTML   = '<span class="spinner"></span>Uploading…';
+        upBtn.disabled = true;
+        upBtn.innerHTML = '<span class="spinner"></span>Uploading…';
         status.textContent = 'Uploading…';
-        status.className  = 'upload-status status-pending';
-
+        status.className = 'upload-status status-pending';
         try {
             // Path: engineers/{docId}/{key}/{filename}
-            const storageRef  = ref(storage, `engineers/${currentEngineer.docId}/${key}/${file.name}`);
-            const snapshot    = await uploadBytes(storageRef, file);
+            const storageRef = ref(storage, `engineers/${currentEngineer.docId}/${key}/${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
-
             // Save URL to Firestore
             const fieldName = `docs_${key}`;
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
@@ -540,87 +483,71 @@
                 [`docs_${key}_filename`]: file.name,
                 [`docs_${key}_uploadedAt`]: serverTimestamp()
             });
-
             currentEngineer[fieldName] = downloadURL;
-
             status.textContent = '✓ Uploaded';
-            status.className   = 'upload-status status-saved';
+            status.className = 'upload-status status-saved';
             zone.classList.add('has-file');
-            upBtn.textContent  = 'Re-upload';
-            upBtn.disabled     = false;
-
+            upBtn.textContent = 'Re-upload';
+            upBtn.disabled = false;
             updateProgress();
-
         } catch (err) {
             status.textContent = '✗ Upload failed';
-            status.className   = 'upload-status status-none';
-            upBtn.textContent  = 'Retry';
-            upBtn.disabled     = false;
+            status.className = 'upload-status status-none';
+            upBtn.textContent = 'Retry';
+            upBtn.disabled = false;
             console.error('Upload error:', err);
             alert('Upload failed: ' + err.message);
         }
     }
-
     // ── Save bank details ─────────────────────────────────────────────────────
     document.getElementById('saveBankBtn').addEventListener('click', async () => {
-        const btn  = document.getElementById('saveBankBtn');
+        const btn = document.getElementById('saveBankBtn');
         const msgEl = document.getElementById('bankMsg');
-
-        const bank_name      = document.getElementById('bankName').value.trim();
-        const bank_bankName  = document.getElementById('bankBankName').value.trim();
-        const bank_sortCode  = document.getElementById('bankSortCode').value.trim();
+        const bank_name = document.getElementById('bankName').value.trim();
+        const bank_bankName = document.getElementById('bankBankName').value.trim();
+        const bank_sortCode = document.getElementById('bankSortCode').value.trim();
         const bank_accountNo = document.getElementById('bankAccountNo').value.trim();
-
         msgEl.textContent = '';
         if (!bank_name || !bank_bankName || !bank_sortCode || !bank_accountNo) {
-            msgEl.className   = 'save-msg err';
+            msgEl.className = 'save-msg err';
             msgEl.textContent = 'Please fill in all bank detail fields.';
             return;
         }
-
-        btn.disabled    = true;
-        btn.innerHTML   = '<span class="spinner"></span>Saving…';
-
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>Saving…';
         try {
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
                 bank_name, bank_bankName, bank_sortCode, bank_accountNo,
                 bank_savedAt: serverTimestamp()
             });
-
             Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
-
-            msgEl.className   = 'save-msg ok';
+            msgEl.className = 'save-msg ok';
             msgEl.textContent = '✓ Bank details saved securely';
             updateProgress();
-
         } catch (err) {
-            msgEl.className   = 'save-msg err';
+            msgEl.className = 'save-msg err';
             msgEl.textContent = 'Error saving: ' + err.message;
         }
-
-        btn.disabled  = false;
+        btn.disabled = false;
         btn.textContent = 'Save Bank Details';
     });
-
     // ── Progress tracker ──────────────────────────────────────────────────────
     function updateProgress() {
         const d = currentEngineer;
         toggleProg('prog-licence', !!d.docs_licence);
-        toggleProg('prog-certs',   !!d.docs_certs);
+        toggleProg('prog-certs', !!d.docs_certs);
         toggleProg('prog-address', !!d.docs_address);
-        toggleProg('prog-bank',    !!(d.bank_name && d.bank_accountNo));
+        toggleProg('prog-bank', !!(d.bank_name && d.bank_accountNo));
     }
-
     function toggleProg(id, done) {
         const el = document.getElementById(id);
-        el.classList.toggle('done',   done);
+        el.classList.toggle('done', done);
         el.classList.toggle('active', !done);
     }
-
     // ── Drag and drop ─────────────────────────────────────────────────────────
     ['licence','certs','address'].forEach(key => {
         const zone = document.getElementById(`zone-${key}`);
-        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
         zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
         zone.addEventListener('drop', e => {
             e.preventDefault();
@@ -635,7 +562,6 @@
             }
         });
     });
-
     // ── Sort code auto-format ─────────────────────────────────────────────────
     document.getElementById('bankSortCode').addEventListener('input', function() {
         let v = this.value.replace(/\D/g, '').slice(0,6);
@@ -643,17 +569,15 @@
         else if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
         this.value = v;
     });
-
     // ── Sign out ──────────────────────────────────────────────────────────────
     document.getElementById('signOutBtn').addEventListener('click', () => {
         currentEngineer = null;
-        document.getElementById('portalScreen').style.display  = 'none';
-        document.getElementById('loginScreen').style.display   = 'flex';
-        document.getElementById('loginEmail').value    = '';
+        document.getElementById('portalScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
         document.getElementById('loginError').textContent = '';
     });
-
 </script>
 </body>
 </html>
