@@ -123,8 +123,16 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-        .error-msg  { color: var(--error);   margin-top:1rem; font-size:0.95rem; }
-        .success-msg { color: var(--success); margin-top:1rem; font-size:0.95rem; }
+        .error-msg {
+            color: var(--error);
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+        .success-msg {
+            color: var(--success);
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
 
         table {
             width: 100%;
@@ -144,7 +152,20 @@
             font-size: 0.85rem;
             letter-spacing: 0.4px;
         }
-        tr:hover { background: rgba(0,163,224,0.06); }
+        tr:hover {
+            background: rgba(0,163,224,0.06);
+        }
+
+        .warning-box {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 1.5rem 0 2.5rem;
+            color: #fecaca;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
 
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
@@ -159,7 +180,12 @@
          alt="NGU Logo" class="logo">
 
     <h1>User Database</h1>
-    <p class="subtitle">Create & view onboarding accounts (admin only)</p>
+    <p class="subtitle">Manage NGU Onboarding accounts</p>
+
+    <div class="warning-box">
+        ⚠️ <strong>This page is public</strong> — anyone with the link can see all users and create new accounts.
+        Use only for testing or in a protected environment.
+    </div>
 
     <div class="card">
         <h2>Create New User</h2>
@@ -198,13 +224,10 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import {
-        getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import {
         getFirestore, collection, addDoc, getDocs, serverTimestamp
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    // ── REPLACE WITH YOUR OWN CONFIG ──
+    // ── REPLACE WITH YOUR OWN FIREBASE CONFIG ────────────────────────────────
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
         authDomain: "oesperformance-a54c0.firebaseapp.com",
@@ -212,10 +235,10 @@
         storageBucket: "oesperformance-a54c0.firebasestorage.app",
         messagingSenderId: "484894102454",
         appId: "1:484894102454:web:17535ee497eac2d90d6717"
+        // measurementId: "..."   ← add if needed
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db   = getFirestore(app);
 
     const colRef = collection(db, "NGUO Database");
@@ -224,26 +247,16 @@
     const msgEl     = document.getElementById('createMsg');
     const tableEl   = document.getElementById('usersTable');
 
-    // Redirect if not logged in
-    onAuthStateChanged(auth, user => {
-        if (!user) {
-            document.body.innerHTML = `
-                <div style="text-align:center; padding:6rem 1rem;">
-                    <h1>Please <a href="index.html" style="color:var(--accent);">sign in first</a></h1>
-                </div>`;
-        }
-    });
-
     async function loadUsers() {
         try {
             const snap = await getDocs(colRef);
             let html = '<table><thead><tr><th>Name</th><th>Email</th><th>Created</th></tr></thead><tbody>';
 
             if (snap.empty) {
-                html += '<tr><td colspan="3" style="text-align:center; padding:3rem 0; color:var(--text-muted);">No users yet</td></tr>';
+                html = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No users found</p>';
             } else {
-                snap.forEach(docSnap => {
-                    const d = docSnap.data();
+                snap.forEach(doc => {
+                    const d = doc.data();
                     const date = d.createdAt
                         ? new Date(d.createdAt.toMillis()).toLocaleString([], {dateStyle:'medium', timeStyle:'short'})
                         : '—';
@@ -253,12 +266,13 @@
                         <td>${date}</td>
                     </tr>`;
                 });
+                html += '</tbody></table>';
             }
-            html += '</tbody></table>';
+
             tableEl.innerHTML = html;
         } catch (err) {
             tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">
-                Error: ${err.message}
+                Error loading users: ${err.message}
             </p>`;
         }
     }
@@ -272,7 +286,7 @@
         msgEl.textContent = '';
 
         if (!name || !email || !pass || pass.length < 6) {
-            msgEl.textContent = 'Fill all fields (password ≥ 6 chars)';
+            msgEl.textContent = 'Please fill all fields (password ≥ 6 characters)';
             return;
         }
 
@@ -280,22 +294,15 @@
         createBtn.textContent = 'Creating...';
 
         try {
-            // 1. Create real Auth user
-            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            const newUser = userCredential.user;
-
-            // 2. Store extra info in Firestore
             await addDoc(colRef, {
                 name,
                 email,
-                uid: newUser.uid,
+                passwordPlain: pass,           // ← only for debugging – remove in production!
                 createdAt: serverTimestamp()
             });
 
             msgEl.className = 'success-msg';
-            msgEl.textContent = `User created: ${email} ✓ (they can now log in)`;
-
-            // Refresh list
+            msgEl.textContent = 'User record created ✓ (note: actual auth account must still be created in Firebase console)';
             loadUsers();
 
             // Clear form
@@ -303,18 +310,18 @@
             document.getElementById('newEmail').value = '';
             document.getElementById('newPassword').value = '';
         } catch (err) {
-            let txt = 'Creation failed';
-            if (err.code === 'auth/email-already-in-use') txt = 'Email already registered';
-            if (err.code === 'auth/invalid-email')       txt = 'Invalid email format';
-            if (err.code === 'auth/weak-password')       txt = 'Password too weak';
-            msgEl.textContent = txt + ' – ' + (err.message || '');
+            let txt = err.message;
+            if (err.code === 'permission-denied') {
+                txt = 'Permission denied – check Firestore security rules';
+            }
+            msgEl.textContent = txt;
         }
 
         createBtn.disabled = false;
         createBtn.textContent = 'Create User';
     });
 
-    // Load on page open
+    // Initial load
     loadUsers();
 </script>
 </body>
