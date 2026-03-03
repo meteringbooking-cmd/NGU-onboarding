@@ -658,12 +658,22 @@
         let contractFileName = null;
         try {
             const contractCol  = collection(db, "NGUO contract");
-            const contractQ    = query(contractCol, where("campaign", "==", eng.contract), orderBy("uploadedAt", "desc"));
+            const contractQ    = query(contractCol, where("campaign", "==", eng.contract));
             const contractSnap = await getDocs(contractQ);
             if (!contractSnap.empty) {
-                const latest     = contractSnap.docs[0].data();
-                contractLink     = latest.downloadURL   || null;
-                contractFileName = latest.fileName      || eng.contract + ' Contract';
+                // Sort by uploadedAt descending in JS (avoids needing a Firestore composite index)
+                const docs = contractSnap.docs
+                    .map(d => d.data())
+                    .filter(d => d.downloadURL)
+                    .sort((a, b) => {
+                        const aTime = a.uploadedAt ? a.uploadedAt.toMillis() : 0;
+                        const bTime = b.uploadedAt ? b.uploadedAt.toMillis() : 0;
+                        return bTime - aTime;
+                    });
+                if (docs.length > 0) {
+                    contractLink     = docs[0].downloadURL;
+                    contractFileName = docs[0].fileName || eng.contract + ' Contract';
+                }
             }
         } catch (contractErr) {
             console.warn('Could not fetch contract doc:', contractErr);
