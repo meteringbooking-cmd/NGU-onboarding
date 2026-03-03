@@ -69,6 +69,7 @@
         select option { background: var(--bg-card); color: var(--text-light); }
         input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,163,224,0.15); }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
         .btn {
             padding: 1rem 2.2rem; border: none; border-radius: 12px;
             font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit;
@@ -303,6 +304,29 @@
     </div>
 </div>
 
+<!-- ── Interview date/time overlay ── -->
+<div class="overlay" id="interviewOverlay">
+    <div class="confirm-box" style="max-width:460px;">
+        <h3 style="color:var(--accent); margin-bottom:0.4rem;">📅 Schedule Interview</h3>
+        <p id="interviewEngineerName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;"></p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left; margin-bottom:1.5rem;">
+            <div>
+                <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Date</label>
+                <input type="date" id="interviewDate" style="width:100%; padding:0.8rem 1rem; background:var(--bg-dark); border:2px solid var(--border); border-radius:10px; color:white; font-size:0.95rem; font-family:inherit;">
+            </div>
+            <div>
+                <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Time</label>
+                <input type="time" id="interviewTime" style="width:100%; padding:0.8rem 1rem; background:var(--bg-dark); border:2px solid var(--border); border-radius:10px; color:white; font-size:0.95rem; font-family:inherit;">
+            </div>
+        </div>
+        <div id="interviewError" style="color:var(--error); font-size:0.85rem; margin-bottom:1rem; min-height:1.2rem;"></div>
+        <div class="confirm-actions">
+            <button class="btn btn-primary" id="confirmInterviewBtn" style="padding:0.8rem 1.8rem; font-size:0.95rem;">Begin Onboarding</button>
+            <button class="btn btn-secondary" id="cancelInterviewBtn" style="padding:0.8rem 1.4rem;">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -334,6 +358,7 @@
     let allEngineers  = [];
     let selectedDocId = null;
     let pendingDeleteId = null;
+    let pendingOnboardId = null;
 
     // ── Contract badge ────────────────────────────────────────────────────────
     function contractBadge(contract) {
@@ -417,24 +442,18 @@
                 });
             });
 
-            // Begin Onboard buttons
+            // Begin Onboard buttons → open interview modal
             tableEl.querySelectorAll('.btn-onboard:not(.active)').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    const id = btn.dataset.id;
-                    btn.disabled = true;
-                    btn.textContent = 'Saving...';
-                    try {
-                        await updateDoc(doc(db, "NGUO - Engineers", id), {
-                            status: 'onboarding',
-                            onboardingStartedAt: serverTimestamp()
-                        });
-                        loadEngineers();
-                    } catch (err) {
-                        btn.disabled = false;
-                        btn.textContent = '▶ Begin Onboard';
-                        alert('Error: ' + err.message);
-                    }
+                    const eng = allEngineers.find(en => en.id === btn.dataset.id);
+                    pendingOnboardId = btn.dataset.id;
+                    document.getElementById('interviewEngineerName').textContent =
+                        `Set an interview date and time for ${eng ? eng.name : 'this engineer'} before beginning onboarding.`;
+                    document.getElementById('interviewDate').value  = '';
+                    document.getElementById('interviewTime').value  = '';
+                    document.getElementById('interviewError').textContent = '';
+                    document.getElementById('interviewOverlay').classList.add('active');
                 });
             });
 
@@ -599,6 +618,51 @@
 
         addBtn.disabled = false;
         addBtn.textContent = 'Add Engineer';
+    });
+
+    // ── Interview modal ───────────────────────────────────────────────────────
+    document.getElementById('confirmInterviewBtn').addEventListener('click', async () => {
+        const date     = document.getElementById('interviewDate').value;
+        const time     = document.getElementById('interviewTime').value;
+        const errorEl  = document.getElementById('interviewError');
+        const btn      = document.getElementById('confirmInterviewBtn');
+
+        errorEl.textContent = '';
+        if (!date || !time) { errorEl.textContent = 'Please set both a date and time for the interview.'; return; }
+        if (!pendingOnboardId) return;
+
+        btn.disabled  = true;
+        btn.textContent = 'Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", pendingOnboardId), {
+                status:              'onboarding',
+                onboardingStartedAt: serverTimestamp(),
+                interviewDate:       date,
+                interviewTime:       time,
+                interviewDateTime:   `${date}T${time}`
+            });
+            document.getElementById('interviewOverlay').classList.remove('active');
+            pendingOnboardId = null;
+            loadEngineers();
+        } catch (err) {
+            errorEl.textContent = 'Error saving: ' + err.message;
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Begin Onboarding';
+    });
+
+    document.getElementById('cancelInterviewBtn').addEventListener('click', () => {
+        document.getElementById('interviewOverlay').classList.remove('active');
+        pendingOnboardId = null;
+    });
+
+    document.getElementById('interviewOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('interviewOverlay').classList.remove('active');
+            pendingOnboardId = null;
+        }
     });
 
     document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
