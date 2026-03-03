@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Contracts</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #005EB8;
+            --accent: #00A3E0;
+            --bg-dark: #0A1628;
+            --bg-card: #1a2942;
+            --bg-input: #0d1f3a;
+            --text-light: #E8EDF2;
+            --text-muted: #8B9AAE;
+            --border: #2a3f5f;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+
+            /* Campaign colours */
+            --ss-oes: #00A3E0;
+            --ss-sp:  #818CF8;
+            --cal-sp: #10B981;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
+            pointer-events: none; z-index: -1;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+        .logo { max-height: 70px; display: block; margin: 0 auto 2.5rem; }
+
+        h1 {
+            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 3rem; }
+
+        /* Nav bar */
+        .protected-bar {
+            background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.3);
+            border-radius: 12px; padding: 1rem 1.4rem; margin: 0 0 2.5rem;
+            color: #bae6fd; font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem 2.2rem;
+            margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.7rem;
+        }
+        .card-title-icon {
+            width: 36px; height: 36px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            background: rgba(0,163,224,0.15); flex-shrink: 0;
+        }
+
+        /* Campaign tabs */
+        .campaign-tabs {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem; margin-bottom: 2rem;
+        }
+        .campaign-tab {
+            padding: 1rem 0.8rem; border-radius: 12px; cursor: pointer;
+            border: 2px solid var(--border); background: var(--bg-input);
+            text-align: center; transition: all 0.22s; font-family: inherit;
+            font-weight: 700; font-size: 0.9rem; color: var(--text-muted);
+            display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+        }
+        .campaign-tab .tab-icon { font-size: 1.4rem; }
+        .campaign-tab .tab-count {
+            font-size: 0.72rem; font-family: 'DM Mono', monospace;
+            color: var(--text-muted); font-weight: 400;
+        }
+        .campaign-tab:hover { border-color: var(--accent); color: var(--text-light); }
+
+        .campaign-tab.active-ss-oes { border-color: var(--ss-oes); background: rgba(0,163,224,0.1); color: #7dd3fc; }
+        .campaign-tab.active-ss-sp  { border-color: var(--ss-sp);  background: rgba(129,140,248,0.1); color: #c4b5fd; }
+        .campaign-tab.active-cal-sp { border-color: var(--cal-sp); background: rgba(16,185,129,0.1); color: #6ee7b7; }
+
+        /* Upload zone */
+        .upload-section { margin-bottom: 1.5rem; }
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: 12px;
+            padding: 2.5rem 1rem; text-align: center; cursor: pointer;
+            transition: all 0.22s; position: relative; background: var(--bg-input);
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: rgba(0,163,224,0.05); }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+        .upload-zone-icon { font-size: 2.2rem; }
+        .upload-zone-label { font-weight: 700; font-size: 1rem; }
+        .upload-zone-hint  { font-size: 0.82rem; color: var(--text-muted); }
+        .upload-zone-filename { font-size: 0.83rem; color: var(--accent); font-family: 'DM Mono', monospace; margin-top: 0.3rem; }
+
+        .upload-actions { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; flex-wrap: wrap; }
+        .upload-msg { font-size: 0.9rem; }
+        .upload-msg.ok  { color: var(--success); }
+        .upload-msg.err { color: var(--error); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.8rem; border: none; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: all 0.22s; font-family: inherit;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,163,224,0.35); }
+        .btn-secondary { background: var(--bg-input); border: 2px solid var(--border); color: var(--text-light); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+        /* Spinner */
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 5px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Divider */
+        .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+        /* Documents list */
+        .docs-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .docs-header h3 { font-size: 1rem; font-weight: 700; }
+        .docs-count { font-size: 0.8rem; font-family: 'DM Mono', monospace; color: var(--text-muted); }
+
+        .doc-list { display: flex; flex-direction: column; gap: 0.7rem; }
+        .doc-item {
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.9rem 1.1rem;
+            display: flex; align-items: center; gap: 1rem;
+            transition: border-color 0.18s;
+        }
+        .doc-item:hover { border-color: rgba(0,163,224,0.35); }
+        .doc-item-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .doc-item-info { flex: 1; min-width: 0; }
+        .doc-item-name {
+            font-weight: 600; font-size: 0.9rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .doc-item-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
+        .doc-item-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+        .btn-download {
+            padding: 0.4rem 0.9rem; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+            background: rgba(0,163,224,0.12); border: 1.5px solid rgba(0,163,224,0.35); color: #7dd3fc;
+        }
+        .btn-download:hover { background: rgba(0,163,224,0.22); border-color: var(--accent); }
+        .btn-delete-doc {
+            padding: 0.4rem 0.9rem; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+            background: rgba(239,68,68,0.1); border: 1.5px solid rgba(239,68,68,0.3); color: #fca5a5;
+        }
+        .btn-delete-doc:hover { background: rgba(239,68,68,0.2); border-color: var(--error); }
+
+        .campaign-badge {
+            display: inline-block; padding: 0.18rem 0.65rem;
+            border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+        }
+        .badge-ss-oes  { background: rgba(0,163,224,0.18);   color: #7dd3fc; }
+        .badge-ss-sp   { background: rgba(129,140,248,0.18); color: #c4b5fd; }
+        .badge-cal-sp  { background: rgba(16,185,129,0.18);  color: #6ee7b7; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+        .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* Confirm overlay */
+        .overlay {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.75);
+            align-items: center; justify-content: center;
+        }
+        .overlay.active { display: flex; }
+        .confirm-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2.2rem; max-width: 400px; width: 90%;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            animation: popIn 0.18s ease;
+        }
+        @keyframes popIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
+        .confirm-box .confirm-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+        .confirm-box h3 { font-size: 1.15rem; margin-bottom: 0.6rem; color: #fca5a5; }
+        .confirm-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.6rem; line-height: 1.5; }
+        .confirm-actions { display: flex; gap: 0.8rem; justify-content: center; }
+        .btn-confirm-delete {
+            padding: 0.75rem 1.8rem; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+            background: rgba(239,68,68,0.2); border: 2px solid rgba(239,68,68,0.5); color: #fca5a5;
+        }
+        .btn-confirm-delete:hover { background: rgba(239,68,68,0.32); border-color: var(--error); }
+        .btn-confirm-cancel {
+            padding: 0.75rem 1.5rem; border-radius: 10px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+            background: var(--bg-input); border: 2px solid var(--border); color: var(--text-light);
+        }
+        .btn-confirm-cancel:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Filter pills */
+        .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+        .filter-pill {
+            padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; border: 1.5px solid var(--border); background: transparent;
+            color: var(--text-muted); font-family: inherit; transition: all 0.18s;
+        }
+        .filter-pill:hover { border-color: var(--accent); color: var(--accent); }
+        .filter-pill.active { border-color: var(--accent); background: rgba(0,163,224,0.12); color: var(--accent); }
+
+        @media (max-width: 600px) {
+            .campaign-tabs { grid-template-columns: 1fr; }
+            .doc-item-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
+         alt="NGU Logo" class="logo">
+
+    <h1>Contracts</h1>
+    <p class="subtitle">Upload and manage contract documents by campaign</p>
+
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" id="signOutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- ── Upload Card ── -->
+    <div class="card">
+        <div class="card-title">
+            <div class="card-title-icon">📤</div>
+            Upload Contract Document
+        </div>
+
+        <!-- Campaign selector -->
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.9rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">1. Select Campaign</p>
+        <div class="campaign-tabs">
+            <button class="campaign-tab" data-campaign="Sureserve - OES" data-key="ss-oes">
+                <span class="tab-icon">🔵</span>
+                Sureserve - OES
+                <span class="tab-count" id="count-ss-oes">0 docs</span>
+            </button>
+            <button class="campaign-tab" data-campaign="Sureserve - SP" data-key="ss-sp">
+                <span class="tab-icon">🟣</span>
+                Sureserve - SP
+                <span class="tab-count" id="count-ss-sp">0 docs</span>
+            </button>
+            <button class="campaign-tab" data-campaign="Calisen - SP" data-key="cal-sp">
+                <span class="tab-icon">🟢</span>
+                Calisen - SP
+                <span class="tab-count" id="count-cal-sp">0 docs</span>
+            </button>
+        </div>
+
+        <!-- Upload zone -->
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.9rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">2. Choose File</p>
+        <div class="upload-section">
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx">
+                <div class="upload-zone-icon">📄</div>
+                <div class="upload-zone-label">Drop file here or click to browse</div>
+                <div class="upload-zone-hint">PDF, Word, Excel, or image — max 20MB</div>
+                <div class="upload-zone-filename" id="selectedFileName"></div>
+            </div>
+        </div>
+
+        <div class="upload-actions">
+            <button class="btn btn-primary" id="uploadBtn" disabled>Upload Document</button>
+            <span class="upload-msg" id="uploadMsg"></span>
+        </div>
+    </div>
+
+    <!-- ── Documents Card ── -->
+    <div class="card">
+        <div class="card-title">
+            <div class="card-title-icon">📁</div>
+            Contract Documents
+        </div>
+
+        <!-- Filter pills -->
+        <div class="filter-row">
+            <button class="filter-pill active" data-filter="all">All Campaigns</button>
+            <button class="filter-pill" data-filter="Sureserve - OES">Sureserve - OES</button>
+            <button class="filter-pill" data-filter="Sureserve - SP">Sureserve - SP</button>
+            <button class="filter-pill" data-filter="Calisen - SP">Calisen - SP</button>
+        </div>
+
+        <div id="docList">
+            <div class="empty-state">
+                <div class="empty-icon">📂</div>
+                <p>Loading documents…</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Delete confirm overlay ── -->
+<div class="overlay" id="deleteOverlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">🗑️</div>
+        <h3>Delete Document?</h3>
+        <p id="deleteConfirmText">This will permanently remove this document. This cannot be undone.</p>
+        <div class="confirm-actions">
+            <button class="btn-confirm-delete" id="confirmDeleteBtn">Yes, Delete</button>
+            <button class="btn-confirm-cancel" id="cancelDeleteBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+        getFirestore, collection, addDoc, getDocs, doc, deleteDoc,
+        serverTimestamp, query, orderBy
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
+
+    const colRef  = collection(db, "NGUO contract");
+
+    // ── Auth gate ─────────────────────────────────────────────────────────────
+    onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
+
+    let selectedCampaign = null;
+    let selectedFile     = null;
+    let allDocs          = [];
+    let activeFilter     = 'all';
+    let pendingDeleteId  = null;
+    let pendingDeleteStoragePath = null;
+    let pendingDeleteName = '';
+
+    // ── Campaign tab selection ────────────────────────────────────────────────
+    document.querySelectorAll('.campaign-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.campaign-tab').forEach(t => {
+                t.className = 'campaign-tab';
+            });
+            const key = tab.dataset.key;
+            tab.classList.add(`active-${key}`);
+            selectedCampaign = tab.dataset.campaign;
+            checkUploadReady();
+        });
+    });
+
+    // ── File input ────────────────────────────────────────────────────────────
+    const fileInput       = document.getElementById('fileInput');
+    const selectedFileEl  = document.getElementById('selectedFileName');
+    const uploadZone      = document.getElementById('uploadZone');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files[0]) {
+            selectedFile = fileInput.files[0];
+            if (selectedFile.size > 20 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 20MB.');
+                fileInput.value = ''; selectedFile = null;
+                selectedFileEl.textContent = ''; return;
+            }
+            selectedFileEl.textContent = `📎 ${selectedFile.name}`;
+            uploadZone.style.borderStyle = 'solid';
+            uploadZone.style.borderColor = 'var(--accent)';
+        }
+        checkUploadReady();
+    });
+
+    // Drag and drop
+    uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) {
+            const dt = new DataTransfer();
+            dt.items.add(e.dataTransfer.files[0]);
+            fileInput.files = dt.files;
+            fileInput.dispatchEvent(new Event('change'));
+        }
+    });
+
+    function checkUploadReady() {
+        document.getElementById('uploadBtn').disabled = !(selectedCampaign && selectedFile);
+    }
+
+    // ── Upload ────────────────────────────────────────────────────────────────
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+        if (!selectedCampaign || !selectedFile) return;
+
+        const btn   = document.getElementById('uploadBtn');
+        const msgEl = document.getElementById('uploadMsg');
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span>Uploading…';
+        msgEl.textContent = '';
+
+        try {
+            const safeName    = `${Date.now()}_${selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+            const storagePath = `contracts/${selectedCampaign.replace(/\s/g,'_')}/${safeName}`;
+            const storageRef  = ref(storage, storagePath);
+            const snapshot    = await uploadBytes(storageRef, selectedFile);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            await addDoc(colRef, {
+                campaign:    selectedCampaign,
+                fileName:    selectedFile.name,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                fileSize:    selectedFile.size,
+                uploadedAt:  serverTimestamp()
+            });
+
+            msgEl.className   = 'upload-msg ok';
+            msgEl.textContent = `✓ "${selectedFile.name}" uploaded to ${selectedCampaign}`;
+
+            // Reset file
+            fileInput.value = '';
+            selectedFile    = null;
+            selectedFileEl.textContent = '';
+            uploadZone.style.borderStyle = '';
+            uploadZone.style.borderColor = '';
+            checkUploadReady();
+
+            await loadDocs();
+
+        } catch (err) {
+            msgEl.className   = 'upload-msg err';
+            msgEl.textContent = 'Upload failed: ' + err.message;
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Upload Document';
+    });
+
+    // ── Load documents ────────────────────────────────────────────────────────
+    async function loadDocs() {
+        try {
+            const q    = query(colRef, orderBy('uploadedAt', 'desc'));
+            const snap = await getDocs(q);
+            allDocs    = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            updateCounts();
+            renderDocs();
+        } catch (err) {
+            document.getElementById('docList').innerHTML =
+                `<div class="empty-state"><p style="color:var(--error)">Error loading: ${err.message}</p></div>`;
+        }
+    }
+
+    function updateCounts() {
+        ['ss-oes','ss-sp','cal-sp'].forEach(key => {
+            const campaign = { 'ss-oes': 'Sureserve - OES', 'ss-sp': 'Sureserve - SP', 'cal-sp': 'Calisen - SP' }[key];
+            const count    = allDocs.filter(d => d.campaign === campaign).length;
+            document.getElementById(`count-${key}`).textContent = `${count} doc${count !== 1 ? 's' : ''}`;
+        });
+    }
+
+    function renderDocs() {
+        const filtered = activeFilter === 'all' ? allDocs : allDocs.filter(d => d.campaign === activeFilter);
+        const listEl   = document.getElementById('docList');
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <p>${activeFilter === 'all' ? 'No documents uploaded yet.' : `No documents for ${activeFilter} yet.`}</p>
+                </div>`;
+            return;
+        }
+
+        const badgeMap = {
+            'Sureserve - OES': 'badge-ss-oes',
+            'Sureserve - SP':  'badge-ss-sp',
+            'Calisen - SP':    'badge-cal-sp'
+        };
+
+        const iconMap = (name) => {
+            const ext = name.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext))                   return '📄';
+            if (['doc','docx'].includes(ext))            return '📝';
+            if (['xls','xlsx'].includes(ext))            return '📊';
+            if (['jpg','jpeg','png','gif'].includes(ext)) return '🖼️';
+            return '📎';
+        };
+
+        listEl.innerHTML = `<div class="doc-list">${filtered.map(d => {
+            const date     = d.uploadedAt ? new Date(d.uploadedAt.toMillis()).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+            const sizeKB   = d.fileSize ? (d.fileSize / 1024).toFixed(0) + ' KB' : '';
+            return `<div class="doc-item" data-id="${d.id}">
+                <div class="doc-item-icon">${iconMap(d.fileName || '')}</div>
+                <div class="doc-item-info">
+                    <div class="doc-item-name">${d.fileName || 'Unknown file'}</div>
+                    <div class="doc-item-meta">
+                        <span class="campaign-badge ${badgeMap[d.campaign] || ''}">${d.campaign}</span>
+                        &nbsp;·&nbsp;${date}${sizeKB ? '&nbsp;·&nbsp;' + sizeKB : ''}
+                    </div>
+                </div>
+                <div class="doc-item-actions">
+                    <button class="btn-download" onclick="downloadDoc('${d.downloadURL}', '${(d.fileName || 'document').replace(/'/g, "\\'")}')">⬇ Download</button>
+                    <button class="btn-delete-doc" onclick="promptDelete('${d.id}', '${(d.storagePath || '').replace(/'/g,"\\'")}', '${(d.fileName || '').replace(/'/g,"\\'")}')">🗑 Delete</button>
+                </div>
+            </div>`;
+        }).join('')}</div>`;
+    }
+
+    // ── Filter pills ──────────────────────────────────────────────────────────
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            activeFilter = pill.dataset.filter;
+            renderDocs();
+        });
+    });
+
+    // ── Download ──────────────────────────────────────────────────────────────
+    window.downloadDoc = function(url, filename) {
+        const a = document.createElement('a');
+        a.href     = url;
+        a.download = filename;
+        a.target   = '_blank';
+        a.rel      = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
+    // ── Delete flow ───────────────────────────────────────────────────────────
+    window.promptDelete = function(docId, storagePath, fileName) {
+        pendingDeleteId          = docId;
+        pendingDeleteStoragePath = storagePath;
+        pendingDeleteName        = fileName;
+        document.getElementById('deleteConfirmText').textContent =
+            `Are you sure you want to permanently delete "${fileName}"? This cannot be undone.`;
+        document.getElementById('deleteOverlay').classList.add('active');
+    };
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+        if (!pendingDeleteId) return;
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.disabled    = true;
+        btn.textContent = 'Deleting…';
+
+        try {
+            // Delete from Firestore
+            await deleteDoc(doc(db, "NGUO contract", pendingDeleteId));
+
+            // Delete from Storage (best effort — may fail if path is missing)
+            if (pendingDeleteStoragePath) {
+                try { await deleteObject(ref(storage, pendingDeleteStoragePath)); } catch (_) {}
+            }
+
+            document.getElementById('deleteOverlay').classList.remove('active');
+            pendingDeleteId          = null;
+            pendingDeleteStoragePath = null;
+            pendingDeleteName        = '';
+            await loadDocs();
+
+        } catch (err) {
+            alert('Error deleting: ' + err.message);
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Yes, Delete';
+    });
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+        document.getElementById('deleteOverlay').classList.remove('active');
+        pendingDeleteId = null;
+    });
+
+    document.getElementById('deleteOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('deleteOverlay').classList.remove('active');
+            pendingDeleteId = null;
+        }
+    });
+
+    // ── Sign out ──────────────────────────────────────────────────────────────
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    });
+
+    loadDocs();
+</script>
+</body>
+</html>
