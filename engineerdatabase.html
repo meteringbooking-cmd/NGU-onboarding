@@ -644,22 +644,37 @@
         btn.disabled    = true;
         btn.textContent = 'Saving…';
 
-        // Format date nicely for email e.g. "Monday 15 March 2026"
+        // Format date nicely e.g. "Monday 15 March 2026"
         const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
         });
         // Format time nicely e.g. "10:30 AM"
-        const [h, m]   = time.split(':');
-        const hour     = parseInt(h);
+        const [h, m] = time.split(':');
+        const hour   = parseInt(h);
         const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
 
-        // Contract-specific document name
-        const contractDocMap = {
-            'Sureserve - OES': 'Sureserve OES Contract',
-            'Sureserve - SP':  'Sureserve SP Contract',
-            'Calisen - SP':    'Calisen SP Contract'
-        };
-        const contractDoc = contractDocMap[eng.contract] || `${eng.contract || 'your'} Contract`;
+        // Fetch the most recent contract document for this engineer's campaign from NGUO contract
+        let contractLink     = null;
+        let contractFileName = null;
+        try {
+            const contractCol  = collection(db, "NGUO contract");
+            const contractQ    = query(contractCol, where("campaign", "==", eng.contract), orderBy("uploadedAt", "desc"));
+            const contractSnap = await getDocs(contractQ);
+            if (!contractSnap.empty) {
+                const latest     = contractSnap.docs[0].data();
+                contractLink     = latest.downloadURL   || null;
+                contractFileName = latest.fileName      || eng.contract + ' Contract';
+            }
+        } catch (contractErr) {
+            console.warn('Could not fetch contract doc:', contractErr);
+        }
+
+        const contractDisplay = contractFileName
+            ? `${contractFileName}`
+            : `${eng.contract || 'your'} Contract`;
+        const contractLinkText = contractLink
+            ? contractLink
+            : '(No contract document uploaded yet for this campaign)';
 
         try {
             // 1. Save to Firestore
@@ -674,19 +689,20 @@
             // 2. Send email via EmailJS
             try {
                 await emailjs.send('service_g9nll6f', 'template_risvowl', {
-                    to_email:        eng.email,
-                    engineer_name:   eng.name,
-                    interview_date:  dateFormatted,
-                    interview_time:  timeFormatted,
-                    contract_name:   eng.contract || 'your contract',
-                    contract_doc:    contractDoc,
-                    portal_link:     'https://ngu-onboarding.vercel.app/uploaddocuments.html',
-                    login_email:     eng.email,
-                    login_password:  eng.password || '(see your welcome pack)'
+                    to_email:          eng.email,
+                    engineer_name:     eng.name,
+                    interview_date:    dateFormatted,
+                    interview_time:    timeFormatted,
+                    contract_name:     eng.contract || 'your contract',
+                    contract_doc:      contractDisplay,
+                    contract_link:     contractLinkText,
+                    portal_link:       'https://ngu-onboarding.vercel.app/uploaddocuments.html',
+                    login_email:       eng.email,
+                    login_password:    eng.password || '(see your welcome pack)'
                 });
             } catch (emailErr) {
                 console.warn('Email failed (onboarding status was still saved):', emailErr);
-                errorEl.textContent = '⚠️ Onboarding saved but email failed to send: ' + (emailErr.text || emailErr.message || 'unknown error');
+                errorEl.textContent = '⚠️ Onboarding saved but email failed: ' + (emailErr.text || emailErr.message || 'unknown error');
                 btn.disabled    = false;
                 btn.textContent = 'Begin Onboarding';
                 return;
