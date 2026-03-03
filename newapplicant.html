@@ -3,894 +3,832 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU — Application Form</title>
+    <title>NGU — New Applicants</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #005EB8;
-            --accent: #00A3E0;
-            --bg-dark: #0A1628;
-            --bg-card: #1a2942;
-            --bg-input: #0d1f3a;
-            --text-light: #E8EDF2;
-            --text-muted: #8B9AAE;
-            --border: #2a3f5f;
-            --success: #10B981;
-            --error: #EF4444;
-            --warning: #F59E0B;
+            --primary: #005EB8; --accent: #00A3E0;
+            --bg-dark: #0A1628; --bg-card: #1a2942; --bg-input: #0d1f3a;
+            --text-light: #E8EDF2; --text-muted: #8B9AAE; --border: #2a3f5f;
+            --success: #10B981; --error: #EF4444; --warning: #F59E0B;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Work Sans', sans-serif;
             background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            padding: 2rem 1.5rem 4rem;
+            color: var(--text-light); min-height: 100vh; padding: 2rem 1.5rem 4rem;
         }
         body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background:
-                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.08) 0%, transparent 55%),
-                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 55%);
-            pointer-events: none; z-index: -1;
+            content:''; position:fixed; inset:0;
+            background: radial-gradient(circle at 15% 20%, rgba(0,163,224,0.08) 0%, transparent 55%),
+                        radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 55%);
+            pointer-events:none; z-index:-1;
         }
-
-        .container { max-width: 860px; margin: 0 auto; }
-        .logo { max-height: 70px; display: block; margin: 0 auto 2rem; }
-
-        /* Header */
-        .page-header { text-align: center; margin-bottom: 3rem; }
-        .page-header h1 {
-            font-size: 2.2rem; font-weight: 800;
+        .container { max-width: 1100px; margin: 0 auto; }
+        .logo { max-height: 70px; display:block; margin: 0 auto 2rem; }
+        h1 {
+            font-size: 2.1rem; font-weight: 800; text-align: center; margin-bottom: 0.4rem;
             background: linear-gradient(90deg, var(--accent), #60a5fa);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
         }
-        .page-header p { color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 0.88rem; }
+        .subtitle { text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:2.5rem; font-size:0.88rem; }
 
-        /* Section cards */
-        .section {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 2rem 2.2rem 2.4rem;
-            margin-bottom: 1.8rem; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-        .section-header {
-            display: flex; align-items: center; gap: 0.9rem;
-            margin-bottom: 1.8rem; padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .section-num {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; font-weight: 700; flex-shrink: 0; color: white;
-        }
-        .section-header h2 { font-size: 1.15rem; font-weight: 700; }
-        .section-header p  { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.1rem; }
-
-        /* Form elements */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; }
-        .form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
-        .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
-        .form-group.full { grid-column: 1 / -1; }
-        label {
-            font-weight: 600; font-size: 0.88rem; color: var(--text-light);
-        }
-        label .req { color: var(--accent); margin-left: 2px; }
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="date"],
-        select,
-        textarea {
-            width: 100%; padding: 0.85rem 1rem;
-            background: var(--bg-input); border: 2px solid var(--border);
-            border-radius: 10px; color: var(--text-light); font-size: 0.95rem;
-            font-family: inherit; transition: all 0.2s; resize: vertical;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none; border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0,163,224,0.15);
-        }
-        input::placeholder, textarea::placeholder { color: var(--text-muted); }
-        select {
-            appearance: none; -webkit-appearance: none; cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 1rem center;
-            padding-right: 2.5rem;
-        }
-        select option { background: var(--bg-card); color: var(--text-light); }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
-        textarea { min-height: 100px; line-height: 1.5; }
-
-        /* Radio / Yes-No */
-        .radio-group { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .radio-option {
-            display: flex; align-items: center; gap: 0.5rem;
-            background: var(--bg-input); border: 2px solid var(--border);
-            border-radius: 10px; padding: 0.65rem 1.1rem; cursor: pointer;
-            transition: all 0.18s; font-size: 0.92rem; font-weight: 600;
-        }
-        .radio-option input[type="radio"] { display: none; }
-        .radio-option.selected { border-color: var(--accent); background: rgba(0,163,224,0.1); color: var(--accent); }
-        .radio-option:hover { border-color: var(--accent); }
-
-        /* Conditional reveal */
-        .conditional { display: none; margin-top: 1rem; }
-        .conditional.visible { display: block; animation: slideDown 0.2s ease; }
-        @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-
-        /* Rubix engineer email notice */
-        .rubix-notice {
-            display: none;
-            background: rgba(0,163,224,0.08);
-            border: 1.5px solid rgba(0,163,224,0.3);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin-top: 1rem;
-            animation: slideDown 0.22s ease;
-        }
-        .rubix-notice.visible { display: block; }
-        .rubix-notice-label {
-            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; color: var(--accent); margin-bottom: 0.6rem;
-            display: flex; align-items: center; gap: 0.4rem;
+        .protected-bar {
+            background: rgba(0,163,224,0.1); border:1px solid rgba(0,163,224,0.3);
+            border-radius:12px; padding:1rem 1.4rem; margin-bottom:2.5rem;
+            color:#bae6fd; font-size:0.95rem;
+            display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
         }
 
-        /* Upload zone */
-        .upload-zone {
-            border: 2px dashed var(--border); border-radius: 12px;
-            padding: 2rem 1rem; text-align: center; cursor: pointer;
-            transition: all 0.22s; position: relative; background: var(--bg-input);
+        /* Tabs */
+        .tabs { display:flex; gap:0.5rem; margin-bottom:1.8rem; flex-wrap:wrap; }
+        .tab {
+            padding:0.65rem 1.4rem; border-radius:10px; font-size:0.92rem; font-weight:700;
+            cursor:pointer; border:2px solid var(--border); background:var(--bg-input);
+            color:var(--text-muted); transition:all 0.2s; font-family:inherit;
         }
-        .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: rgba(0,163,224,0.05); }
-        .upload-zone.has-file { border-color: var(--success); border-style: solid; background: rgba(16,185,129,0.04); }
-        .upload-zone input[type="file"] { position: absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-        .upload-zone-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-        .upload-zone-label { font-weight: 700; font-size: 0.92rem; margin-bottom: 0.2rem; }
-        .upload-zone-hint  { font-size: 0.78rem; color: var(--text-muted); }
-        .upload-zone-filename { font-size: 0.82rem; color: #6ee7b7; margin-top: 0.4rem; font-family: 'DM Mono', monospace; }
+        .tab:hover { border-color:var(--accent); color:var(--accent); }
+        .tab.active { background:rgba(0,163,224,0.12); border-color:var(--accent); color:var(--accent); }
+        .tab .tab-count {
+            display:inline-block; background:rgba(0,163,224,0.2); color:var(--accent);
+            border-radius:20px; padding:0.1rem 0.55rem; font-size:0.75rem; margin-left:0.4rem;
+        }
+        .tab.tab-historic.active { background:rgba(139,154,174,0.1); border-color:var(--text-muted); color:var(--text-muted); }
+        .tab.tab-historic .tab-count { background:rgba(139,154,174,0.15); color:var(--text-muted); }
+        .tab.tab-onhold.active { background:rgba(245,158,11,0.1); border-color:var(--warning); color:var(--warning); }
+        .tab.tab-onhold .tab-count { background:rgba(245,158,11,0.15); color:var(--warning); }
+        .status-onhold { background:rgba(245,158,11,0.18); color:#fcd34d; }
+        .btn-onhold { background:rgba(245,158,11,0.13); border:2px solid rgba(245,158,11,0.4); color:#fcd34d; }
+        .btn-onhold:hover { background:rgba(245,158,11,0.25); border-color:var(--warning); }
 
-        /* Employment history */
-        .employment-entry {
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.4rem; margin-bottom: 1rem;
-            position: relative;
+        /* Card */
+        .card {
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:16px; padding:2rem 2.2rem;
+            box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-bottom:2rem;
         }
-        .entry-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1.2rem;
-        }
-        .entry-label { font-weight: 700; font-size: 0.9rem; color: var(--accent); font-family: 'DM Mono', monospace; }
-        .btn-remove {
-            background: rgba(239,68,68,0.1); border: 1.5px solid rgba(239,68,68,0.3);
-            color: #fca5a5; border-radius: 8px; padding: 0.3rem 0.75rem;
-            font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit;
-            transition: all 0.18s;
-        }
-        .btn-remove:hover { background: rgba(239,68,68,0.2); border-color: var(--error); }
+        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; flex-wrap:wrap; gap:1rem; }
+        .card-header h2 { font-size:1.2rem; font-weight:700; }
 
-        /* Reference entries */
-        .reference-entry {
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.4rem; margin-bottom: 1rem;
+        /* Table */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:0.9rem; min-width:700px; }
+        th { padding:0.8rem 1rem; text-align:left; background:rgba(0,163,224,0.07); font-weight:700; text-transform:uppercase; font-size:0.76rem; letter-spacing:0.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+        td { padding:0.95rem 1rem; border-bottom:1px solid rgba(42,63,95,0.5); vertical-align:middle; }
+        tbody tr { cursor:pointer; transition:background 0.15s; }
+        tbody tr:hover { background:rgba(0,163,224,0.06); }
+        tbody tr.selected { background:rgba(0,163,224,0.12); outline:1px solid rgba(0,163,224,0.3); }
+
+        .applicant-name { font-weight:700; font-size:0.95rem; color:var(--accent); }
+        .applicant-name:hover { text-decoration:underline; }
+
+        /* Recruiter badge */
+        .recruiter-badge {
+            display:inline-block; padding:0.15rem 0.55rem; border-radius:20px;
+            font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
+            margin-left:0.5rem; vertical-align:middle;
+            background:rgba(168,85,247,0.18); color:#c4b5fd; border:1px solid rgba(168,85,247,0.3);
         }
 
-        /* Signature box */
-        .sig-wrap { position: relative; }
-        .sig-canvas {
-            width: 100%; height: 120px; border: 2px solid var(--border);
-            border-radius: 10px; background: var(--bg-input); display: block;
-            cursor: crosshair; touch-action: none;
-        }
-        .sig-canvas:focus { outline: none; border-color: var(--accent); }
-        .sig-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; }
-        .btn-clear-sig {
-            position: absolute; top: 0.5rem; right: 0.5rem;
-            background: rgba(139,154,174,0.15); border: 1px solid var(--border);
-            color: var(--text-muted); border-radius: 6px; padding: 0.25rem 0.6rem;
-            font-size: 0.75rem; cursor: pointer; font-family: inherit; transition: all 0.18s;
-        }
-        .btn-clear-sig:hover { border-color: var(--accent); color: var(--accent); }
+        .status-badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.75rem; font-weight:700; }
+        .status-new      { background:rgba(0,163,224,0.18); color:#7dd3fc; }
+        .status-proceed  { background:rgba(16,185,129,0.18); color:#6ee7b7; }
+        .status-declined { background:rgba(239,68,68,0.18); color:#fca5a5; }
+
+        .empty-state { text-align:center; padding:3.5rem 1rem; color:var(--text-muted); }
+        .empty-state .ei { font-size:2.5rem; margin-bottom:0.7rem; }
 
         /* Buttons */
-        .btn {
-            padding: 0.85rem 2rem; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 700; cursor: pointer;
-            transition: all 0.22s; font-family: inherit;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-        }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,163,224,0.35); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-add {
-            background: rgba(0,163,224,0.1); border: 2px dashed rgba(0,163,224,0.4);
-            color: var(--accent); border-radius: 10px; padding: 0.65rem 1.4rem;
-            font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit;
-            transition: all 0.18s; width: 100%; margin-top: 0.5rem;
-        }
-        .btn-add:hover { background: rgba(0,163,224,0.16); border-color: var(--accent); }
+        .btn { padding:0.7rem 1.6rem; border:none; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.22s; font-family:inherit; }
+        .btn-secondary { background:var(--bg-input); border:2px solid var(--border); color:var(--text-light); }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-proceed { background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.4); color:#6ee7b7; }
+        .btn-proceed:hover { background:rgba(16,185,129,0.28); border-color:var(--success); }
+        .btn-decline { background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.3); color:#fca5a5; }
+        .btn-decline:hover { background:rgba(239,68,68,0.22); border-color:var(--error); }
 
-        .divider { border: none; border-top: 1px solid var(--border); margin: 1.4rem 0; }
-
-        /* Spinner */
-        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Submit area */
-        .submit-area { text-align: center; margin-top: 2rem; }
-        .submit-msg { font-size: 0.95rem; margin-top: 1rem; min-height: 1.4rem; }
-        .submit-msg.ok  { color: var(--success); }
-        .submit-msg.err { color: var(--error); }
-
-        /* Success screen */
-        #successScreen {
-            display: none; text-align: center; padding: 4rem 2rem;
-            animation: fadeIn 0.4s ease;
+        /* Detail panel */
+        #detailPanel {
+            display:none; background:rgba(5,15,35,0.8); border:2px solid var(--accent);
+            border-radius:16px; padding:2rem 2.2rem; margin-top:1.5rem;
+            animation: slideIn 0.22s ease;
         }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        #successScreen .success-icon { font-size: 4rem; margin-bottom: 1rem; }
-        #successScreen h2 { font-size: 1.8rem; font-weight: 800; color: #6ee7b7; margin-bottom: 0.8rem; }
-        #successScreen p  { color: var(--text-muted); font-size: 1rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        @keyframes slideIn { from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);} }
 
-        @media (max-width: 600px) {
-            .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
-            .section { padding: 1.5rem 1.2rem; }
+        .detail-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.6rem; flex-wrap:wrap; gap:1rem; }
+        .detail-name { font-size:1.4rem; font-weight:800; color:var(--accent); }
+        .detail-pos  { font-size:0.9rem; color:var(--text-muted); margin-top:0.2rem; font-family:'DM Mono',monospace; }
+        .detail-actions { display:flex; gap:0.7rem; flex-wrap:wrap; }
+
+        /* Application detail sections */
+        .detail-section { margin-bottom:1.6rem; }
+        .detail-section-title {
+            font-size:0.75rem; text-transform:uppercase; letter-spacing:0.8px;
+            color:var(--text-muted); font-weight:700; margin-bottom:0.9rem;
+            padding-bottom:0.5rem; border-bottom:1px solid var(--border);
         }
+        .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.8rem; }
+        .detail-field label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-muted); display:block; margin-bottom:0.2rem; }
+        .detail-field span  { font-size:0.9rem; font-weight:600; }
+        .detail-field.full  { grid-column:1/-1; }
+
+        .detail-text {
+            background:var(--bg-input); border:1px solid var(--border); border-radius:8px;
+            padding:0.8rem 1rem; font-size:0.88rem; line-height:1.5; color:var(--text-light);
+            white-space:pre-wrap; word-break:break-word;
+        }
+
+        /* Employment / Reference sub-items */
+        .sub-item {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.6rem;
+        }
+        .sub-item-title { font-weight:700; font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem; font-family:'DM Mono',monospace; }
+
+        /* Signature display */
+        .sig-display {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:10px; padding:0.5rem; max-width:400px;
+        }
+        .sig-display img { width:100%; border-radius:6px; display:block; }
+
+        /* CV link */
+        .cv-link {
+            display:inline-flex; align-items:center; gap:0.5rem;
+            background:rgba(0,163,224,0.1); border:1.5px solid rgba(0,163,224,0.35);
+            border-radius:8px; padding:0.55rem 1rem; color:var(--accent);
+            text-decoration:none; font-size:0.88rem; font-weight:600; transition:all 0.18s;
+        }
+        .cv-link:hover { background:rgba(0,163,224,0.2); border-color:var(--accent); }
+
+        /* Proceed modal extras */
+        .proceed-form { margin-top: 1.2rem; text-align: left; }
+        .proceed-form label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-light); margin-bottom:0.4rem; margin-top:0.9rem; }
+        .proceed-form input,
+        .proceed-form select {
+            width:100%; padding:0.75rem 1rem; background:var(--bg-dark);
+            border:2px solid var(--border); border-radius:10px; color:white;
+            font-size:0.95rem; font-family:inherit; appearance:none; -webkit-appearance:none;
+        }
+        .proceed-form select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer;
+        }
+        .proceed-form select option { background:var(--bg-card); color:var(--text-light); }
+        .proceed-form input:focus,
+        .proceed-form select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
+        .proceed-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        @media(max-width:480px){ .proceed-form .form-row { grid-template-columns:1fr; } }
+
+        /* Confirm overlay */
+        .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; }
+        .overlay.active { display:flex; }
+        .confirm-box {
+            background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
+            padding:2.2rem; max-width:480px; width:90%; text-align:center;
+            box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease;
+        }
+        @keyframes popIn { from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);} }
+        .confirm-box .ci { font-size:2.5rem; margin-bottom:0.7rem; }
+        .confirm-box h3  { font-size:1.1rem; margin-bottom:0.5rem; }
+        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem; line-height:1.5; }
+        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1.4rem; }
+
+        .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
+        @keyframes spin { to{transform:rotate(360deg);} }
+
+        #proceedError { color:var(--error); font-size:0.83rem; margin-top:0.6rem; min-height:1.1rem; }
+
+        @media (max-width:700px) { .detail-grid { grid-template-columns:1fr 1fr; } }
     </style>
 </head>
 <body>
 <div class="container">
     <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
+    <h1>Applicants</h1>
+    <p class="subtitle">Manage and review incoming applications</p>
 
-    <div class="page-header">
-        <h1>Application Form</h1>
-        <p>Complete all sections carefully — all fields marked <span style="color:var(--accent)">*</span> are required</p>
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" id="signOutBtn">Sign Out</button>
+        </div>
     </div>
 
-    <div id="applicationForm">
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" id="tabNew" onclick="switchTab('new')">
+            New Applicants <span class="tab-count" id="countNew">0</span>
+        </button>
+        <button class="tab tab-onhold" id="tabOnHold" onclick="switchTab('onhold')">
+            On Hold <span class="tab-count" id="countOnHold">0</span>
+        </button>
+        <button class="tab tab-historic" id="tabHistoric" onclick="switchTab('historic')">
+            Historic Applicants <span class="tab-count" id="countHistoric">0</span>
+        </button>
+    </div>
 
-        <!-- ── 1. POSITION ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">1</div>
-                <div><h2>Position Applied For</h2></div>
+    <!-- New Applicants -->
+    <div id="panelNew">
+        <div class="card">
+            <div class="card-header">
+                <h2>New Applicants</h2>
+                <button class="btn btn-secondary" style="padding:0.45rem 1rem;font-size:0.85rem;" id="refreshBtn">↻ Refresh</button>
             </div>
-            <div class="form-group">
-                <label>Position <span class="req">*</span></label>
-                <input type="text" id="position" placeholder="e.g. Field Engineer, Smart Meter Installer…">
-            </div>
+            <div id="newTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanel"></div>
         </div>
+    </div>
 
-        <!-- ── 2. PERSONAL DETAILS ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">2</div>
-                <div><h2>Personal Details</h2></div>
+    <!-- On Hold -->
+    <div id="panelOnHold" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <h2>On Hold Applicants</h2>
             </div>
-            <div class="form-grid-3" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Title <span class="req">*</span></label>
-                    <select id="title">
-                        <option value="" disabled selected>Select…</option>
-                        <option>Mr</option><option>Mrs</option><option>Ms</option><option>Miss</option><option>Dr</option><option>Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Forename <span class="req">*</span></label>
-                    <input type="text" id="forename" placeholder="First name">
-                </div>
-                <div class="form-group">
-                    <label>Surname <span class="req">*</span></label>
-                    <input type="text" id="surname" placeholder="Last name">
+            <div id="onholdTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanelOnHold"></div>
+        </div>
+    </div>
+
+    <!-- Historic -->
+    <div id="panelHistoric" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <h2>Historic Applicants</h2>
+                <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+                    <span style="font-size:0.82rem;color:var(--text-muted);">Filter:</span>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterAll" onclick="filterHistoric('all')">All</button>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterProceed" onclick="filterHistoric('proceed')">Proceeded</button>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterDeclined" onclick="filterHistoric('declined')">Declined</button>
                 </div>
             </div>
-            <div class="form-grid" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Email Address <span class="req">*</span></label>
-                    <input type="email" id="email" placeholder="you@example.com">
-                    <!-- Rubix engineer email — shown only when @rubix.com is detected -->
-                    <div class="rubix-notice" id="rubixNotice">
-                        <div class="rubix-notice-label">🔗 Rubix Recruitment</div>
-                        <div class="form-group">
-                            <label>Engineer's Personal Email <span class="req">*</span></label>
-                            <input type="email" id="engineerEmail" placeholder="engineer@personal.com">
-                            <span style="font-size:0.78rem; color:var(--text-muted); margin-top:0.3rem;">Please provide the engineer's personal email address so we can contact them directly.</span>
-                        </div>
+            <div id="historicTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanelHistoric"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Proceed modal ── -->
+<div class="overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="ci" id="confirmIcon">✅</div>
+        <h3 id="confirmTitle">Proceed with Applicant?</h3>
+        <p id="confirmText">This will move the applicant to historic records and add them to the Engineer Database.</p>
+
+        <div id="proceedFields" style="display:none;">
+            <div class="proceed-form">
+                <div class="form-row">
+                    <div>
+                        <label>Contract</label>
+                        <select id="proceedContract">
+                            <option value="" disabled selected>Select contract…</option>
+                            <option value="Sureserve - OES">Sureserve - OES</option>
+                            <option value="Sureserve - SP">Sureserve - SP</option>
+                            <option value="Calisen - SP">Calisen - SP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>FTL</label>
+                        <select id="proceedFTL">
+                            <option value="" disabled selected>Select FTL…</option>
+                            <option value="Richard Wiecko">Richard Wiecko</option>
+                            <option value="Scott Carson">Scott Carson</option>
+                            <option value="Stuart Whyte">Stuart Whyte</option>
+                            <option value="Tom Green">Tom Green</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Telephone Number <span class="req">*</span></label>
-                    <input type="tel" id="phone" placeholder="+44 7700 000000">
+                <div class="form-row">
+                    <div>
+                        <label>Proposed Start Date</label>
+                        <input type="date" id="proceedStartDate">
+                    </div>
+                    <div>
+                        <label>Portal Password</label>
+                        <input type="text" id="proceedPassword" placeholder="Set a password">
+                    </div>
                 </div>
             </div>
-            <div class="form-grid">
-                <div class="form-group full">
-                    <label>Address <span class="req">*</span></label>
-                    <input type="text" id="address" placeholder="Street address">
-                </div>
-                <div class="form-group">
-                    <label>Postcode <span class="req">*</span></label>
-                    <input type="text" id="postcode" placeholder="e.g. SW1A 1AA" style="text-transform:uppercase;">
-                </div>
-            </div>
+            <div id="proceedError"></div>
         </div>
 
-        <!-- ── 3. REASONABLE ADJUSTMENTS ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">3</div>
-                <div>
-                    <h2>Reasonable Adjustments</h2>
-                    <p>Interview accommodations</p>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-bottom:1.4rem;">
-                <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>disability</strong>? <span class="req">*</span></label>
-                <div class="radio-group" id="disabilityGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="disabilityYesLabel">
-                        <input type="radio" name="disability" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="disabilityNoLabel">
-                        <input type="radio" name="disability" value="no"> No
-                    </label>
-                </div>
-                <div class="conditional" id="disabilityDetails">
-                    <textarea id="disabilityText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you in your application or with our recruitment process…" style="min-height:90px;"></textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>medical condition</strong>? <span class="req">*</span></label>
-                <div class="radio-group" id="medicalGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="medicalYesLabel">
-                        <input type="radio" name="medical" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="medicalNoLabel">
-                        <input type="radio" name="medical" value="no"> No
-                    </label>
-                </div>
-                <div class="conditional" id="medicalDetails">
-                    <textarea id="medicalText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you in your application or with our recruitment process…" style="min-height:90px;"></textarea>
-                </div>
-            </div>
+        <div class="confirm-actions">
+            <button class="btn" id="confirmYesBtn" style="padding:0.7rem 1.6rem;">Confirm</button>
+            <button class="btn btn-secondary" id="confirmNoBtn" style="padding:0.7rem 1.4rem;">Cancel</button>
         </div>
-
-        <!-- ── 4. CONVICTIONS ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">4</div>
-                <div><h2>Criminal Convictions</h2></div>
-            </div>
-            <div class="form-group">
-                <label>Have you any convictions that are not spent under the Rehabilitation of Offenders Act? <span class="req">*</span></label>
-                <div class="radio-group" id="convictionsGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="convictionsYesLabel">
-                        <input type="radio" name="convictions" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="convictionsNoLabel">
-                        <input type="radio" name="convictions" value="no"> No
-                    </label>
-                </div>
-                <div class="conditional" id="convictionsDetails">
-                    <textarea id="convictionsText" placeholder="Please provide further details…" style="min-height:90px;"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── 5. WORK PERMIT ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">5</div>
-                <div><h2>Right to Work</h2></div>
-            </div>
-            <div class="form-group">
-                <label>Do you need a work permit to be employed in the UK? <span class="req">*</span></label>
-                <div class="radio-group" id="workPermitGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="workPermitYesLabel">
-                        <input type="radio" name="workPermit" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="workPermitNoLabel">
-                        <input type="radio" name="workPermit" value="no"> No
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── 6. QUALIFICATIONS ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">6</div>
-                <div>
-                    <h2>Qualifications</h2>
-                    <p>I confirm I have the minimum required qualifications for the role</p>
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom:1.4rem;">
-                <label>Please specify your qualifications below <span class="req">*</span></label>
-                <textarea id="qualifications" placeholder="List your relevant qualifications, certifications and training…" style="min-height:110px;"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Upload CV <span class="req">*</span></label>
-                <div class="upload-zone" id="cvZone">
-                    <input type="file" id="cvFile" accept=".pdf,.doc,.docx">
-                    <div class="upload-zone-icon">📄</div>
-                    <div class="upload-zone-label">Drop your CV here or click to browse</div>
-                    <div class="upload-zone-hint">PDF or Word document — max 10MB</div>
-                    <div class="upload-zone-filename" id="cvFileName"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── 7. EMPLOYMENT HISTORY ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">7</div>
-                <div>
-                    <h2>Employment History</h2>
-                    <p>Please provide details for the past 5 years</p>
-                </div>
-            </div>
-            <div id="employmentList"></div>
-            <button class="btn-add" id="addEmploymentBtn">+ Add Employment</button>
-        </div>
-
-        <!-- ── 8. REFERENCES ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">8</div>
-                <div>
-                    <h2>References</h2>
-                    <p>Please provide two referees — one should be your most recent employer. By providing their details, you consent to us contacting them.</p>
-                </div>
-            </div>
-
-            <div class="reference-entry">
-                <div class="entry-label" style="margin-bottom:1.1rem;">Referee 1</div>
-                <div class="form-grid" style="margin-bottom:1rem;">
-                    <div class="form-group"><label>Company Name <span class="req">*</span></label><input type="text" class="ref-company" placeholder="Company name"></div>
-                    <div class="form-group"><label>Name <span class="req">*</span></label><input type="text" class="ref-name" placeholder="Referee's full name"></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Position <span class="req">*</span></label><input type="text" class="ref-position" placeholder="Job title"></div>
-                    <div class="form-group"><label>Telephone <span class="req">*</span></label><input type="tel" class="ref-phone" placeholder="+44 7700 000000"></div>
-                    <div class="form-group"><label>Email <span class="req">*</span></label><input type="email" class="ref-email" placeholder="referee@company.com"></div>
-                </div>
-            </div>
-
-            <div class="reference-entry">
-                <div class="entry-label" style="margin-bottom:1.1rem;">Referee 2</div>
-                <div class="form-grid" style="margin-bottom:1rem;">
-                    <div class="form-group"><label>Company Name <span class="req">*</span></label><input type="text" class="ref-company" placeholder="Company name"></div>
-                    <div class="form-group"><label>Name <span class="req">*</span></label><input type="text" class="ref-name" placeholder="Referee's full name"></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Position <span class="req">*</span></label><input type="text" class="ref-position" placeholder="Job title"></div>
-                    <div class="form-group"><label>Telephone <span class="req">*</span></label><input type="tel" class="ref-phone" placeholder="+44 7700 000000"></div>
-                    <div class="form-group"><label>Email <span class="req">*</span></label><input type="email" class="ref-email" placeholder="referee@company.com"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── 9. INTERVIEW AVAILABILITY ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">9</div>
-                <div><h2>Interview Availability</h2></div>
-            </div>
-            <div class="form-group">
-                <label>Please tell us if there are any dates you would be unavailable for interview</label>
-                <textarea id="unavailability" placeholder="e.g. 15–22 March, afternoons only in April…" style="min-height:80px;"></textarea>
-            </div>
-        </div>
-
-        <!-- ── 10. DECLARATION ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">10</div>
-                <div><h2>Declaration</h2></div>
-            </div>
-            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:1.6rem;">
-                I confirm that the information I have provided on this form is correct and I accept that providing deliberately false information could result in my dismissal.
-            </p>
-            <div class="form-grid" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Applicant Name <span class="req">*</span></label>
-                    <input type="text" id="declarationName" placeholder="Your full name">
-                </div>
-                <div class="form-group">
-                    <label>Date <span class="req">*</span></label>
-                    <input type="date" id="declarationDate">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Signature <span class="req">*</span></label>
-                <div class="sig-wrap">
-                    <canvas class="sig-canvas" id="sigCanvas1" width="800" height="120"></canvas>
-                    <button type="button" class="btn-clear-sig" onclick="clearSig('sigCanvas1')">Clear</button>
-                </div>
-                <p class="sig-hint">Sign above using your mouse or finger</p>
-            </div>
-        </div>
-
-        <!-- ── 11. CONSENT ── -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-num">11</div>
-                <div><h2>Data Consent</h2></div>
-            </div>
-            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:1.6rem;">
-                I hereby give my consent for the contact information provided on this form to be held on computer or other relevant filing systems and to be shared with other accredited organisations or agencies for recruitment opportunities.
-            </p>
-            <div class="form-grid" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Applicant Name <span class="req">*</span></label>
-                    <input type="text" id="consentName" placeholder="Your full name">
-                </div>
-                <div class="form-group">
-                    <label>Date <span class="req">*</span></label>
-                    <input type="date" id="consentDate">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Signature <span class="req">*</span></label>
-                <div class="sig-wrap">
-                    <canvas class="sig-canvas" id="sigCanvas2" width="800" height="120"></canvas>
-                    <button type="button" class="btn-clear-sig" onclick="clearSig('sigCanvas2')">Clear</button>
-                </div>
-                <p class="sig-hint">Sign above using your mouse or finger</p>
-            </div>
-        </div>
-
-        <div class="submit-area">
-            <button class="btn btn-primary" id="submitBtn" style="min-width:220px; font-size:1.05rem;">Submit Application</button>
-            <div class="submit-msg" id="submitMsg"></div>
-        </div>
-
-    </div><!-- end applicationForm -->
-
-    <!-- Success -->
-    <div id="successScreen">
-        <div class="success-icon">🎉</div>
-        <h2>Application Submitted!</h2>
-        <p>Thank you for applying. We have received your application and will be in touch shortly regarding the next steps.</p>
     </div>
-
-</div><!-- end container -->
+</div>
 
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, addDoc, serverTimestamp }
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, getDocs, doc, addDoc, updateDoc, serverTimestamp, query, orderBy }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
-        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
-        authDomain: "oesperformance-a54c0.firebaseapp.com",
-        projectId: "oesperformance-a54c0",
-        storageBucket: "oesperformance-a54c0.firebasestorage.app",
-        messagingSenderId: "484894102454",
-        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+        apiKey:"AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain:"oesperformance-a54c0.firebaseapp.com",
+        projectId:"oesperformance-a54c0",
+        storageBucket:"oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId:"484894102454",
+        appId:"1:484894102454:web:17535ee497eac2d90d6717"
     };
 
-    const app     = initializeApp(firebaseConfig);
-    const db      = getFirestore(app);
-    const storage = getStorage(app);
-    const colRef  = collection(db, "NGUO New Applicants");
+    const app    = initializeApp(firebaseConfig);
+    const auth   = getAuth(app);
+    const db     = getFirestore(app);
+    const col    = collection(db, "NGUO New Applicants");
+    const engCol = collection(db, "NGUO - Engineers");
 
-    // ── Rubix detection ───────────────────────────────────────────────────────
-    const emailInput   = document.getElementById('email');
-    const rubixNotice  = document.getElementById('rubixNotice');
+    onAuthStateChanged(auth, u => { if (!u) window.location.href = 'index.html'; });
 
-    function isRubix(email) {
-        return email.trim().toLowerCase().endsWith('@rubix.com');
+    let allApplicants  = [];
+    let activeTab      = 'new';
+    let selectedId     = null;
+    let historicFilter = 'all';
+    let pendingAction  = null;
+
+    // ── Recruiter badge HTML helper ───────────────────────────────────────────
+    function recruiterBadge(a) {
+        if (!a.recruiter) return '';
+        const label = a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1);
+        return `<span class="recruiter-badge">${label}</span>`;
     }
 
-    emailInput.addEventListener('input', () => {
-        const show = isRubix(emailInput.value);
-        rubixNotice.classList.toggle('visible', show);
-        if (!show) document.getElementById('engineerEmail').value = '';
-    });
-
-    // ── Radio yes/no helpers ──────────────────────────────────────────────────
-    function setupRadio(name, yesId, noId, conditionalId) {
-        const radios = document.querySelectorAll(`input[name="${name}"]`);
-        radios.forEach(r => {
-            r.addEventListener('change', () => {
-                document.getElementById(yesId).classList.toggle('selected', r.value === 'yes');
-                document.getElementById(noId).classList.toggle('selected',  r.value === 'no');
-                if (conditionalId) {
-                    document.getElementById(conditionalId).classList.toggle('visible', r.value === 'yes');
-                }
-            });
-        });
-        [yesId, noId].forEach(id => {
-            document.getElementById(id).addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                radio.checked = true;
-                radio.dispatchEvent(new Event('change'));
-            });
-        });
+    // ── Name cell: name + optional recruiter badge ────────────────────────────
+    function nameCellHTML(a) {
+        return `<span class="applicant-name">${fullName(a)}</span>${recruiterBadge(a)}`;
     }
 
-    setupRadio('disability', 'disabilityYesLabel', 'disabilityNoLabel', 'disabilityDetails');
-    setupRadio('medical',    'medicalYesLabel',    'medicalNoLabel',    'medicalDetails');
-    setupRadio('convictions','convictionsYesLabel','convictionsNoLabel','convictionsDetails');
-    setupRadio('workPermit', 'workPermitYesLabel', 'workPermitNoLabel', null);
-
-    function getRadioValue(name) {
-        const r = document.querySelector(`input[name="${name}"]:checked`);
-        return r ? r.value : '';
-    }
-
-    // ── CV upload zone ────────────────────────────────────────────────────────
-    const cvZone = document.getElementById('cvZone');
-    const cvFile = document.getElementById('cvFile');
-    cvFile.addEventListener('change', () => handleCVSelect(cvFile.files[0]));
-    cvZone.addEventListener('dragover',  e => { e.preventDefault(); cvZone.classList.add('dragover'); });
-    cvZone.addEventListener('dragleave', () => cvZone.classList.remove('dragover'));
-    cvZone.addEventListener('drop', e => {
-        e.preventDefault(); cvZone.classList.remove('dragover');
-        if (e.dataTransfer.files[0]) {
-            const dt = new DataTransfer();
-            dt.items.add(e.dataTransfer.files[0]);
-            cvFile.files = dt.files;
-            handleCVSelect(e.dataTransfer.files[0]);
+    // ── Load all ──────────────────────────────────────────────────────────────
+    async function loadAll() {
+        try {
+            const q    = query(col, orderBy('submittedAt', 'desc'));
+            const snap = await getDocs(q);
+            allApplicants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderNew();
+            renderOnHold();
+            renderHistoric();
+            updateCounts();
+        } catch (err) {
+            document.getElementById('newTable').innerHTML = `<div class="empty-state"><p style="color:var(--error)">Error: ${err.message}</p></div>`;
         }
-    });
-    function handleCVSelect(file) {
-        if (!file) return;
-        if (file.size > 10 * 1024 * 1024) { alert('CV file too large — max 10MB.'); return; }
-        document.getElementById('cvFileName').textContent = `📎 ${file.name}`;
-        cvZone.classList.add('has-file');
     }
 
-    // ── Employment history ────────────────────────────────────────────────────
-    let empCount = 0;
-    function addEmployment() {
-        empCount++;
-        const div = document.createElement('div');
-        div.className = 'employment-entry';
-        div.dataset.emp = empCount;
-        div.innerHTML = `
-            <div class="entry-header">
-                <span class="entry-label">Employment ${empCount}</span>
-                <button type="button" class="btn-remove" onclick="removeEntry(this, 'employment-entry')">Remove</button>
-            </div>
-            <div class="form-grid" style="margin-bottom:1rem;">
-                <div class="form-group"><label>Company Name</label><input type="text" class="emp-company" placeholder="Company name"></div>
-                <div class="form-group"><label>Position</label><input type="text" class="emp-position" placeholder="Job title held"></div>
-            </div>
-            <div class="form-group">
-                <label>Reason for Leaving</label>
-                <textarea class="emp-reason" placeholder="Reason for leaving…" style="min-height:70px;"></textarea>
-            </div>`;
-        document.getElementById('employmentList').appendChild(div);
+    function updateCounts() {
+        const newOnes  = allApplicants.filter(a => !a.status || a.status === 'new');
+        const onhold   = allApplicants.filter(a => a.status === 'onhold');
+        const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
+        document.getElementById('countNew').textContent      = newOnes.length;
+        document.getElementById('countOnHold').textContent   = onhold.length;
+        document.getElementById('countHistoric').textContent = historic.length;
     }
-    addEmployment();
-    document.getElementById('addEmploymentBtn').addEventListener('click', addEmployment);
 
-    window.removeEntry = function(btn, cls) {
-        const entry = btn.closest('.' + cls);
-        if (entry) entry.remove();
-    };
+    function fmtDate(ts) {
+        if (!ts) return '—';
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    }
 
-    // ── Signature canvases ────────────────────────────────────────────────────
-    function setupCanvas(id) {
-        const canvas = document.getElementById(id);
-        const ctx    = canvas.getContext('2d');
-        let drawing  = false;
-        let lastX = 0, lastY = 0;
+    function fullName(a) {
+        if (a.fullName) return a.fullName;
+        const p = a.personalDetails || {};
+        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
+    }
 
-        function getPos(e) {
-            const r = canvas.getBoundingClientRect();
-            const scaleX = canvas.width  / r.width;
-            const scaleY = canvas.height / r.height;
-            if (e.touches) {
-                return [(e.touches[0].clientX - r.left) * scaleX, (e.touches[0].clientY - r.top) * scaleY];
-            }
-            return [(e.clientX - r.left) * scaleX, (e.clientY - r.top) * scaleY];
+    // ── Render new applicants table ───────────────────────────────────────────
+    function renderNew() {
+        const list = allApplicants.filter(a => !a.status || a.status === 'new');
+        const el   = document.getElementById('newTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>No new applicants.</p></div>';
+            closeDetail('detailPanel');
+            return;
         }
-
-        ctx.strokeStyle = '#00A3E0';
-        ctx.lineWidth   = 2.5;
-        ctx.lineCap     = 'round';
-        ctx.lineJoin    = 'round';
-
-        canvas.addEventListener('mousedown',  e => { drawing = true; [lastX, lastY] = getPos(e); });
-        canvas.addEventListener('mousemove',  e => {
-            if (!drawing) return;
-            const [x, y] = getPos(e);
-            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-            [lastX, lastY] = [x, y];
-        });
-        canvas.addEventListener('mouseup',   () => drawing = false);
-        canvas.addEventListener('mouseleave',() => drawing = false);
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
-        canvas.addEventListener('touchmove',  e => {
-            e.preventDefault();
-            if (!drawing) return;
-            const [x, y] = getPos(e);
-            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-            [lastX, lastY] = [x, y];
-        }, { passive: false });
-        canvas.addEventListener('touchend', () => drawing = false);
+        el.innerHTML = `
+            <div class="table-wrap"><table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','new')">
+                        <td>${nameCellHTML(a)}</td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-new">New</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table></div>`;
     }
 
-    setupCanvas('sigCanvas1');
-    setupCanvas('sigCanvas2');
-
-    window.clearSig = function(id) {
-        const c = document.getElementById(id);
-        c.getContext('2d').clearRect(0, 0, c.width, c.height);
-    };
-
-    function isCanvasBlank(canvas) {
-        const blank = document.createElement('canvas');
-        blank.width = canvas.width; blank.height = canvas.height;
-        return canvas.toDataURL() === blank.toDataURL();
+    // ── Render on hold table ──────────────────────────────────────────────────
+    function renderOnHold() {
+        const list = allApplicants.filter(a => a.status === 'onhold');
+        const el   = document.getElementById('onholdTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
+            closeDetail('detailPanelOnHold');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap"><table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
+                        <td>${nameCellHTML(a)}</td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table></div>`;
     }
 
-    // ── Submit ────────────────────────────────────────────────────────────────
-    document.getElementById('submitBtn').addEventListener('click', async () => {
-        const btn   = document.getElementById('submitBtn');
-        const msgEl = document.getElementById('submitMsg');
-        msgEl.textContent = '';
+    // ── Render historic table ─────────────────────────────────────────────────
+    function renderHistoric() {
+        let list = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
+        if (historicFilter === 'proceed')  list = list.filter(a => a.status === 'proceed');
+        if (historicFilter === 'declined') list = list.filter(a => a.status === 'declined');
 
-        const position       = document.getElementById('position').value.trim();
-        const title          = document.getElementById('title').value;
-        const forename       = document.getElementById('forename').value.trim();
-        const surname        = document.getElementById('surname').value.trim();
-        const email          = document.getElementById('email').value.trim();
-        const phone          = document.getElementById('phone').value.trim();
-        const address        = document.getElementById('address').value.trim();
-        const postcode       = document.getElementById('postcode').value.trim();
-        const disability     = getRadioValue('disability');
-        const medical        = getRadioValue('medical');
-        const convictions    = getRadioValue('convictions');
-        const workPermit     = getRadioValue('workPermit');
-        const qualifications = document.getElementById('qualifications').value.trim();
-        const declarationName = document.getElementById('declarationName').value.trim();
-        const declarationDate = document.getElementById('declarationDate').value;
-        const consentName    = document.getElementById('consentName').value.trim();
-        const consentDate    = document.getElementById('consentDate').value;
+        const el = document.getElementById('historicTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">🗂️</div><p>No historic applicants yet.</p></div>';
+            closeDetail('detailPanelHistoric');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap"><table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','historic')">
+                        <td>${nameCellHTML(a)}</td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}">
+                            ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
+                        </span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table></div>`;
+    }
 
-        // Rubix-specific
-        const rubixDetected  = isRubix(email);
-        const engineerEmail  = rubixDetected ? document.getElementById('engineerEmail').value.trim() : '';
+    // ── Select applicant → show detail ────────────────────────────────────────
+    window.selectApplicant = function(id, panel) {
+        const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
+        const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
 
-        const missing = [];
-        if (!position)        missing.push('Position Applied For');
-        if (!title)           missing.push('Title');
-        if (!forename)        missing.push('Forename');
-        if (!surname)         missing.push('Surname');
-        if (!email)           missing.push('Email');
-        if (!phone)           missing.push('Telephone');
-        if (!address)         missing.push('Address');
-        if (!postcode)        missing.push('Postcode');
-        if (!disability)      missing.push('Disability adjustment question');
-        if (!medical)         missing.push('Medical adjustment question');
-        if (!convictions)     missing.push('Convictions question');
-        if (!workPermit)      missing.push('Work permit question');
-        if (!qualifications)  missing.push('Qualifications');
-        if (!cvFile.files[0]) missing.push('CV upload');
-        if (!declarationName) missing.push('Declaration name');
-        if (!declarationDate) missing.push('Declaration date');
-        if (!consentName)     missing.push('Consent name');
-        if (!consentDate)     missing.push('Consent date');
-        if (isCanvasBlank(document.getElementById('sigCanvas1'))) missing.push('Declaration signature');
-        if (isCanvasBlank(document.getElementById('sigCanvas2'))) missing.push('Consent signature');
-        // Require engineer email if Rubix
-        if (rubixDetected && !engineerEmail) missing.push("Engineer's personal email");
-
-        if (missing.length > 0) {
-            msgEl.className   = 'submit-msg err';
-            msgEl.textContent = `Please complete: ${missing.slice(0,3).join(', ')}${missing.length > 3 ? ` and ${missing.length - 3} more…` : '.'}`;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (selectedId === id) {
+            selectedId = null;
+            closeDetail(panelId);
+            document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => r.classList.remove('selected'));
             return;
         }
 
+        selectedId = id;
+        document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => {
+            r.classList.toggle('selected', r.dataset.id === id);
+        });
+
+        const a = allApplicants.find(x => x.id === id);
+        if (!a) return;
+        renderDetailPanel(a, panelId, panel === 'new' || panel === 'onhold');
+    };
+
+    function closeDetail(panelId) {
+        const p = document.getElementById(panelId);
+        p.style.display = 'none';
+        p.innerHTML = '';
+    }
+
+    function renderDetailPanel(a, panelId, showActions) {
+        const p    = a.personalDetails || {};
+        const ra   = a.reasonableAdjustments || {};
+        const dec  = a.declaration || {};
+        const con  = a.consent     || {};
+        const emp  = a.employment  || [];
+        const refs = a.references  || [];
+
+        const yesNo = v => v === 'yes' ? '<span style="color:var(--warning)">Yes</span>' : '<span style="color:#6ee7b7">No</span>';
+
+        const actionBtns = showActions ? `
+            <div class="detail-actions">
+                <button class="btn btn-proceed" onclick="triggerAction('${a.id}','proceed')">✓ Proceed with Applicant</button>
+                <button class="btn btn-onhold" onclick="triggerAction('${a.id}','onhold')">⏸ Place On Hold</button>
+                <button class="btn btn-decline" onclick="triggerAction('${a.id}','decline')">✗ Decline Applicant</button>
+                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
+            </div>` : `
+            <div class="detail-actions">
+                <span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}" style="font-size:0.9rem;padding:0.35rem 1rem;">
+                    ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
+                </span>
+                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
+            </div>`;
+
+        const empHTML = emp.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No employment history provided.</p>' :
+            emp.map((e,i) => `
+                <div class="sub-item">
+                    <div class="sub-item-title">Employment ${i+1}</div>
+                    <div class="detail-grid">
+                        <div class="detail-field"><label>Company</label><span>${e.company||'—'}</span></div>
+                        <div class="detail-field"><label>Position</label><span>${e.position||'—'}</span></div>
+                        <div class="detail-field full"><label>Reason for Leaving</label><span>${e.reason||'—'}</span></div>
+                    </div>
+                </div>`).join('');
+
+        const refHTML = refs.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No references provided.</p>' :
+            refs.map(r => `
+                <div class="sub-item">
+                    <div class="sub-item-title">${r.label||'Referee'}</div>
+                    <div class="detail-grid">
+                        <div class="detail-field"><label>Company</label><span>${r.company||'—'}</span></div>
+                        <div class="detail-field"><label>Name</label><span>${r.name||'—'}</span></div>
+                        <div class="detail-field"><label>Position</label><span>${r.position||'—'}</span></div>
+                        <div class="detail-field"><label>Telephone</label><span>${r.phone||'—'}</span></div>
+                        <div class="detail-field"><label>Email</label><span>${r.email||'—'}</span></div>
+                    </div>
+                </div>`).join('');
+
+        const sigHTML = (sig, label) => sig && sig.startsWith('data:')
+            ? `<div class="sig-display"><img src="${sig}" alt="${label}"></div>`
+            : `<span style="color:var(--text-muted);font-size:0.85rem;">No signature captured</span>`;
+
+        const cvHTML = a.cv?.url
+            ? `<a href="${a.cv.url}" target="_blank" rel="noopener" class="cv-link">📄 ${a.cv.filename || 'Download CV'}</a>`
+            : `<span style="color:var(--text-muted);font-size:0.85rem;">No CV uploaded</span>`;
+
+        // Recruiter section — only shown if recruiter field is present
+        const recruiterSection = a.recruiter ? `
+            <div class="detail-section">
+                <div class="detail-section-title">Recruiter</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Agency</label><span>${a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1)}</span></div>
+                    <div class="detail-field"><label>Recruiter Email</label><span>${a.recruiterEmail || '—'}</span></div>
+                    <div class="detail-field"><label>Engineer's Personal Email</label><span>${a.engineerEmail || '—'}</span></div>
+                </div>
+            </div>` : '';
+
+        const panel = document.getElementById(panelId);
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <div class="detail-top">
+                <div>
+                    <div class="detail-name">${fullName(a)}${recruiterBadge(a)}</div>
+                    <div class="detail-pos">${a.position || '—'} · Applied ${fmtDate(a.submittedAt)}</div>
+                </div>
+                ${actionBtns}
+            </div>
+
+            ${recruiterSection}
+
+            <div class="detail-section">
+                <div class="detail-section-title">Personal Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Title</label><span>${p.title||'—'}</span></div>
+                    <div class="detail-field"><label>Forename</label><span>${p.forename||'—'}</span></div>
+                    <div class="detail-field"><label>Surname</label><span>${p.surname||'—'}</span></div>
+                    <div class="detail-field"><label>Email</label><span>${p.email||'—'}</span></div>
+                    <div class="detail-field"><label>Telephone</label><span>${p.phone||'—'}</span></div>
+                    <div class="detail-field"><label>Address</label><span>${p.address||'—'}</span></div>
+                    <div class="detail-field"><label>Postcode</label><span>${p.postcode||'—'}</span></div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Reasonable Adjustments</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Disability Adjustment Required</label><span>${yesNo(ra.disability)}</span></div>
+                    ${ra.disability==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.disabilityText||'—'}</div></div>`:''}
+                    <div class="detail-field"><label>Medical Adjustment Required</label><span>${yesNo(ra.medical)}</span></div>
+                    ${ra.medical==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.medicalText||'—'}</div></div>`:''}
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Background</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Unspent Convictions</label><span>${yesNo(a.convictions)}</span></div>
+                    ${a.convictions==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${a.convictionsText||'—'}</div></div>`:''}
+                    <div class="detail-field"><label>Requires Work Permit</label><span>${yesNo(a.workPermit)}</span></div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Qualifications</div>
+                <div class="detail-text">${a.qualifications||'—'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">CV</div>
+                ${cvHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Employment History (5 Years)</div>
+                ${empHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">References</div>
+                ${refHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Interview Availability</div>
+                <div class="detail-text">${a.unavailability||'No unavailable dates noted'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Declaration</div>
+                <div class="detail-grid" style="margin-bottom:0.8rem;">
+                    <div class="detail-field"><label>Name</label><span>${dec.name||'—'}</span></div>
+                    <div class="detail-field"><label>Date</label><span>${dec.date||'—'}</span></div>
+                </div>
+                ${sigHTML(dec.signature, 'Declaration signature')}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Data Consent</div>
+                <div class="detail-grid" style="margin-bottom:0.8rem;">
+                    <div class="detail-field"><label>Name</label><span>${con.name||'—'}</span></div>
+                    <div class="detail-field"><label>Date</label><span>${con.date||'—'}</span></div>
+                </div>
+                ${sigHTML(con.signature, 'Consent signature')}
+            </div>
+        `;
+
+        setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+    }
+
+    window.closeDetailById = function(panelId) {
+        selectedId = null;
+        closeDetail(panelId);
+        document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+    };
+
+    // ── Trigger action modal ──────────────────────────────────────────────────
+    window.triggerAction = function(id, type) {
+        pendingAction = { id, type };
+        const a    = allApplicants.find(x => x.id === id);
+        const name = fullName(a);
+
+        document.getElementById('proceedFields').style.display   = 'none';
+        document.getElementById('proceedContract').value          = '';
+        document.getElementById('proceedFTL').value               = '';
+        document.getElementById('proceedStartDate').value         = '';
+        document.getElementById('proceedPassword').value          = '';
+        document.getElementById('proceedError').textContent       = '';
+
+        if (type === 'proceed') {
+            document.getElementById('confirmIcon').textContent   = '✅';
+            document.getElementById('confirmTitle').textContent  = 'Proceed with Applicant?';
+            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic records and added to the Engineer Database.`;
+            document.getElementById('confirmYesBtn').className   = 'btn btn-proceed';
+            document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+            document.getElementById('proceedFields').style.display = 'block';
+        } else if (type === 'onhold') {
+            document.getElementById('confirmIcon').textContent   = '⏸️';
+            document.getElementById('confirmTitle').textContent  = 'Place Applicant On Hold?';
+            document.getElementById('confirmText').textContent   = `"${name}" will be moved to the On Hold list.`;
+            document.getElementById('confirmYesBtn').className   = 'btn btn-onhold';
+            document.getElementById('confirmYesBtn').textContent = '⏸ Yes, Place On Hold';
+        } else {
+            document.getElementById('confirmIcon').textContent   = '✗';
+            document.getElementById('confirmTitle').textContent  = 'Decline Applicant?';
+            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic applicants and marked as Declined.`;
+            document.getElementById('confirmYesBtn').className   = 'btn btn-decline';
+            document.getElementById('confirmYesBtn').textContent = '✗ Yes, Decline';
+        }
+        document.getElementById('confirmOverlay').classList.add('active');
+    };
+
+    document.getElementById('confirmYesBtn').addEventListener('click', async () => {
+        if (!pendingAction) return;
+        const btn     = document.getElementById('confirmYesBtn');
+        const errorEl = document.getElementById('proceedError');
+        errorEl.textContent = '';
+
+        if (pendingAction.type === 'proceed') {
+            const contract  = document.getElementById('proceedContract').value;
+            const ftl       = document.getElementById('proceedFTL').value;
+            const startDate = document.getElementById('proceedStartDate').value;
+            const password  = document.getElementById('proceedPassword').value.trim();
+            if (!contract || !ftl || !startDate || !password) {
+                errorEl.textContent = 'Please fill in all fields above before proceeding.';
+                return;
+            }
+        }
+
         btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Submitting…';
+        btn.innerHTML = '<span class="spinner"></span>Saving…';
 
         try {
-            // Upload CV
-            let cvURL = '';
-            let cvName = '';
-            if (cvFile.files[0]) {
-                const file     = cvFile.files[0];
-                const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-                const sRef     = storageRef(storage, `applicants/${email}/${safeName}`);
-                const snap     = await uploadBytes(sRef, file);
-                cvURL  = await getDownloadURL(snap.ref);
-                cvName = file.name;
-            }
-
-            // Collect employment history
-            const employment = [];
-            document.querySelectorAll('.employment-entry').forEach(entry => {
-                employment.push({
-                    company:  entry.querySelector('.emp-company')?.value.trim()  || '',
-                    position: entry.querySelector('.emp-position')?.value.trim() || '',
-                    reason:   entry.querySelector('.emp-reason')?.value.trim()   || ''
-                });
+            await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
+                status:    pendingAction.type,
+                decidedAt: serverTimestamp()
             });
 
-            // Collect references
-            const refEls = document.querySelectorAll('.reference-entry');
-            const references = [];
-            refEls.forEach((r, i) => {
-                references.push({
-                    label:    `Referee ${i + 1}`,
-                    company:  r.querySelector('.ref-company')?.value.trim()  || '',
-                    name:     r.querySelector('.ref-name')?.value.trim()     || '',
-                    position: r.querySelector('.ref-position')?.value.trim() || '',
-                    phone:    r.querySelector('.ref-phone')?.value.trim()    || '',
-                    email:    r.querySelector('.ref-email')?.value.trim()    || ''
+            if (pendingAction.type === 'proceed') {
+                const a         = allApplicants.find(x => x.id === pendingAction.id);
+                const p         = a?.personalDetails || {};
+                const contract  = document.getElementById('proceedContract').value;
+                const ftl       = document.getElementById('proceedFTL').value;
+                const startDate = document.getElementById('proceedStartDate').value;
+                const password  = document.getElementById('proceedPassword').value.trim();
+
+                await addDoc(engCol, {
+                    name:              fullName(a),
+                    email:             p.email  || '',
+                    phone:             p.phone  || '',
+                    contract,
+                    ftl,
+                    startDate,
+                    password,
+                    status:            'pending',
+                    sourceApplicantId: pendingAction.id,
+                    createdAt:         serverTimestamp()
                 });
-            });
-
-            const sig1 = document.getElementById('sigCanvas1').toDataURL('image/png');
-            const sig2 = document.getElementById('sigCanvas2').toDataURL('image/png');
-
-            // Build Firestore document
-            const docData = {
-                submittedAt:      serverTimestamp(),
-                position,
-                personalDetails:  { title, forename, surname, email, phone, address, postcode },
-                fullName:         `${forename} ${surname}`,
-                reasonableAdjustments: {
-                    disability:     disability,
-                    disabilityText: disability === 'yes' ? document.getElementById('disabilityText').value.trim() : '',
-                    medical:        medical,
-                    medicalText:    medical    === 'yes' ? document.getElementById('medicalText').value.trim()    : ''
-                },
-                convictions:     convictions,
-                convictionsText: convictions === 'yes' ? document.getElementById('convictionsText').value.trim() : '',
-                workPermit,
-                qualifications,
-                cv:              { url: cvURL, filename: cvName },
-                employment,
-                references,
-                unavailability:  document.getElementById('unavailability').value.trim(),
-                declaration:     { name: declarationName, date: declarationDate, signature: sig1 },
-                consent:         { name: consentName,     date: consentDate,     signature: sig2 }
-            };
-
-            // Add recruiter fields if Rubix
-            if (rubixDetected) {
-                docData.recruiter      = 'rubix';
-                docData.recruiterEmail = email;
-                docData.engineerEmail  = engineerEmail;
-                // Override personalDetails email with engineer's personal email
-                docData.personalDetails.email = engineerEmail;
             }
 
-            await addDoc(colRef, docData);
+            const a = allApplicants.find(x => x.id === pendingAction.id);
+            if (a) a.status = pendingAction.type;
 
-            document.getElementById('applicationForm').style.display = 'none';
-            document.getElementById('successScreen').style.display   = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('confirmOverlay').classList.remove('active');
+            selectedId    = null;
+            pendingAction = null;
+
+            closeDetail('detailPanel');
+            closeDetail('detailPanelHistoric');
+            closeDetail('detailPanelOnHold');
+            document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+            renderNew();
+            renderOnHold();
+            renderHistoric();
+            updateCounts();
 
         } catch (err) {
-            msgEl.className   = 'submit-msg err';
-            msgEl.textContent = 'Submission failed: ' + err.message;
-            btn.disabled    = false;
-            btn.textContent = 'Submit Application';
+            errorEl.textContent = 'Error: ' + err.message;
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Confirm';
+    });
+
+    document.getElementById('confirmNoBtn').addEventListener('click', () => {
+        document.getElementById('confirmOverlay').classList.remove('active');
+        pendingAction = null;
+    });
+    document.getElementById('confirmOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('confirmOverlay').classList.remove('active');
+            pendingAction = null;
         }
     });
 
-    // Postcode uppercase
-    document.getElementById('postcode').addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    window.switchTab = function(tab) {
+        activeTab = tab;
+        document.getElementById('panelNew').style.display      = tab === 'new'      ? 'block' : 'none';
+        document.getElementById('panelOnHold').style.display   = tab === 'onhold'   ? 'block' : 'none';
+        document.getElementById('panelHistoric').style.display = tab === 'historic' ? 'block' : 'none';
+        document.getElementById('tabNew').classList.toggle('active',      tab === 'new');
+        document.getElementById('tabOnHold').classList.toggle('active',   tab === 'onhold');
+        document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
+        selectedId = null;
+    };
+
+    window.filterHistoric = function(f) {
+        historicFilter = f;
+        ['hFilterAll','hFilterProceed','hFilterDeclined'].forEach(id => {
+            document.getElementById(id).classList.remove('active');
+        });
+        document.getElementById(f === 'all' ? 'hFilterAll' : f === 'proceed' ? 'hFilterProceed' : 'hFilterDeclined').classList.add('active');
+        renderHistoric();
+    };
+
+    document.getElementById('refreshBtn').addEventListener('click', loadAll);
+    document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
+
+    loadAll();
 </script>
 </body>
 </html>
