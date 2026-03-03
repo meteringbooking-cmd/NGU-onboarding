@@ -123,6 +123,23 @@
         .conditional.visible { display: block; animation: slideDown 0.2s ease; }
         @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
 
+        /* Rubix engineer email notice */
+        .rubix-notice {
+            display: none;
+            background: rgba(0,163,224,0.08);
+            border: 1.5px solid rgba(0,163,224,0.3);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+            animation: slideDown 0.22s ease;
+        }
+        .rubix-notice.visible { display: block; }
+        .rubix-notice-label {
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--accent); margin-bottom: 0.6rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
         /* Upload zone */
         .upload-zone {
             border: 2px dashed var(--border); border-radius: 12px;
@@ -277,6 +294,15 @@
                 <div class="form-group">
                     <label>Email Address <span class="req">*</span></label>
                     <input type="email" id="email" placeholder="you@example.com">
+                    <!-- Rubix engineer email — shown only when @rubix.com is detected -->
+                    <div class="rubix-notice" id="rubixNotice">
+                        <div class="rubix-notice-label">🔗 Rubix Recruitment</div>
+                        <div class="form-group">
+                            <label>Engineer's Personal Email <span class="req">*</span></label>
+                            <input type="email" id="engineerEmail" placeholder="engineer@personal.com">
+                            <span style="font-size:0.78rem; color:var(--text-muted); margin-top:0.3rem;">Please provide the engineer's personal email address so we can contact them directly.</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Telephone Number <span class="req">*</span></label>
@@ -305,7 +331,6 @@
                 </div>
             </div>
 
-            <!-- Disability -->
             <div class="form-group" style="margin-bottom:1.4rem;">
                 <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>disability</strong>? <span class="req">*</span></label>
                 <div class="radio-group" id="disabilityGroup" style="margin-top:0.5rem;">
@@ -321,7 +346,6 @@
                 </div>
             </div>
 
-            <!-- Medical -->
             <div class="form-group">
                 <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>medical condition</strong>? <span class="req">*</span></label>
                 <div class="radio-group" id="medicalGroup" style="margin-top:0.5rem;">
@@ -466,7 +490,7 @@
             </div>
         </div>
 
-        <!-- ── 10. DECLARATION 1 ── -->
+        <!-- ── 10. DECLARATION ── -->
         <div class="section">
             <div class="section-header">
                 <div class="section-num">10</div>
@@ -561,6 +585,20 @@
     const storage = getStorage(app);
     const colRef  = collection(db, "NGUO New Applicants");
 
+    // ── Rubix detection ───────────────────────────────────────────────────────
+    const emailInput   = document.getElementById('email');
+    const rubixNotice  = document.getElementById('rubixNotice');
+
+    function isRubix(email) {
+        return email.trim().toLowerCase().endsWith('@rubix.com');
+    }
+
+    emailInput.addEventListener('input', () => {
+        const show = isRubix(emailInput.value);
+        rubixNotice.classList.toggle('visible', show);
+        if (!show) document.getElementById('engineerEmail').value = '';
+    });
+
     // ── Radio yes/no helpers ──────────────────────────────────────────────────
     function setupRadio(name, yesId, noId, conditionalId) {
         const radios = document.querySelectorAll(`input[name="${name}"]`);
@@ -573,7 +611,6 @@
                 }
             });
         });
-        // Click on label toggles radio
         [yesId, noId].forEach(id => {
             document.getElementById(id).addEventListener('click', function() {
                 const radio = this.querySelector('input[type="radio"]');
@@ -637,7 +674,6 @@
             </div>`;
         document.getElementById('employmentList').appendChild(div);
     }
-    // Start with one entry
     addEmployment();
     document.getElementById('addEmploymentBtn').addEventListener('click', addEmployment);
 
@@ -708,7 +744,6 @@
         const msgEl = document.getElementById('submitMsg');
         msgEl.textContent = '';
 
-        // Basic validation
         const position       = document.getElementById('position').value.trim();
         const title          = document.getElementById('title').value;
         const forename       = document.getElementById('forename').value.trim();
@@ -726,6 +761,10 @@
         const declarationDate = document.getElementById('declarationDate').value;
         const consentName    = document.getElementById('consentName').value.trim();
         const consentDate    = document.getElementById('consentDate').value;
+
+        // Rubix-specific
+        const rubixDetected  = isRubix(email);
+        const engineerEmail  = rubixDetected ? document.getElementById('engineerEmail').value.trim() : '';
 
         const missing = [];
         if (!position)        missing.push('Position Applied For');
@@ -748,6 +787,8 @@
         if (!consentDate)     missing.push('Consent date');
         if (isCanvasBlank(document.getElementById('sigCanvas1'))) missing.push('Declaration signature');
         if (isCanvasBlank(document.getElementById('sigCanvas2'))) missing.push('Consent signature');
+        // Require engineer email if Rubix
+        if (rubixDetected && !engineerEmail) missing.push("Engineer's personal email");
 
         if (missing.length > 0) {
             msgEl.className   = 'submit-msg err';
@@ -760,14 +801,14 @@
         btn.innerHTML = '<span class="spinner"></span>Submitting…';
 
         try {
-            // Upload CV to Firebase Storage
+            // Upload CV
             let cvURL = '';
             let cvName = '';
             if (cvFile.files[0]) {
-                const file       = cvFile.files[0];
-                const safeName   = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-                const sRef       = storageRef(storage, `applicants/${email}/${safeName}`);
-                const snap       = await uploadBytes(sRef, file);
+                const file     = cvFile.files[0];
+                const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+                const sRef     = storageRef(storage, `applicants/${email}/${safeName}`);
+                const snap     = await uploadBytes(sRef, file);
                 cvURL  = await getDownloadURL(snap.ref);
                 cvName = file.name;
             }
@@ -783,7 +824,7 @@
             });
 
             // Collect references
-            const refEls  = document.querySelectorAll('.reference-entry');
+            const refEls = document.querySelectorAll('.reference-entry');
             const references = [];
             refEls.forEach((r, i) => {
                 references.push({
@@ -796,16 +837,15 @@
                 });
             });
 
-            // Signatures as base64 data URLs
             const sig1 = document.getElementById('sigCanvas1').toDataURL('image/png');
             const sig2 = document.getElementById('sigCanvas2').toDataURL('image/png');
 
-            // Save to Firestore
-            await addDoc(colRef, {
+            // Build Firestore document
+            const docData = {
                 submittedAt:      serverTimestamp(),
                 position,
-                personalDetails: { title, forename, surname, email, phone, address, postcode },
-                fullName:        `${forename} ${surname}`,
+                personalDetails:  { title, forename, surname, email, phone, address, postcode },
+                fullName:         `${forename} ${surname}`,
                 reasonableAdjustments: {
                     disability:     disability,
                     disabilityText: disability === 'yes' ? document.getElementById('disabilityText').value.trim() : '',
@@ -816,15 +856,25 @@
                 convictionsText: convictions === 'yes' ? document.getElementById('convictionsText').value.trim() : '',
                 workPermit,
                 qualifications,
-                cv: { url: cvURL, filename: cvName },
+                cv:              { url: cvURL, filename: cvName },
                 employment,
                 references,
                 unavailability:  document.getElementById('unavailability').value.trim(),
-                declaration: { name: declarationName, date: declarationDate, signature: sig1 },
-                consent:     { name: consentName,     date: consentDate,     signature: sig2 }
-            });
+                declaration:     { name: declarationName, date: declarationDate, signature: sig1 },
+                consent:         { name: consentName,     date: consentDate,     signature: sig2 }
+            };
 
-            // Show success
+            // Add recruiter fields if Rubix
+            if (rubixDetected) {
+                docData.recruiter      = 'rubix';
+                docData.recruiterEmail = email;
+                docData.engineerEmail  = engineerEmail;
+                // Override personalDetails email with engineer's personal email
+                docData.personalDetails.email = engineerEmail;
+            }
+
+            await addDoc(colRef, docData);
+
             document.getElementById('applicationForm').style.display = 'none';
             document.getElementById('successScreen').style.display   = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
