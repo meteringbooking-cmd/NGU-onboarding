@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU — New Applicants</title>
+    <title>NGU &mdash; New Applicants</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -34,15 +34,12 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .subtitle { text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:2.5rem; font-size:0.88rem; }
-
         .protected-bar {
             background: rgba(0,163,224,0.1); border:1px solid rgba(0,163,224,0.3);
             border-radius:12px; padding:1rem 1.4rem; margin-bottom:2.5rem;
             color:#bae6fd; font-size:0.95rem;
             display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
         }
-
-        /* Tabs */
         .tabs { display:flex; gap:0.5rem; margin-bottom:1.8rem; flex-wrap:wrap; }
         .tab {
             padding:0.65rem 1.4rem; border-radius:10px; font-size:0.92rem; font-weight:700;
@@ -51,10 +48,7 @@
         }
         .tab:hover { border-color:var(--accent); color:var(--accent); }
         .tab.active { background:rgba(0,163,224,0.12); border-color:var(--accent); color:var(--accent); }
-        .tab .tab-count {
-            display:inline-block; background:rgba(0,163,224,0.2); color:var(--accent);
-            border-radius:20px; padding:0.1rem 0.55rem; font-size:0.75rem; margin-left:0.4rem;
-        }
+        .tab .tab-count { display:inline-block; background:rgba(0,163,224,0.2); color:var(--accent); border-radius:20px; padding:0.1rem 0.55rem; font-size:0.75rem; margin-left:0.4rem; }
         .tab.tab-historic.active { background:rgba(139,154,174,0.1); border-color:var(--text-muted); color:var(--text-muted); }
         .tab.tab-historic .tab-count { background:rgba(139,154,174,0.15); color:var(--text-muted); }
         .tab.tab-onhold.active { background:rgba(245,158,11,0.1); border-color:var(--warning); color:var(--warning); }
@@ -62,17 +56,9 @@
         .status-onhold { background:rgba(245,158,11,0.18); color:#fcd34d; }
         .btn-onhold { background:rgba(245,158,11,0.13); border:2px solid rgba(245,158,11,0.4); color:#fcd34d; }
         .btn-onhold:hover { background:rgba(245,158,11,0.25); border-color:var(--warning); }
-
-        /* Card */
-        .card {
-            background:var(--bg-card); border:1px solid var(--border);
-            border-radius:16px; padding:2rem 2.2rem;
-            box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-bottom:2rem;
-        }
+        .card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 2.2rem; box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-bottom:2rem; }
         .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; flex-wrap:wrap; gap:1rem; }
         .card-header h2 { font-size:1.2rem; font-weight:700; }
-
-        /* Table */
         .table-wrap { overflow-x:auto; }
         table { width:100%; border-collapse:collapse; font-size:0.9rem; min-width:700px; }
         th { padding:0.8rem 1rem; text-align:left; background:rgba(0,163,224,0.07); font-weight:700; text-transform:uppercase; font-size:0.76rem; letter-spacing:0.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
@@ -80,27 +66,20 @@
         tbody tr { cursor:pointer; transition:background 0.15s; }
         tbody tr:hover { background:rgba(0,163,224,0.06); }
         tbody tr.selected { background:rgba(0,163,224,0.12); outline:1px solid rgba(0,163,224,0.3); }
-
         .applicant-name { font-weight:700; font-size:0.95rem; color:var(--accent); }
         .applicant-name:hover { text-decoration:underline; }
-
-        /* Recruiter badge */
         .recruiter-badge {
             display:inline-block; padding:0.15rem 0.55rem; border-radius:20px;
-            font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
+            font-size:0.68rem; font-weight:700; letter-spacing:0.3px;
             margin-left:0.5rem; vertical-align:middle;
             background:rgba(168,85,247,0.18); color:#c4b5fd; border:1px solid rgba(168,85,247,0.3);
         }
-
         .status-badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.75rem; font-weight:700; }
         .status-new      { background:rgba(0,163,224,0.18); color:#7dd3fc; }
         .status-proceed  { background:rgba(16,185,129,0.18); color:#6ee7b7; }
         .status-declined { background:rgba(239,68,68,0.18); color:#fca5a5; }
-
         .empty-state { text-align:center; padding:3.5rem 1rem; color:var(--text-muted); }
         .empty-state .ei { font-size:2.5rem; margin-bottom:0.7rem; }
-
-        /* Buttons */
         .btn { padding:0.7rem 1.6rem; border:none; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.22s; font-family:inherit; }
         .btn-secondary { background:var(--bg-input); border:2px solid var(--border); color:var(--text-light); }
         .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
@@ -108,99 +87,44 @@
         .btn-proceed:hover { background:rgba(16,185,129,0.28); border-color:var(--success); }
         .btn-decline { background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.3); color:#fca5a5; }
         .btn-decline:hover { background:rgba(239,68,68,0.22); border-color:var(--error); }
-
-        /* Detail panel */
-        #detailPanel {
-            display:none; background:rgba(5,15,35,0.8); border:2px solid var(--accent);
-            border-radius:16px; padding:2rem 2.2rem; margin-top:1.5rem;
-            animation: slideIn 0.22s ease;
-        }
+        #detailPanel { display:none; background:rgba(5,15,35,0.8); border:2px solid var(--accent); border-radius:16px; padding:2rem 2.2rem; margin-top:1.5rem; animation: slideIn 0.22s ease; }
         @keyframes slideIn { from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);} }
-
         .detail-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.6rem; flex-wrap:wrap; gap:1rem; }
         .detail-name { font-size:1.4rem; font-weight:800; color:var(--accent); }
         .detail-pos  { font-size:0.9rem; color:var(--text-muted); margin-top:0.2rem; font-family:'DM Mono',monospace; }
         .detail-actions { display:flex; gap:0.7rem; flex-wrap:wrap; }
-
-        /* Application detail sections */
         .detail-section { margin-bottom:1.6rem; }
-        .detail-section-title {
-            font-size:0.75rem; text-transform:uppercase; letter-spacing:0.8px;
-            color:var(--text-muted); font-weight:700; margin-bottom:0.9rem;
-            padding-bottom:0.5rem; border-bottom:1px solid var(--border);
-        }
+        .detail-section-title { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); font-weight:700; margin-bottom:0.9rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
         .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.8rem; }
         .detail-field label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-muted); display:block; margin-bottom:0.2rem; }
         .detail-field span  { font-size:0.9rem; font-weight:600; }
         .detail-field.full  { grid-column:1/-1; }
-
-        .detail-text {
-            background:var(--bg-input); border:1px solid var(--border); border-radius:8px;
-            padding:0.8rem 1rem; font-size:0.88rem; line-height:1.5; color:var(--text-light);
-            white-space:pre-wrap; word-break:break-word;
-        }
-
-        /* Employment / Reference sub-items */
-        .sub-item {
-            background:var(--bg-input); border:1px solid var(--border);
-            border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.6rem;
-        }
+        .detail-text { background:var(--bg-input); border:1px solid var(--border); border-radius:8px; padding:0.8rem 1rem; font-size:0.88rem; line-height:1.5; color:var(--text-light); white-space:pre-wrap; word-break:break-word; }
+        .sub-item { background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.6rem; }
         .sub-item-title { font-weight:700; font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem; font-family:'DM Mono',monospace; }
-
-        /* Signature display */
-        .sig-display {
-            background:var(--bg-input); border:1px solid var(--border);
-            border-radius:10px; padding:0.5rem; max-width:400px;
-        }
+        .sig-display { background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:0.5rem; max-width:400px; }
         .sig-display img { width:100%; border-radius:6px; display:block; }
-
-        /* CV link */
-        .cv-link {
-            display:inline-flex; align-items:center; gap:0.5rem;
-            background:rgba(0,163,224,0.1); border:1.5px solid rgba(0,163,224,0.35);
-            border-radius:8px; padding:0.55rem 1rem; color:var(--accent);
-            text-decoration:none; font-size:0.88rem; font-weight:600; transition:all 0.18s;
-        }
+        .cv-link { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,163,224,0.1); border:1.5px solid rgba(0,163,224,0.35); border-radius:8px; padding:0.55rem 1rem; color:var(--accent); text-decoration:none; font-size:0.88rem; font-weight:600; transition:all 0.18s; }
         .cv-link:hover { background:rgba(0,163,224,0.2); border-color:var(--accent); }
-
-        /* Proceed modal extras */
         .proceed-form { margin-top: 1.2rem; text-align: left; }
         .proceed-form label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-light); margin-bottom:0.4rem; margin-top:0.9rem; }
-        .proceed-form input,
-        .proceed-form select {
-            width:100%; padding:0.75rem 1rem; background:var(--bg-dark);
-            border:2px solid var(--border); border-radius:10px; color:white;
-            font-size:0.95rem; font-family:inherit; appearance:none; -webkit-appearance:none;
-        }
-        .proceed-form select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer;
-        }
+        .proceed-form input, .proceed-form select { width:100%; padding:0.75rem 1rem; background:var(--bg-dark); border:2px solid var(--border); border-radius:10px; color:white; font-size:0.95rem; font-family:inherit; appearance:none; -webkit-appearance:none; }
+        .proceed-form select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer; }
         .proceed-form select option { background:var(--bg-card); color:var(--text-light); }
-        .proceed-form input:focus,
-        .proceed-form select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
+        .proceed-form input:focus, .proceed-form select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
         .proceed-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
         @media(max-width:480px){ .proceed-form .form-row { grid-template-columns:1fr; } }
-
-        /* Confirm overlay */
         .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; }
         .overlay.active { display:flex; }
-        .confirm-box {
-            background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
-            padding:2.2rem; max-width:480px; width:90%; text-align:center;
-            box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease;
-        }
+        .confirm-box { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2.2rem; max-width:480px; width:90%; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease; }
         @keyframes popIn { from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);} }
         .confirm-box .ci { font-size:2.5rem; margin-bottom:0.7rem; }
         .confirm-box h3  { font-size:1.1rem; margin-bottom:0.5rem; }
         .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem; line-height:1.5; }
         .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1.4rem; }
-
         .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
         @keyframes spin { to{transform:rotate(360deg);} }
-
         #proceedError { color:var(--error); font-size:0.83rem; margin-top:0.6rem; min-height:1.1rem; }
-
         @media (max-width:700px) { .detail-grid { grid-template-columns:1fr 1fr; } }
     </style>
 </head>
@@ -211,50 +135,38 @@
     <p class="subtitle">Manage and review incoming applications</p>
 
     <div class="protected-bar">
-        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        &#x1F512; <strong>Protected page</strong> &mdash; only signed-in users can access this.
         <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
-            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" onclick="window.location.href='index.html'">&larr; Dashboard</button>
             <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" id="signOutBtn">Sign Out</button>
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" id="tabNew" onclick="switchTab('new')">
-            New Applicants <span class="tab-count" id="countNew">0</span>
-        </button>
-        <button class="tab tab-onhold" id="tabOnHold" onclick="switchTab('onhold')">
-            On Hold <span class="tab-count" id="countOnHold">0</span>
-        </button>
-        <button class="tab tab-historic" id="tabHistoric" onclick="switchTab('historic')">
-            Historic Applicants <span class="tab-count" id="countHistoric">0</span>
-        </button>
+        <button class="tab active" id="tabNew" onclick="switchTab('new')">New Applicants <span class="tab-count" id="countNew">0</span></button>
+        <button class="tab tab-onhold" id="tabOnHold" onclick="switchTab('onhold')">On Hold <span class="tab-count" id="countOnHold">0</span></button>
+        <button class="tab tab-historic" id="tabHistoric" onclick="switchTab('historic')">Historic Applicants <span class="tab-count" id="countHistoric">0</span></button>
     </div>
 
-    <!-- New Applicants -->
     <div id="panelNew">
         <div class="card">
             <div class="card-header">
                 <h2>New Applicants</h2>
-                <button class="btn btn-secondary" style="padding:0.45rem 1rem;font-size:0.85rem;" id="refreshBtn">↻ Refresh</button>
+                <button class="btn btn-secondary" style="padding:0.45rem 1rem;font-size:0.85rem;" id="refreshBtn">&#x21BB; Refresh</button>
             </div>
-            <div id="newTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="newTable"><div class="empty-state"><p>Loading&hellip;</p></div></div>
             <div id="detailPanel"></div>
         </div>
     </div>
 
-    <!-- On Hold -->
     <div id="panelOnHold" style="display:none;">
         <div class="card">
-            <div class="card-header">
-                <h2>On Hold Applicants</h2>
-            </div>
-            <div id="onholdTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div class="card-header"><h2>On Hold Applicants</h2></div>
+            <div id="onholdTable"><div class="empty-state"><p>Loading&hellip;</p></div></div>
             <div id="detailPanelOnHold"></div>
         </div>
     </div>
 
-    <!-- Historic -->
     <div id="panelHistoric" style="display:none;">
         <div class="card">
             <div class="card-header">
@@ -266,26 +178,24 @@
                     <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterDeclined" onclick="filterHistoric('declined')">Declined</button>
                 </div>
             </div>
-            <div id="historicTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="historicTable"><div class="empty-state"><p>Loading&hellip;</p></div></div>
             <div id="detailPanelHistoric"></div>
         </div>
     </div>
 </div>
 
-<!-- ── Proceed modal ── -->
 <div class="overlay" id="confirmOverlay">
     <div class="confirm-box">
-        <div class="ci" id="confirmIcon">✅</div>
+        <div class="ci" id="confirmIcon">&#x2705;</div>
         <h3 id="confirmTitle">Proceed with Applicant?</h3>
         <p id="confirmText">This will move the applicant to historic records and add them to the Engineer Database.</p>
-
         <div id="proceedFields" style="display:none;">
             <div class="proceed-form">
                 <div class="form-row">
                     <div>
                         <label>Contract</label>
                         <select id="proceedContract">
-                            <option value="" disabled selected>Select contract…</option>
+                            <option value="" disabled selected>Select contract&hellip;</option>
                             <option value="Sureserve - OES">Sureserve - OES</option>
                             <option value="Sureserve - SP">Sureserve - SP</option>
                             <option value="Calisen - SP">Calisen - SP</option>
@@ -294,7 +204,7 @@
                     <div>
                         <label>FTL</label>
                         <select id="proceedFTL">
-                            <option value="" disabled selected>Select FTL…</option>
+                            <option value="" disabled selected>Select FTL&hellip;</option>
                             <option value="Richard Wiecko">Richard Wiecko</option>
                             <option value="Scott Carson">Scott Carson</option>
                             <option value="Stuart Whyte">Stuart Whyte</option>
@@ -303,19 +213,12 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div>
-                        <label>Proposed Start Date</label>
-                        <input type="date" id="proceedStartDate">
-                    </div>
-                    <div>
-                        <label>Portal Password</label>
-                        <input type="text" id="proceedPassword" placeholder="Set a password">
-                    </div>
+                    <div><label>Proposed Start Date</label><input type="date" id="proceedStartDate"></div>
+                    <div><label>Portal Password</label><input type="text" id="proceedPassword" placeholder="Set a password"></div>
                 </div>
             </div>
             <div id="proceedError"></div>
         </div>
-
         <div class="confirm-actions">
             <button class="btn" id="confirmYesBtn" style="padding:0.7rem 1.6rem;">Confirm</button>
             <button class="btn btn-secondary" id="confirmNoBtn" style="padding:0.7rem 1.4rem;">Cancel</button>
@@ -352,44 +255,38 @@
     let historicFilter = 'all';
     let pendingAction  = null;
 
-    // ── Recruiter badge HTML helper ───────────────────────────────────────────
+    // Recruiter badge: shows recruiter's personal name if available, else agency name
     function recruiterBadge(a) {
         if (!a.recruiter) return '';
-        const label = a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1);
-        return `<span class="recruiter-badge">${label}</span>`;
+        const label = a.recruiterName
+            ? a.recruiterName
+            : (a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1));
+        return '<span class="recruiter-badge">via ' + label + '</span>';
     }
 
-    // ── Name cell: name + optional recruiter badge ────────────────────────────
     function nameCellHTML(a) {
-        return `<span class="applicant-name">${fullName(a)}</span>${recruiterBadge(a)}`;
+        return '<span class="applicant-name">' + fullName(a) + '</span>' + recruiterBadge(a);
     }
 
-    // ── Load all ──────────────────────────────────────────────────────────────
     async function loadAll() {
         try {
             const q    = query(col, orderBy('submittedAt', 'desc'));
             const snap = await getDocs(q);
             allApplicants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderNew();
-            renderOnHold();
-            renderHistoric();
-            updateCounts();
+            renderNew(); renderOnHold(); renderHistoric(); updateCounts();
         } catch (err) {
-            document.getElementById('newTable').innerHTML = `<div class="empty-state"><p style="color:var(--error)">Error: ${err.message}</p></div>`;
+            document.getElementById('newTable').innerHTML = '<div class="empty-state"><p style="color:var(--error)">Error: ' + err.message + '</p></div>';
         }
     }
 
     function updateCounts() {
-        const newOnes  = allApplicants.filter(a => !a.status || a.status === 'new');
-        const onhold   = allApplicants.filter(a => a.status === 'onhold');
-        const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
-        document.getElementById('countNew').textContent      = newOnes.length;
-        document.getElementById('countOnHold').textContent   = onhold.length;
-        document.getElementById('countHistoric').textContent = historic.length;
+        document.getElementById('countNew').textContent      = allApplicants.filter(a => !a.status || a.status === 'new').length;
+        document.getElementById('countOnHold').textContent   = allApplicants.filter(a => a.status === 'onhold').length;
+        document.getElementById('countHistoric').textContent = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined').length;
     }
 
     function fmtDate(ts) {
-        if (!ts) return '—';
+        if (!ts) return '\u2014';
         const d = ts.toDate ? ts.toDate() : new Date(ts);
         return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
     }
@@ -397,127 +294,67 @@
     function fullName(a) {
         if (a.fullName) return a.fullName;
         const p = a.personalDetails || {};
-        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
+        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '\u2014';
     }
 
-    // ── Render new applicants table ───────────────────────────────────────────
+    function tableRows(list, panelKey) {
+        return list.map(a => {
+            const statusBadge = panelKey === 'new'    ? '<span class="status-badge status-new">New</span>'
+                              : panelKey === 'onhold' ? '<span class="status-badge status-onhold">\u23f8 On Hold</span>'
+                              : '<span class="status-badge ' + (a.status==='proceed'?'status-proceed':'status-declined') + '">'
+                                + (a.status==='proceed'?'\u2713 Proceeded':'\u2717 Declined') + '</span>';
+            return '<tr data-id="' + a.id + '" onclick="selectApplicant(\'' + a.id + '\',\'' + panelKey + '\')">'
+                + '<td>' + nameCellHTML(a) + '</td>'
+                + '<td>' + (a.position||'\u2014') + '</td>'
+                + '<td>' + fmtDate(a.submittedAt) + '</td>'
+                + '<td>' + (a.personalDetails?.phone||'\u2014') + '</td>'
+                + '<td style="font-family:\'DM Mono\',monospace;">' + (a.personalDetails?.postcode||'\u2014') + '</td>'
+                + '<td>' + statusBadge + '</td>'
+                + '</tr>';
+        }).join('');
+    }
+
+    function tableHTML(list, panelKey) {
+        return '<div class="table-wrap"><table>'
+            + '<thead><tr><th>Name</th><th>Position</th><th>Date Submitted</th><th>Telephone</th><th>Postcode</th><th>Status</th></tr></thead>'
+            + '<tbody>' + tableRows(list, panelKey) + '</tbody>'
+            + '</table></div>';
+    }
+
     function renderNew() {
         const list = allApplicants.filter(a => !a.status || a.status === 'new');
         const el   = document.getElementById('newTable');
-        if (list.length === 0) {
-            el.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>No new applicants.</p></div>';
-            closeDetail('detailPanel');
-            return;
-        }
-        el.innerHTML = `
-            <div class="table-wrap"><table>
-                <thead><tr>
-                    <th>Name</th><th>Position</th><th>Date Submitted</th>
-                    <th>Telephone</th><th>Postcode</th><th>Status</th>
-                </tr></thead>
-                <tbody>
-                ${list.map(a => `
-                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','new')">
-                        <td>${nameCellHTML(a)}</td>
-                        <td>${a.position || '—'}</td>
-                        <td>${fmtDate(a.submittedAt)}</td>
-                        <td>${a.personalDetails?.phone || '—'}</td>
-                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
-                        <td><span class="status-badge status-new">New</span></td>
-                    </tr>`).join('')}
-                </tbody>
-            </table></div>`;
+        if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="ei">&#x1F4ED;</div><p>No new applicants.</p></div>'; closeDetail('detailPanel'); return; }
+        el.innerHTML = tableHTML(list, 'new');
     }
-
-    // ── Render on hold table ──────────────────────────────────────────────────
     function renderOnHold() {
         const list = allApplicants.filter(a => a.status === 'onhold');
         const el   = document.getElementById('onholdTable');
-        if (list.length === 0) {
-            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
-            closeDetail('detailPanelOnHold');
-            return;
-        }
-        el.innerHTML = `
-            <div class="table-wrap"><table>
-                <thead><tr>
-                    <th>Name</th><th>Position</th><th>Date Submitted</th>
-                    <th>Telephone</th><th>Postcode</th><th>Status</th>
-                </tr></thead>
-                <tbody>
-                ${list.map(a => `
-                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
-                        <td>${nameCellHTML(a)}</td>
-                        <td>${a.position || '—'}</td>
-                        <td>${fmtDate(a.submittedAt)}</td>
-                        <td>${a.personalDetails?.phone || '—'}</td>
-                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
-                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
-                    </tr>`).join('')}
-                </tbody>
-            </table></div>`;
+        if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="ei">&#x23F8;&#xFE0F;</div><p>No applicants on hold.</p></div>'; closeDetail('detailPanelOnHold'); return; }
+        el.innerHTML = tableHTML(list, 'onhold');
     }
-
-    // ── Render historic table ─────────────────────────────────────────────────
     function renderHistoric() {
         let list = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
         if (historicFilter === 'proceed')  list = list.filter(a => a.status === 'proceed');
         if (historicFilter === 'declined') list = list.filter(a => a.status === 'declined');
-
         const el = document.getElementById('historicTable');
-        if (list.length === 0) {
-            el.innerHTML = '<div class="empty-state"><div class="ei">🗂️</div><p>No historic applicants yet.</p></div>';
-            closeDetail('detailPanelHistoric');
-            return;
-        }
-        el.innerHTML = `
-            <div class="table-wrap"><table>
-                <thead><tr>
-                    <th>Name</th><th>Position</th><th>Date Submitted</th>
-                    <th>Telephone</th><th>Postcode</th><th>Status</th>
-                </tr></thead>
-                <tbody>
-                ${list.map(a => `
-                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','historic')">
-                        <td>${nameCellHTML(a)}</td>
-                        <td>${a.position || '—'}</td>
-                        <td>${fmtDate(a.submittedAt)}</td>
-                        <td>${a.personalDetails?.phone || '—'}</td>
-                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
-                        <td><span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}">
-                            ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
-                        </span></td>
-                    </tr>`).join('')}
-                </tbody>
-            </table></div>`;
+        if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="ei">&#x1F5C2;&#xFE0F;</div><p>No historic applicants yet.</p></div>'; closeDetail('detailPanelHistoric'); return; }
+        el.innerHTML = tableHTML(list, 'historic');
     }
 
-    // ── Select applicant → show detail ────────────────────────────────────────
     window.selectApplicant = function(id, panel) {
-        const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
-        const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
-
-        if (selectedId === id) {
-            selectedId = null;
-            closeDetail(panelId);
-            document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => r.classList.remove('selected'));
-            return;
-        }
-
+        const panelId = panel==='new' ? 'detailPanel' : panel==='onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
+        const tableId = panel==='new' ? 'newTable'    : panel==='onhold' ? 'onholdTable' : 'historicTable';
+        if (selectedId === id) { selectedId=null; closeDetail(panelId); document.querySelectorAll('#'+tableId+' tbody tr').forEach(r=>r.classList.remove('selected')); return; }
         selectedId = id;
-        document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => {
-            r.classList.toggle('selected', r.dataset.id === id);
-        });
-
-        const a = allApplicants.find(x => x.id === id);
-        if (!a) return;
-        renderDetailPanel(a, panelId, panel === 'new' || panel === 'onhold');
+        document.querySelectorAll('#'+tableId+' tbody tr').forEach(r => r.classList.toggle('selected', r.dataset.id===id));
+        const a = allApplicants.find(x=>x.id===id);
+        if (a) renderDetailPanel(a, panelId, panel==='new'||panel==='onhold');
     };
 
     function closeDetail(panelId) {
         const p = document.getElementById(panelId);
-        p.style.display = 'none';
-        p.innerHTML = '';
+        p.style.display='none'; p.innerHTML='';
     }
 
     function renderDetailPanel(a, panelId, showActions) {
@@ -528,195 +365,146 @@
         const emp  = a.employment  || [];
         const refs = a.references  || [];
 
-        const yesNo = v => v === 'yes' ? '<span style="color:var(--warning)">Yes</span>' : '<span style="color:#6ee7b7">No</span>';
+        const yesNo = v => v==='yes'
+            ? '<span style="color:var(--warning)">Yes</span>'
+            : '<span style="color:#6ee7b7">No</span>';
 
-        const actionBtns = showActions ? `
-            <div class="detail-actions">
-                <button class="btn btn-proceed" onclick="triggerAction('${a.id}','proceed')">✓ Proceed with Applicant</button>
-                <button class="btn btn-onhold" onclick="triggerAction('${a.id}','onhold')">⏸ Place On Hold</button>
-                <button class="btn btn-decline" onclick="triggerAction('${a.id}','decline')">✗ Decline Applicant</button>
-                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
-            </div>` : `
-            <div class="detail-actions">
-                <span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}" style="font-size:0.9rem;padding:0.35rem 1rem;">
-                    ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
-                </span>
-                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
-            </div>`;
+        const actionBtns = showActions
+            ? '<div class="detail-actions">'
+              + '<button class="btn btn-proceed" onclick="triggerAction(\''+a.id+'\',\'proceed\')">\u2713 Proceed with Applicant</button>'
+              + '<button class="btn btn-onhold" onclick="triggerAction(\''+a.id+'\',\'onhold\')">\u23f8 Place On Hold</button>'
+              + '<button class="btn btn-decline" onclick="triggerAction(\''+a.id+'\',\'decline\')">\u2717 Decline Applicant</button>'
+              + '<button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById(\''+panelId+'\')">\u2715 Close</button>'
+              + '</div>'
+            : '<div class="detail-actions">'
+              + '<span class="status-badge '+(a.status==='proceed'?'status-proceed':'status-declined')+'" style="font-size:0.9rem;padding:0.35rem 1rem;">'+(a.status==='proceed'?'\u2713 Proceeded':'\u2717 Declined')+'</span>'
+              + '<button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById(\''+panelId+'\')">\u2715 Close</button>'
+              + '</div>';
 
-        const empHTML = emp.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No employment history provided.</p>' :
-            emp.map((e,i) => `
-                <div class="sub-item">
-                    <div class="sub-item-title">Employment ${i+1}</div>
-                    <div class="detail-grid">
-                        <div class="detail-field"><label>Company</label><span>${e.company||'—'}</span></div>
-                        <div class="detail-field"><label>Position</label><span>${e.position||'—'}</span></div>
-                        <div class="detail-field full"><label>Reason for Leaving</label><span>${e.reason||'—'}</span></div>
-                    </div>
-                </div>`).join('');
+        const empHTML = !emp.length ? '<p style="color:var(--text-muted);font-size:0.88rem;">No employment history provided.</p>'
+            : emp.map((e,i) => '<div class="sub-item"><div class="sub-item-title">Employment '+(i+1)+'</div>'
+                + '<div class="detail-grid">'
+                + '<div class="detail-field"><label>Company</label><span>'+(e.company||'\u2014')+'</span></div>'
+                + '<div class="detail-field"><label>Position</label><span>'+(e.position||'\u2014')+'</span></div>'
+                + '<div class="detail-field full"><label>Reason for Leaving</label><span>'+(e.reason||'\u2014')+'</span></div>'
+                + '</div></div>').join('');
 
-        const refHTML = refs.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No references provided.</p>' :
-            refs.map(r => `
-                <div class="sub-item">
-                    <div class="sub-item-title">${r.label||'Referee'}</div>
-                    <div class="detail-grid">
-                        <div class="detail-field"><label>Company</label><span>${r.company||'—'}</span></div>
-                        <div class="detail-field"><label>Name</label><span>${r.name||'—'}</span></div>
-                        <div class="detail-field"><label>Position</label><span>${r.position||'—'}</span></div>
-                        <div class="detail-field"><label>Telephone</label><span>${r.phone||'—'}</span></div>
-                        <div class="detail-field"><label>Email</label><span>${r.email||'—'}</span></div>
-                    </div>
-                </div>`).join('');
+        const refHTML = !refs.length ? '<p style="color:var(--text-muted);font-size:0.88rem;">No references provided.</p>'
+            : refs.map(r => '<div class="sub-item"><div class="sub-item-title">'+(r.label||'Referee')+'</div>'
+                + '<div class="detail-grid">'
+                + '<div class="detail-field"><label>Company</label><span>'+(r.company||'\u2014')+'</span></div>'
+                + '<div class="detail-field"><label>Name</label><span>'+(r.name||'\u2014')+'</span></div>'
+                + '<div class="detail-field"><label>Position</label><span>'+(r.position||'\u2014')+'</span></div>'
+                + '<div class="detail-field"><label>Telephone</label><span>'+(r.phone||'\u2014')+'</span></div>'
+                + '<div class="detail-field"><label>Email</label><span>'+(r.email||'\u2014')+'</span></div>'
+                + '</div></div>').join('');
 
         const sigHTML = (sig, label) => sig && sig.startsWith('data:')
-            ? `<div class="sig-display"><img src="${sig}" alt="${label}"></div>`
-            : `<span style="color:var(--text-muted);font-size:0.85rem;">No signature captured</span>`;
+            ? '<div class="sig-display"><img src="'+sig+'" alt="'+label+'"></div>'
+            : '<span style="color:var(--text-muted);font-size:0.85rem;">No signature captured</span>';
 
         const cvHTML = a.cv?.url
-            ? `<a href="${a.cv.url}" target="_blank" rel="noopener" class="cv-link">📄 ${a.cv.filename || 'Download CV'}</a>`
-            : `<span style="color:var(--text-muted);font-size:0.85rem;">No CV uploaded</span>`;
+            ? '<a href="'+a.cv.url+'" target="_blank" rel="noopener" class="cv-link">&#x1F4C4; '+(a.cv.filename||'Download CV')+'</a>'
+            : '<span style="color:var(--text-muted);font-size:0.85rem;">No CV uploaded</span>';
 
-        // Recruiter section — only shown if recruiter field is present
-        const recruiterSection = a.recruiter ? `
-            <div class="detail-section">
-                <div class="detail-section-title">Recruiter</div>
-                <div class="detail-grid">
-                    <div class="detail-field"><label>Agency</label><span>${a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1)}</span></div>
-                    <div class="detail-field"><label>Recruiter Email</label><span>${a.recruiterEmail || '—'}</span></div>
-                    <div class="detail-field"><label>Engineer's Personal Email</label><span>${a.engineerEmail || '—'}</span></div>
-                </div>
-            </div>` : '';
+        // Recruiter section — includes Recruiter Name field
+        const recruiterSection = a.recruiter
+            ? '<div class="detail-section">'
+              + '<div class="detail-section-title">Recruiter</div>'
+              + '<div class="detail-grid">'
+              + '<div class="detail-field"><label>Agency</label><span>'+(a.recruiter.charAt(0).toUpperCase()+a.recruiter.slice(1))+'</span></div>'
+              + '<div class="detail-field"><label>Recruiter Name</label><span>'+(a.recruiterName||'\u2014')+'</span></div>'
+              + '<div class="detail-field"><label>Recruiter Email</label><span>'+(a.recruiterEmail||'\u2014')+'</span></div>'
+              + '<div class="detail-field"><label>Engineer\'s Personal Email</label><span>'+(a.engineerEmail||'\u2014')+'</span></div>'
+              + '</div></div>'
+            : '';
 
         const panel = document.getElementById(panelId);
         panel.style.display = 'block';
-        panel.innerHTML = `
-            <div class="detail-top">
-                <div>
-                    <div class="detail-name">${fullName(a)}${recruiterBadge(a)}</div>
-                    <div class="detail-pos">${a.position || '—'} · Applied ${fmtDate(a.submittedAt)}</div>
-                </div>
-                ${actionBtns}
-            </div>
-
-            ${recruiterSection}
-
-            <div class="detail-section">
-                <div class="detail-section-title">Personal Details</div>
-                <div class="detail-grid">
-                    <div class="detail-field"><label>Title</label><span>${p.title||'—'}</span></div>
-                    <div class="detail-field"><label>Forename</label><span>${p.forename||'—'}</span></div>
-                    <div class="detail-field"><label>Surname</label><span>${p.surname||'—'}</span></div>
-                    <div class="detail-field"><label>Email</label><span>${p.email||'—'}</span></div>
-                    <div class="detail-field"><label>Telephone</label><span>${p.phone||'—'}</span></div>
-                    <div class="detail-field"><label>Address</label><span>${p.address||'—'}</span></div>
-                    <div class="detail-field"><label>Postcode</label><span>${p.postcode||'—'}</span></div>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Reasonable Adjustments</div>
-                <div class="detail-grid">
-                    <div class="detail-field"><label>Disability Adjustment Required</label><span>${yesNo(ra.disability)}</span></div>
-                    ${ra.disability==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.disabilityText||'—'}</div></div>`:''}
-                    <div class="detail-field"><label>Medical Adjustment Required</label><span>${yesNo(ra.medical)}</span></div>
-                    ${ra.medical==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.medicalText||'—'}</div></div>`:''}
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Background</div>
-                <div class="detail-grid">
-                    <div class="detail-field"><label>Unspent Convictions</label><span>${yesNo(a.convictions)}</span></div>
-                    ${a.convictions==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${a.convictionsText||'—'}</div></div>`:''}
-                    <div class="detail-field"><label>Requires Work Permit</label><span>${yesNo(a.workPermit)}</span></div>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Qualifications</div>
-                <div class="detail-text">${a.qualifications||'—'}</div>
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">CV</div>
-                ${cvHTML}
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Employment History (5 Years)</div>
-                ${empHTML}
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">References</div>
-                ${refHTML}
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Interview Availability</div>
-                <div class="detail-text">${a.unavailability||'No unavailable dates noted'}</div>
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Declaration</div>
-                <div class="detail-grid" style="margin-bottom:0.8rem;">
-                    <div class="detail-field"><label>Name</label><span>${dec.name||'—'}</span></div>
-                    <div class="detail-field"><label>Date</label><span>${dec.date||'—'}</span></div>
-                </div>
-                ${sigHTML(dec.signature, 'Declaration signature')}
-            </div>
-
-            <div class="detail-section">
-                <div class="detail-section-title">Data Consent</div>
-                <div class="detail-grid" style="margin-bottom:0.8rem;">
-                    <div class="detail-field"><label>Name</label><span>${con.name||'—'}</span></div>
-                    <div class="detail-field"><label>Date</label><span>${con.date||'—'}</span></div>
-                </div>
-                ${sigHTML(con.signature, 'Consent signature')}
-            </div>
-        `;
+        panel.innerHTML =
+            '<div class="detail-top">'
+            + '<div>'
+            + '<div class="detail-name">'+fullName(a)+recruiterBadge(a)+'</div>'
+            + '<div class="detail-pos">'+(a.position||'\u2014')+' &middot; Applied '+fmtDate(a.submittedAt)+'</div>'
+            + '</div>'
+            + actionBtns
+            + '</div>'
+            + recruiterSection
+            + '<div class="detail-section"><div class="detail-section-title">Personal Details</div><div class="detail-grid">'
+            + '<div class="detail-field"><label>Title</label><span>'+(p.title||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Forename</label><span>'+(p.forename||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Surname</label><span>'+(p.surname||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Email</label><span>'+(p.email||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Telephone</label><span>'+(p.phone||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Address</label><span>'+(p.address||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Postcode</label><span>'+(p.postcode||'\u2014')+'</span></div>'
+            + '</div></div>'
+            + '<div class="detail-section"><div class="detail-section-title">Reasonable Adjustments</div><div class="detail-grid">'
+            + '<div class="detail-field"><label>Disability Adjustment Required</label><span>'+yesNo(ra.disability)+'</span></div>'
+            + (ra.disability==='yes' ? '<div class="detail-field full"><label>Details</label><div class="detail-text">'+(ra.disabilityText||'\u2014')+'</div></div>' : '')
+            + '<div class="detail-field"><label>Medical Adjustment Required</label><span>'+yesNo(ra.medical)+'</span></div>'
+            + (ra.medical==='yes' ? '<div class="detail-field full"><label>Details</label><div class="detail-text">'+(ra.medicalText||'\u2014')+'</div></div>' : '')
+            + '</div></div>'
+            + '<div class="detail-section"><div class="detail-section-title">Background</div><div class="detail-grid">'
+            + '<div class="detail-field"><label>Unspent Convictions</label><span>'+yesNo(a.convictions)+'</span></div>'
+            + (a.convictions==='yes' ? '<div class="detail-field full"><label>Details</label><div class="detail-text">'+(a.convictionsText||'\u2014')+'</div></div>' : '')
+            + '<div class="detail-field"><label>Requires Work Permit</label><span>'+yesNo(a.workPermit)+'</span></div>'
+            + '</div></div>'
+            + '<div class="detail-section"><div class="detail-section-title">Qualifications</div><div class="detail-text">'+(a.qualifications||'\u2014')+'</div></div>'
+            + '<div class="detail-section"><div class="detail-section-title">CV</div>'+cvHTML+'</div>'
+            + '<div class="detail-section"><div class="detail-section-title">Employment History (5 Years)</div>'+empHTML+'</div>'
+            + '<div class="detail-section"><div class="detail-section-title">References</div>'+refHTML+'</div>'
+            + '<div class="detail-section"><div class="detail-section-title">Interview Availability</div><div class="detail-text">'+(a.unavailability||'No unavailable dates noted')+'</div></div>'
+            + '<div class="detail-section"><div class="detail-section-title">Declaration</div>'
+            + '<div class="detail-grid" style="margin-bottom:0.8rem;">'
+            + '<div class="detail-field"><label>Name</label><span>'+(dec.name||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Date</label><span>'+(dec.date||'\u2014')+'</span></div>'
+            + '</div>'+sigHTML(dec.signature,'Declaration signature')+'</div>'
+            + '<div class="detail-section"><div class="detail-section-title">Data Consent</div>'
+            + '<div class="detail-grid" style="margin-bottom:0.8rem;">'
+            + '<div class="detail-field"><label>Name</label><span>'+(con.name||'\u2014')+'</span></div>'
+            + '<div class="detail-field"><label>Date</label><span>'+(con.date||'\u2014')+'</span></div>'
+            + '</div>'+sigHTML(con.signature,'Consent signature')+'</div>';
 
         setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
     }
 
     window.closeDetailById = function(panelId) {
-        selectedId = null;
-        closeDetail(panelId);
+        selectedId = null; closeDetail(panelId);
         document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
     };
 
-    // ── Trigger action modal ──────────────────────────────────────────────────
     window.triggerAction = function(id, type) {
         pendingAction = { id, type };
         const a    = allApplicants.find(x => x.id === id);
         const name = fullName(a);
 
-        document.getElementById('proceedFields').style.display   = 'none';
-        document.getElementById('proceedContract').value          = '';
-        document.getElementById('proceedFTL').value               = '';
-        document.getElementById('proceedStartDate').value         = '';
-        document.getElementById('proceedPassword').value          = '';
-        document.getElementById('proceedError').textContent       = '';
+        document.getElementById('proceedFields').style.display = 'none';
+        document.getElementById('proceedContract').value       = '';
+        document.getElementById('proceedFTL').value            = '';
+        document.getElementById('proceedStartDate').value      = '';
+        document.getElementById('proceedPassword').value       = '';
+        document.getElementById('proceedError').textContent    = '';
 
         if (type === 'proceed') {
-            document.getElementById('confirmIcon').textContent   = '✅';
+            document.getElementById('confirmIcon').textContent   = '\u2705';
             document.getElementById('confirmTitle').textContent  = 'Proceed with Applicant?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic records and added to the Engineer Database.`;
+            document.getElementById('confirmText').textContent   = '"'+name+'" will be moved to historic records and added to the Engineer Database.';
             document.getElementById('confirmYesBtn').className   = 'btn btn-proceed';
-            document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+            document.getElementById('confirmYesBtn').textContent = '\u2713 Yes, Proceed';
             document.getElementById('proceedFields').style.display = 'block';
         } else if (type === 'onhold') {
-            document.getElementById('confirmIcon').textContent   = '⏸️';
+            document.getElementById('confirmIcon').textContent   = '\u23f8\ufe0f';
             document.getElementById('confirmTitle').textContent  = 'Place Applicant On Hold?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to the On Hold list.`;
+            document.getElementById('confirmText').textContent   = '"'+name+'" will be moved to the On Hold list.';
             document.getElementById('confirmYesBtn').className   = 'btn btn-onhold';
-            document.getElementById('confirmYesBtn').textContent = '⏸ Yes, Place On Hold';
+            document.getElementById('confirmYesBtn').textContent = '\u23f8 Yes, Place On Hold';
         } else {
-            document.getElementById('confirmIcon').textContent   = '✗';
+            document.getElementById('confirmIcon').textContent   = '\u2717';
             document.getElementById('confirmTitle').textContent  = 'Decline Applicant?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic applicants and marked as Declined.`;
+            document.getElementById('confirmText').textContent   = '"'+name+'" will be moved to historic applicants and marked as Declined.';
             document.getElementById('confirmYesBtn').className   = 'btn btn-decline';
-            document.getElementById('confirmYesBtn').textContent = '✗ Yes, Decline';
+            document.getElementById('confirmYesBtn').textContent = '\u2717 Yes, Decline';
         }
         document.getElementById('confirmOverlay').classList.add('active');
     };
@@ -739,12 +527,11 @@
         }
 
         btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Saving…';
+        btn.innerHTML = '<span class="spinner"></span>Saving\u2026';
 
         try {
             await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
-                status:    pendingAction.type,
-                decidedAt: serverTimestamp()
+                status: pendingAction.type, decidedAt: serverTimestamp()
             });
 
             if (pendingAction.type === 'proceed') {
@@ -755,35 +542,32 @@
                 const startDate = document.getElementById('proceedStartDate').value;
                 const password  = document.getElementById('proceedPassword').value.trim();
 
-                await addDoc(engCol, {
+                const engRecord = {
                     name:              fullName(a),
                     email:             p.email  || '',
                     phone:             p.phone  || '',
-                    contract,
-                    ftl,
-                    startDate,
-                    password,
+                    contract, ftl, startDate, password,
                     status:            'pending',
                     sourceApplicantId: pendingAction.id,
                     createdAt:         serverTimestamp()
-                });
+                };
+                // Pass all recruiter fields through if present
+                if (a.recruiter)      engRecord.recruiter      = a.recruiter;
+                if (a.recruiterName)  engRecord.recruiterName  = a.recruiterName;
+                if (a.recruiterEmail) engRecord.recruiterEmail = a.recruiterEmail;
+                if (a.engineerEmail)  engRecord.engineerEmail  = a.engineerEmail;
+
+                await addDoc(engCol, engRecord);
             }
 
             const a = allApplicants.find(x => x.id === pendingAction.id);
             if (a) a.status = pendingAction.type;
 
             document.getElementById('confirmOverlay').classList.remove('active');
-            selectedId    = null;
-            pendingAction = null;
-
-            closeDetail('detailPanel');
-            closeDetail('detailPanelHistoric');
-            closeDetail('detailPanelOnHold');
+            selectedId = null; pendingAction = null;
+            closeDetail('detailPanel'); closeDetail('detailPanelHistoric'); closeDetail('detailPanelOnHold');
             document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
-            renderNew();
-            renderOnHold();
-            renderHistoric();
-            updateCounts();
+            renderNew(); renderOnHold(); renderHistoric(); updateCounts();
 
         } catch (err) {
             errorEl.textContent = 'Error: ' + err.message;
@@ -804,29 +588,26 @@
         }
     });
 
-    // ── Tab switching ─────────────────────────────────────────────────────────
     window.switchTab = function(tab) {
         activeTab = tab;
-        document.getElementById('panelNew').style.display      = tab === 'new'      ? 'block' : 'none';
-        document.getElementById('panelOnHold').style.display   = tab === 'onhold'   ? 'block' : 'none';
-        document.getElementById('panelHistoric').style.display = tab === 'historic' ? 'block' : 'none';
-        document.getElementById('tabNew').classList.toggle('active',      tab === 'new');
-        document.getElementById('tabOnHold').classList.toggle('active',   tab === 'onhold');
-        document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
+        document.getElementById('panelNew').style.display      = tab==='new'      ? 'block' : 'none';
+        document.getElementById('panelOnHold').style.display   = tab==='onhold'   ? 'block' : 'none';
+        document.getElementById('panelHistoric').style.display = tab==='historic' ? 'block' : 'none';
+        document.getElementById('tabNew').classList.toggle('active',      tab==='new');
+        document.getElementById('tabOnHold').classList.toggle('active',   tab==='onhold');
+        document.getElementById('tabHistoric').classList.toggle('active', tab==='historic');
         selectedId = null;
     };
 
     window.filterHistoric = function(f) {
         historicFilter = f;
-        ['hFilterAll','hFilterProceed','hFilterDeclined'].forEach(id => {
-            document.getElementById(id).classList.remove('active');
-        });
-        document.getElementById(f === 'all' ? 'hFilterAll' : f === 'proceed' ? 'hFilterProceed' : 'hFilterDeclined').classList.add('active');
+        ['hFilterAll','hFilterProceed','hFilterDeclined'].forEach(id => document.getElementById(id).classList.remove('active'));
+        document.getElementById(f==='all'?'hFilterAll':f==='proceed'?'hFilterProceed':'hFilterDeclined').classList.add('active');
         renderHistoric();
     };
 
     document.getElementById('refreshBtn').addEventListener('click', loadAll);
-    document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
+    document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href='index.html'; });
 
     loadAll();
 </script>
