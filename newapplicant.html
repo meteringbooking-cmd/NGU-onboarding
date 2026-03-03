@@ -57,6 +57,11 @@
         }
         .tab.tab-historic.active { background:rgba(139,154,174,0.1); border-color:var(--text-muted); color:var(--text-muted); }
         .tab.tab-historic .tab-count { background:rgba(139,154,174,0.15); color:var(--text-muted); }
+        .tab.tab-onhold.active { background:rgba(245,158,11,0.1); border-color:var(--warning); color:var(--warning); }
+        .tab.tab-onhold .tab-count { background:rgba(245,158,11,0.15); color:var(--warning); }
+        .status-onhold { background:rgba(245,158,11,0.18); color:#fcd34d; }
+        .btn-onhold { background:rgba(245,158,11,0.13); border:2px solid rgba(245,158,11,0.4); color:#fcd34d; }
+        .btn-onhold:hover { background:rgba(245,158,11,0.25); border-color:var(--warning); }
 
         /* Card */
         .card {
@@ -189,6 +194,9 @@
         <button class="tab active" id="tabNew" onclick="switchTab('new')">
             New Applicants <span class="tab-count" id="countNew">0</span>
         </button>
+        <button class="tab tab-onhold" id="tabOnHold" onclick="switchTab('onhold')">
+            On Hold <span class="tab-count" id="countOnHold">0</span>
+        </button>
         <button class="tab tab-historic" id="tabHistoric" onclick="switchTab('historic')">
             Historic Applicants <span class="tab-count" id="countHistoric">0</span>
         </button>
@@ -203,6 +211,17 @@
             </div>
             <div id="newTable"><div class="empty-state"><p>Loading…</p></div></div>
             <div id="detailPanel"></div>
+        </div>
+    </div>
+
+    <!-- On Hold -->
+    <div id="panelOnHold" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <h2>On Hold Applicants</h2>
+            </div>
+            <div id="onholdTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanelOnHold"></div>
         </div>
     </div>
 
@@ -272,6 +291,7 @@
             const snap = await getDocs(q);
             allApplicants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderNew();
+            renderOnHold();
             renderHistoric();
             updateCounts();
         } catch (err) {
@@ -281,8 +301,10 @@
 
     function updateCounts() {
         const newOnes = allApplicants.filter(a => !a.status || a.status === 'new');
+        const onhold  = allApplicants.filter(a => a.status === 'onhold');
         const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
         document.getElementById('countNew').textContent      = newOnes.length;
+        document.getElementById('countOnHold').textContent   = onhold.length;
         document.getElementById('countHistoric').textContent = historic.length;
     }
 
@@ -369,8 +391,8 @@
 
     // ── Select applicant → show detail ────────────────────────────────────────
     window.selectApplicant = function(id, panel) {
-        const panelId = panel === 'new' ? 'detailPanel' : 'detailPanelHistoric';
-        const tableId = panel === 'new' ? 'newTable'    : 'historicTable';
+        const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
+        const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
 
         // Toggle
         if (selectedId === id) {
@@ -387,7 +409,7 @@
 
         const a = allApplicants.find(x => x.id === id);
         if (!a) return;
-        renderDetailPanel(a, panelId, panel === 'new');
+        renderDetailPanel(a, panelId, panel === 'new' || panel === 'onhold');
     };
 
     function closeDetail(panelId) {
@@ -409,6 +431,7 @@
         const actionBtns = showActions ? `
             <div class="detail-actions">
                 <button class="btn btn-proceed" onclick="triggerAction('${a.id}','proceed')">✓ Proceed with Applicant</button>
+                <button class="btn btn-onhold" onclick="triggerAction('${a.id}','onhold')">⏸ Place On Hold</button>
                 <button class="btn btn-decline" onclick="triggerAction('${a.id}','decline')">✗ Decline Applicant</button>
                 <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
             </div>` : `
@@ -559,6 +582,12 @@
             document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Proceeded.`;
             document.getElementById('confirmYesBtn').className  = 'btn btn-proceed';
             document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+        } else if (type === 'onhold') {
+            document.getElementById('confirmIcon').textContent  = '⏸️';
+            document.getElementById('confirmTitle').textContent = 'Place Applicant On Hold?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to the On Hold list. You can review them there at any time.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-onhold';
+            document.getElementById('confirmYesBtn').textContent = '⏸ Yes, Place On Hold';
         } else {
             document.getElementById('confirmIcon').textContent  = '✗';
             document.getElementById('confirmTitle').textContent = 'Decline Applicant?';
@@ -591,8 +620,10 @@
 
             closeDetail('detailPanel');
             closeDetail('detailPanelHistoric');
+            closeDetail('detailPanelOnHold');
             document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
             renderNew();
+            renderOnHold();
             renderHistoric();
             updateCounts();
 
@@ -601,7 +632,7 @@
         }
 
         btn.disabled    = false;
-        btn.textContent = pendingAction?.type === 'proceed' ? '✓ Yes, Proceed' : '✗ Yes, Decline';
+        btn.textContent = 'Confirm';
     });
 
     document.getElementById('confirmNoBtn').addEventListener('click', () => {
@@ -619,11 +650,44 @@
     window.switchTab = function(tab) {
         activeTab = tab;
         document.getElementById('panelNew').style.display      = tab === 'new'      ? 'block' : 'none';
+        document.getElementById('panelOnHold').style.display   = tab === 'onhold'   ? 'block' : 'none';
         document.getElementById('panelHistoric').style.display = tab === 'historic' ? 'block' : 'none';
         document.getElementById('tabNew').classList.toggle('active',      tab === 'new');
+        document.getElementById('tabOnHold').classList.toggle('active',   tab === 'onhold');
         document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
         selectedId = null;
     };
+
+    // ── Render on hold table ─────────────────────────────────────────────────
+    function renderOnHold() {
+        const list = allApplicants.filter(a => a.status === 'onhold');
+        const el   = document.getElementById('onholdTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
+            closeDetail('detailPanelOnHold');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
+    }
 
     window.filterHistoric = function(f) {
         historicFilter = f;
