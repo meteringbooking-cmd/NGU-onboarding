@@ -200,6 +200,10 @@
         <!-- Engineer section -->
         <p class="section-label">Engineer Management</p>
         <div class="btn-group">
+            <button class="dash-btn" id="newApplicantBtn">
+                <span class="btn-icon">📝</span>
+                <span class="btn-label">New Applicant</span>
+            </button>
             <button class="dash-btn" id="addEngineerBtn">
                 <span class="btn-icon">👷</span>
                 <span class="btn-label">Add Engineer</span>
@@ -326,6 +330,7 @@
         });
 
         document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+        document.getElementById('newApplicantBtn').addEventListener('click', () => window.location.href = 'newapplicant.html');
         document.getElementById('addEngineerBtn').addEventListener('click', () => window.location.href = 'engineerdatabase.html');
         document.getElementById('documentsBtn').addEventListener('click', () => window.location.href = 'documents.html');
         document.getElementById('personalDetailsBtn').addEventListener('click', () => window.location.href = 'personaldetails.html');
