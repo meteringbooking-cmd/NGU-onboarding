@@ -106,14 +106,6 @@
         .badge-onboarding { background: rgba(245,158,11,0.2); color: #fcd34d; }
         .badge-pending    { background: rgba(139,154,174,0.15); color: #8B9AAE; }
 
-        /* ── Recruiter badge ── */
-        .recruiter-badge {
-            display: inline-block; padding: 0.15rem 0.55rem; border-radius: 20px;
-            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
-            margin-left: 0.5rem; vertical-align: middle;
-            background: rgba(168,85,247,0.18); color: #c4b5fd; border: 1px solid rgba(168,85,247,0.3);
-        }
-
         /* Action buttons in table */
         .action-btns { display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: nowrap; }
         .action-btns button {
@@ -126,6 +118,14 @@
         .btn-onboard.active { background: rgba(245,158,11,0.18); border-color: rgba(245,158,11,0.5); color: #fcd34d; cursor: default; }
         .btn-delete { background: rgba(239,68,68,0.1); border: 1.5px solid rgba(239,68,68,0.3); color: #fca5a5; }
         .btn-delete:hover { background: rgba(239,68,68,0.22); border-color: var(--error); }
+        .btn-interview-proceed { background: rgba(16,185,129,0.15); border: 1.5px solid rgba(16,185,129,0.5); color: #6ee7b7; }
+        .btn-interview-proceed:hover { background: rgba(16,185,129,0.28); border-color: var(--success); }
+        .btn-interview-decline { background: rgba(239,68,68,0.12); border: 1.5px solid rgba(239,68,68,0.4); color: #fca5a5; }
+        .btn-interview-decline:hover { background: rgba(239,68,68,0.24); border-color: var(--error); }
+        .btn-onboard.interview-passed { background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.5); color: #6ee7b7; cursor: default; }
+        .btn-onboard.interview-declined { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #fca5a5; cursor: default; }
+        .interview-due { animation: pulseBorder 1.5s ease-in-out infinite; }
+        @keyframes pulseBorder { 0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); } 50% { box-shadow: 0 0 0 4px rgba(245,158,11,0.15); } }
 
         .protected-bar {
             background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.3);
@@ -168,20 +168,6 @@
         .confirm-box p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
         .confirm-actions { display: flex; gap: 1rem; justify-content: center; }
 
-        /* ── Rubix notice inside interview modal ── */
-        .rubix-notice {
-            background: rgba(168,85,247,0.1);
-            border: 1px solid rgba(168,85,247,0.3);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.2rem;
-            font-size: 0.83rem;
-            color: #c4b5fd;
-            text-align: left;
-            line-height: 1.5;
-        }
-        .rubix-notice strong { color: #d8b4fe; }
-
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .card { padding: 2rem 1.5rem; }
@@ -204,6 +190,7 @@
             <button class="btn btn-secondary" style="padding:0.5rem 1.2rem; font-size:0.9rem;" id="signOutBtn">Sign Out</button>
         </div>
     </div>
+
 
     <!-- ── Engineer List ── -->
     <div class="card">
@@ -281,15 +268,9 @@
 
 <!-- ── Interview date/time overlay ── -->
 <div class="overlay" id="interviewOverlay">
-    <div class="confirm-box" style="max-width:480px;">
+    <div class="confirm-box" style="max-width:460px;">
         <h3 style="color:var(--accent); margin-bottom:0.4rem;">📅 Schedule Interview</h3>
-        <p id="interviewEngineerName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;"></p>
-
-        <!-- Shown only when the engineer was referred by Rubix -->
-        <div class="rubix-notice" id="rubixNotice" style="display:none;">
-            🔗 <strong>Rubix referral</strong> — a copy of this email will also be sent to the Rubix recruiter at <strong id="rubixEmailDisplay"></strong>
-        </div>
-
+        <p id="interviewEngineerName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;"></p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left; margin-bottom:1.5rem;">
             <div>
                 <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Date</label>
@@ -312,7 +293,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
-        getFirestore, collection, getDocs, doc, updateDoc,
+        getFirestore, collection, addDoc, getDocs, doc, updateDoc,
         serverTimestamp, query, orderBy, where
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -329,16 +310,17 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
+    // ── EmailJS ───────────────────────────────────────────────────────────────
     emailjs.init('ziLnha91scpGjFABh');
 
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
-    const colRef         = collection(db, "NGUO - Engineers");
-    const tableEl        = document.getElementById('engineersTable');
+    const colRef  = collection(db, "NGUO - Engineers");
+    const tableEl = document.getElementById('engineersTable');
 
-    let allEngineers     = [];
-    let selectedDocId    = null;
-    let pendingDeleteId  = null;
+    let allEngineers  = [];
+    let selectedDocId = null;
+    let pendingDeleteId = null;
     let pendingOnboardId = null;
 
     // ── Contract badge ────────────────────────────────────────────────────────
@@ -347,13 +329,9 @@
         return `<span class="badge ${map[contract] || 'badge-ss-oes'}">${contract || '—'}</span>`;
     }
 
-    // ── Recruiter badge — shows recruiter's name if available, else agency ────
-    function recruiterBadge(eng) {
-        if (!eng.recruiter) return '';
-        const label = eng.recruiterName
-            ? eng.recruiterName
-            : (eng.recruiter.charAt(0).toUpperCase() + eng.recruiter.slice(1));
-        return `<span class="recruiter-badge">via ${label}</span>`;
+    function statusBadge(status) {
+        if (status === 'onboarding') return `<span class="badge badge-onboarding">⚡ Onboarding</span>`;
+        return `<span class="badge badge-pending">Pending</span>`;
     }
 
     // ── Load engineers (exclude deleted) ─────────────────────────────────────
@@ -364,24 +342,49 @@
             const q    = query(colRef, orderBy('createdAt', 'desc'));
             const snap = await getDocs(q);
 
+            // Filter out deleted records
             allEngineers = snap.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(d => d.status !== 'deleted');
 
             if (allEngineers.length === 0) {
-                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers yet. Proceed an applicant to add one.</p>';
+                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers added yet</p>';
                 return;
             }
+
+            const now = new Date();
 
             let rows = '';
             allEngineers.forEach(d => {
                 const startDate = d.startDate
                     ? new Date(d.startDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
                     : '—';
-                const isOnboarding = d.status === 'onboarding';
+                const isOnboarding  = d.status === 'onboarding';
+                const intPassed     = d.interviewPassed === true;
+                const intDeclined   = d.interviewPassed === false && d.hasOwnProperty('interviewPassed');
+                const intDateTime   = d.interviewDateTime ? new Date(d.interviewDateTime) : null;
+                const intDue        = intDateTime && intDateTime <= now && !intPassed && !intDeclined;
+
+                // Build the onboard/interview button
+                let onboardBtn = '';
+                if (!isOnboarding) {
+                    onboardBtn = `<button class="btn-onboard" data-id="${d.id}">▶ Begin Onboard</button>`;
+                } else if (intPassed) {
+                    onboardBtn = `<button class="btn-onboard interview-passed" data-id="${d.id}" disabled>✓ Interview Passed</button>`;
+                } else if (intDeclined) {
+                    onboardBtn = `<button class="btn-onboard interview-declined" data-id="${d.id}" disabled>✗ Interview Declined</button>`;
+                } else if (intDue) {
+                    // Interview time has passed — show Proceed / Decline buttons
+                    onboardBtn = `
+                        <button class="btn-interview-proceed interview-due" data-id="${d.id}" data-action="proceed">✓ Proceed</button>
+                        <button class="btn-interview-decline" data-id="${d.id}" data-action="decline">✗ Decline</button>`;
+                } else {
+                    // Onboarding but interview not yet due
+                    onboardBtn = `<button class="btn-onboard active" data-id="${d.id}" disabled title="Interview scheduled">⚡ Onboarding</button>`;
+                }
 
                 rows += `<tr data-id="${d.id}">
-                    <td><strong>${d.name || '—'}</strong>${recruiterBadge(d)}</td>
+                    <td><strong>${d.name || '—'}</strong></td>
                     <td>${d.email || '—'}</td>
                     <td>${d.phone || '—'}</td>
                     <td>${contractBadge(d.contract)}</td>
@@ -389,11 +392,7 @@
                     <td>${startDate}</td>
                     <td onclick="event.stopPropagation()">
                         <div class="action-btns">
-                            <button class="btn-onboard ${isOnboarding ? 'active' : ''}"
-                                data-id="${d.id}"
-                                ${isOnboarding ? 'disabled title="Already onboarding"' : ''}>
-                                ${isOnboarding ? '⚡ Onboarding' : '▶ Begin Onboard'}
-                            </button>
+                            ${onboardBtn}
                             <button class="btn-delete" data-id="${d.id}" data-name="${d.name || 'this engineer'}">
                                 🗑 Delete
                             </button>
@@ -426,32 +425,55 @@
                 });
             });
 
-            // Begin Onboard buttons
-            tableEl.querySelectorAll('.btn-onboard:not(.active)').forEach(btn => {
+            // Begin Onboard buttons → open interview modal
+            tableEl.querySelectorAll('.btn-onboard:not(.active):not(.interview-passed):not(.interview-declined)').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     e.stopPropagation();
                     const eng = allEngineers.find(en => en.id === btn.dataset.id);
                     pendingOnboardId = btn.dataset.id;
-
                     document.getElementById('interviewEngineerName').textContent =
                         `Set an interview date and time for ${eng ? eng.name : 'this engineer'} before beginning onboarding.`;
-                    document.getElementById('interviewDate').value        = '';
-                    document.getElementById('interviewTime').value        = '';
+                    document.getElementById('interviewDate').value  = '';
+                    document.getElementById('interviewTime').value  = '';
                     document.getElementById('interviewError').textContent = '';
-
-                    // Show Rubix notice if applicable
-                    const rubixNotice = document.getElementById('rubixNotice');
-                    if (eng && eng.recruiter === 'rubix' && eng.recruiterEmail) {
-                        const recruiterLabel = eng.recruiterName
-                            ? `${eng.recruiterName} (${eng.recruiterEmail})`
-                            : eng.recruiterEmail;
-                        document.getElementById('rubixEmailDisplay').textContent = recruiterLabel;
-                        rubixNotice.style.display = 'block';
-                    } else {
-                        rubixNotice.style.display = 'none';
-                    }
-
                     document.getElementById('interviewOverlay').classList.add('active');
+                });
+            });
+
+            // Interview Proceed / Decline buttons (shown after interview time passes)
+            tableEl.querySelectorAll('.btn-interview-proceed, .btn-interview-decline').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const action = btn.dataset.action; // 'proceed' or 'decline'
+                    const engId  = btn.dataset.id;
+                    const eng    = allEngineers.find(en => en.id === engId);
+                    if (!eng) return;
+
+                    const label = action === 'proceed' ? 'Interview Passed' : 'Interview Declined';
+                    if (!confirm(`Mark "${eng.name}" as ${label}?`)) return;
+
+                    btn.disabled    = true;
+                    btn.textContent = 'Saving…';
+
+                    try {
+                        const passed = action === 'proceed';
+                        await updateDoc(doc(db, "NGUO - Engineers", engId), {
+                            interviewPassed:   passed,
+                            interviewOutcomeAt: serverTimestamp()
+                        });
+
+                        // Update local cache
+                        eng.interviewPassed = passed;
+
+                        // Re-render
+                        closeEditPanel();
+                        loadEngineers();
+
+                    } catch (err) {
+                        alert('Error: ' + err.message);
+                        btn.disabled    = false;
+                        btn.textContent = action === 'proceed' ? '✓ Proceed' : '✗ Decline';
+                    }
                 });
             });
 
@@ -527,18 +549,12 @@
             await updateDoc(doc(db, "NGUO - Engineers", selectedDocId), updates);
             editMsg.className   = 'success-msg';
             editMsg.textContent = `✓ Changes saved for ${updates.name}`;
+            // Update local cache
             const idx = allEngineers.findIndex(e => e.id === selectedDocId);
             if (idx !== -1) allEngineers[idx] = { ...allEngineers[idx], ...updates };
+            // Refresh table row name
             const row = tableEl.querySelector(`tr[data-id="${selectedDocId}"]`);
-            if (row) {
-                const eng = allEngineers.find(e => e.id === selectedDocId);
-                // Preserve recruiter badge when updating name cell
-                row.cells[0].innerHTML   = `<strong>${updates.name}</strong>${recruiterBadge(eng || {})}`;
-                row.cells[1].textContent = updates.email;
-                row.cells[2].textContent = updates.phone;
-                row.cells[3].innerHTML   = contractBadge(updates.contract);
-                row.cells[4].textContent = updates.ftl;
-            }
+            if (row) { row.cells[0].innerHTML = `<strong>${updates.name}</strong>`; row.cells[1].textContent = updates.email; row.cells[2].textContent = updates.phone; row.cells[3].innerHTML = contractBadge(updates.contract); row.cells[4].textContent = updates.ftl; }
             document.getElementById('editTitle').textContent = `Editing — ${updates.name}`;
         } catch (err) {
             editMsg.className   = 'error-msg';
@@ -575,6 +591,7 @@
         pendingDeleteId = null;
     });
 
+    // Close overlay on backdrop click
     document.getElementById('deleteOverlay').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
             document.getElementById('deleteOverlay').classList.remove('active');
@@ -582,7 +599,7 @@
         }
     });
 
-    // ── Interview modal & dual-email send ─────────────────────────────────────
+    // ── Interview modal ───────────────────────────────────────────────────────
     document.getElementById('confirmInterviewBtn').addEventListener('click', async () => {
         const date    = document.getElementById('interviewDate').value;
         const time    = document.getElementById('interviewTime').value;
@@ -593,21 +610,23 @@
         if (!date || !time) { errorEl.textContent = 'Please set both a date and time for the interview.'; return; }
         if (!pendingOnboardId) return;
 
+        // Find the engineer data
         const eng = allEngineers.find(e => e.id === pendingOnboardId);
         if (!eng) { errorEl.textContent = 'Engineer not found.'; return; }
 
         btn.disabled    = true;
         btn.textContent = 'Saving…';
 
-        // Format date & time for the email
+        // Format date nicely e.g. "Monday 15 March 2026"
         const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
         });
-        const [h, m]        = time.split(':');
-        const hour          = parseInt(h);
+        // Format time nicely e.g. "10:30 AM"
+        const [h, m] = time.split(':');
+        const hour   = parseInt(h);
         const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
 
-        // Fetch contract document link
+        // Fetch the most recent contract document for this engineer's campaign from NGUO contract
         let contractLink     = null;
         let contractFileName = null;
         try {
@@ -615,6 +634,7 @@
             const contractQ    = query(contractCol, where("campaign", "==", eng.contract));
             const contractSnap = await getDocs(contractQ);
             if (!contractSnap.empty) {
+                // Sort by uploadedAt descending in JS (avoids needing a Firestore composite index)
                 const docs = contractSnap.docs
                     .map(d => d.data())
                     .filter(d => d.downloadURL)
@@ -632,24 +652,15 @@
             console.warn('Could not fetch contract doc:', contractErr);
         }
 
-        const contractDisplay  = contractFileName || `${eng.contract || 'your'} Contract`;
-        const contractLinkText = contractLink     || '(No contract document uploaded yet for this campaign)';
-
-        // Base email params (same content goes to both addresses)
-        const emailParams = {
-            engineer_name:  eng.name,
-            interview_date: dateFormatted,
-            interview_time: timeFormatted,
-            contract_name:  eng.contract  || 'your contract',
-            contract_doc:   contractDisplay,
-            contract_link:  contractLinkText,
-            portal_link:    'https://ngu-onboarding.vercel.app/uploaddocuments.html',
-            login_email:    eng.email,
-            login_password: eng.password  || '(see your welcome pack)'
-        };
+        const contractDisplay = contractFileName
+            ? `${contractFileName}`
+            : `${eng.contract || 'your'} Contract`;
+        const contractLinkText = contractLink
+            ? contractLink
+            : '(No contract document uploaded yet for this campaign)';
 
         try {
-            // 1. Save onboarding status to Firestore
+            // 1. Save to Firestore
             await updateDoc(doc(db, "NGUO - Engineers", pendingOnboardId), {
                 status:              'onboarding',
                 onboardingStartedAt: serverTimestamp(),
@@ -658,35 +669,26 @@
                 interviewDateTime:   `${date}T${time}`
             });
 
-            // 2. Send email to engineer
+            // 2. Send email via EmailJS
             try {
                 await emailjs.send('service_g9nll6f', 'template_risvowl', {
-                    ...emailParams,
-                    to_email: eng.email
+                    to_email:          eng.email,
+                    engineer_name:     eng.name,
+                    interview_date:    dateFormatted,
+                    interview_time:    timeFormatted,
+                    contract_name:     eng.contract || 'your contract',
+                    contract_doc:      contractDisplay,
+                    contract_link:     contractLinkText,
+                    portal_link:       'https://ngu-onboarding.vercel.app/uploaddocuments.html',
+                    login_email:       eng.email,
+                    login_password:    eng.password || '(see your welcome pack)'
                 });
             } catch (emailErr) {
-                console.warn('Engineer email failed:', emailErr);
-                errorEl.textContent = '⚠️ Onboarding saved but engineer email failed: ' + (emailErr.text || emailErr.message || 'unknown error');
+                console.warn('Email failed (onboarding status was still saved):', emailErr);
+                errorEl.textContent = '⚠️ Onboarding saved but email failed: ' + (emailErr.text || emailErr.message || 'unknown error');
                 btn.disabled    = false;
                 btn.textContent = 'Begin Onboarding';
                 return;
-            }
-
-            // 3. If Rubix referral — also send a copy to the recruiter
-            if (eng.recruiter === 'rubix' && eng.recruiterEmail) {
-                try {
-                    await emailjs.send('service_g9nll6f', 'template_risvowl', {
-                        ...emailParams,
-                        to_email: eng.recruiterEmail
-                    });
-                } catch (recruiterEmailErr) {
-                    // Non-fatal: onboarding saved and engineer emailed successfully
-                    console.warn('Rubix recruiter email failed:', recruiterEmailErr);
-                    errorEl.textContent = '⚠️ Onboarding saved & engineer emailed, but Rubix recruiter copy failed.';
-                    btn.disabled    = false;
-                    btn.textContent = 'Begin Onboarding';
-                    return;
-                }
             }
 
             document.getElementById('interviewOverlay').classList.remove('active');
