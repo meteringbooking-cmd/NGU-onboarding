@@ -155,22 +155,43 @@
         }
         .cv-link:hover { background:rgba(0,163,224,0.2); border-color:var(--accent); }
 
+        /* Proceed modal extras */
+        .proceed-form { margin-top: 1.2rem; text-align: left; }
+        .proceed-form label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-light); margin-bottom:0.4rem; margin-top:0.9rem; }
+        .proceed-form input,
+        .proceed-form select {
+            width:100%; padding:0.75rem 1rem; background:var(--bg-dark);
+            border:2px solid var(--border); border-radius:10px; color:white;
+            font-size:0.95rem; font-family:inherit; appearance:none; -webkit-appearance:none;
+        }
+        .proceed-form select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer;
+        }
+        .proceed-form select option { background:var(--bg-card); color:var(--text-light); }
+        .proceed-form input:focus,
+        .proceed-form select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
+        .proceed-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        @media(max-width:480px){ .proceed-form .form-row { grid-template-columns:1fr; } }
+
         /* Confirm overlay */
         .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; }
         .overlay.active { display:flex; }
         .confirm-box {
             background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
-            padding:2.2rem; max-width:420px; width:90%; text-align:center;
+            padding:2.2rem; max-width:480px; width:90%; text-align:center;
             box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease;
         }
         @keyframes popIn { from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);} }
         .confirm-box .ci { font-size:2.5rem; margin-bottom:0.7rem; }
         .confirm-box h3  { font-size:1.1rem; margin-bottom:0.5rem; }
-        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.6rem; line-height:1.5; }
-        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; }
+        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem; line-height:1.5; }
+        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1.4rem; }
 
         .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
         @keyframes spin { to{transform:rotate(360deg);} }
+
+        #proceedError { color:var(--error); font-size:0.83rem; margin-top:0.6rem; min-height:1.1rem; }
 
         @media (max-width:700px) { .detail-grid { grid-template-columns:1fr 1fr; } }
     </style>
@@ -243,12 +264,51 @@
     </div>
 </div>
 
-<!-- Confirm overlay -->
+<!-- ── Proceed modal (with engineer details form) ── -->
 <div class="overlay" id="confirmOverlay">
     <div class="confirm-box">
         <div class="ci" id="confirmIcon">✅</div>
         <h3 id="confirmTitle">Proceed with Applicant?</h3>
-        <p id="confirmText">This will move the applicant to historic records and mark them as proceeded.</p>
+        <p id="confirmText">This will move the applicant to historic records and add them to the Engineer Database.</p>
+
+        <!-- Extra fields shown only for "proceed" action -->
+        <div id="proceedFields" style="display:none;">
+            <div class="proceed-form">
+                <div class="form-row">
+                    <div>
+                        <label>Contract</label>
+                        <select id="proceedContract">
+                            <option value="" disabled selected>Select contract…</option>
+                            <option value="Sureserve - OES">Sureserve - OES</option>
+                            <option value="Sureserve - SP">Sureserve - SP</option>
+                            <option value="Calisen - SP">Calisen - SP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>FTL</label>
+                        <select id="proceedFTL">
+                            <option value="" disabled selected>Select FTL…</option>
+                            <option value="Richard Wiecko">Richard Wiecko</option>
+                            <option value="Scott Carson">Scott Carson</option>
+                            <option value="Stuart Whyte">Stuart Whyte</option>
+                            <option value="Tom Green">Tom Green</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Proposed Start Date</label>
+                        <input type="date" id="proceedStartDate">
+                    </div>
+                    <div>
+                        <label>Portal Password</label>
+                        <input type="text" id="proceedPassword" placeholder="Set a password">
+                    </div>
+                </div>
+            </div>
+            <div id="proceedError"></div>
+        </div>
+
         <div class="confirm-actions">
             <button class="btn" id="confirmYesBtn" style="padding:0.7rem 1.6rem;">Confirm</button>
             <button class="btn btn-secondary" id="confirmNoBtn" style="padding:0.7rem 1.4rem;">Cancel</button>
@@ -259,7 +319,7 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy }
+    import { getFirestore, collection, getDocs, doc, addDoc, updateDoc, serverTimestamp, query, orderBy }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -275,6 +335,7 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
     const col  = collection(db, "NGUO New Applicants");
+    const engCol = collection(db, "NGUO - Engineers");
 
     onAuthStateChanged(auth, u => { if (!u) window.location.href = 'index.html'; });
 
@@ -282,7 +343,7 @@
     let activeTab       = 'new';
     let selectedId      = null;
     let historicFilter  = 'all';
-    let pendingAction   = null; // { id, type: 'proceed'|'decline' }
+    let pendingAction   = null; // { id, type: 'proceed'|'decline'|'onhold' }
 
     // ── Load all ──────────────────────────────────────────────────────────────
     async function loadAll() {
@@ -300,8 +361,8 @@
     }
 
     function updateCounts() {
-        const newOnes = allApplicants.filter(a => !a.status || a.status === 'new');
-        const onhold  = allApplicants.filter(a => a.status === 'onhold');
+        const newOnes  = allApplicants.filter(a => !a.status || a.status === 'new');
+        const onhold   = allApplicants.filter(a => a.status === 'onhold');
         const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
         document.getElementById('countNew').textContent      = newOnes.length;
         document.getElementById('countOnHold').textContent   = onhold.length;
@@ -313,6 +374,13 @@
         if (!ts) return '—';
         const d = ts.toDate ? ts.toDate() : new Date(ts);
         return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    // ── Full name helper ──────────────────────────────────────────────────────
+    function fullName(a) {
+        if (a.fullName) return a.fullName;
+        const p = a.personalDetails || {};
+        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
     }
 
     // ── Render new applicants table ───────────────────────────────────────────
@@ -340,6 +408,37 @@
                         <td>${a.personalDetails?.phone || '—'}</td>
                         <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
                         <td><span class="status-badge status-new">New</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
+    }
+
+    // ── Render on hold table ──────────────────────────────────────────────────
+    function renderOnHold() {
+        const list = allApplicants.filter(a => a.status === 'onhold');
+        const el   = document.getElementById('onholdTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
+            closeDetail('detailPanelOnHold');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
                     </tr>`).join('')}
                 </tbody>
             </table>
@@ -382,19 +481,11 @@
             </div>`;
     }
 
-    // ── Full name helper ──────────────────────────────────────────────────────
-    function fullName(a) {
-        if (a.fullName) return a.fullName;
-        const p = a.personalDetails || {};
-        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
-    }
-
     // ── Select applicant → show detail ────────────────────────────────────────
     window.selectApplicant = function(id, panel) {
         const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
         const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
 
-        // Toggle
         if (selectedId === id) {
             selectedId = null;
             closeDetail(panelId);
@@ -570,18 +661,28 @@
         document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
     };
 
-    // ── Proceed / Decline ─────────────────────────────────────────────────────
+    // ── Trigger action modal ──────────────────────────────────────────────────
     window.triggerAction = function(id, type) {
         pendingAction = { id, type };
         const a = allApplicants.find(x => x.id === id);
         const name = fullName(a);
 
+        // Reset proceed fields
+        document.getElementById('proceedFields').style.display = 'none';
+        document.getElementById('proceedContract').value  = '';
+        document.getElementById('proceedFTL').value       = '';
+        document.getElementById('proceedStartDate').value = '';
+        document.getElementById('proceedPassword').value  = '';
+        document.getElementById('proceedError').textContent = '';
+
         if (type === 'proceed') {
             document.getElementById('confirmIcon').textContent  = '✅';
             document.getElementById('confirmTitle').textContent = 'Proceed with Applicant?';
-            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Proceeded.`;
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic records and added to the Engineer Database.`;
             document.getElementById('confirmYesBtn').className  = 'btn btn-proceed';
             document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+            // Show the extra engineer fields
+            document.getElementById('proceedFields').style.display = 'block';
         } else if (type === 'onhold') {
             document.getElementById('confirmIcon').textContent  = '⏸️';
             document.getElementById('confirmTitle').textContent = 'Place Applicant On Hold?';
@@ -600,22 +701,62 @@
 
     document.getElementById('confirmYesBtn').addEventListener('click', async () => {
         if (!pendingAction) return;
-        const btn = document.getElementById('confirmYesBtn');
+        const btn      = document.getElementById('confirmYesBtn');
+        const errorEl  = document.getElementById('proceedError');
+        errorEl.textContent = '';
+
+        // If proceeding, validate the extra fields first
+        if (pendingAction.type === 'proceed') {
+            const contract  = document.getElementById('proceedContract').value;
+            const ftl       = document.getElementById('proceedFTL').value;
+            const startDate = document.getElementById('proceedStartDate').value;
+            const password  = document.getElementById('proceedPassword').value.trim();
+
+            if (!contract || !ftl || !startDate || !password) {
+                errorEl.textContent = 'Please fill in all fields above before proceeding.';
+                return;
+            }
+        }
+
         btn.disabled  = true;
         btn.innerHTML = '<span class="spinner"></span>Saving…';
 
         try {
+            // 1. Update applicant status
             await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
-                status:     pendingAction.type,
-                decidedAt:  serverTimestamp()
+                status:    pendingAction.type,
+                decidedAt: serverTimestamp()
             });
+
+            // 2. If proceeded → create engineer record
+            if (pendingAction.type === 'proceed') {
+                const a        = allApplicants.find(x => x.id === pendingAction.id);
+                const p        = a?.personalDetails || {};
+                const contract = document.getElementById('proceedContract').value;
+                const ftl      = document.getElementById('proceedFTL').value;
+                const startDate= document.getElementById('proceedStartDate').value;
+                const password = document.getElementById('proceedPassword').value.trim();
+
+                await addDoc(engCol, {
+                    name:       fullName(a),
+                    email:      p.email  || '',
+                    phone:      p.phone  || '',
+                    contract,
+                    ftl,
+                    startDate,
+                    password,
+                    status:     'pending',
+                    sourceApplicantId: pendingAction.id,
+                    createdAt:  serverTimestamp()
+                });
+            }
 
             // Update local cache
             const a = allApplicants.find(x => x.id === pendingAction.id);
             if (a) a.status = pendingAction.type;
 
             document.getElementById('confirmOverlay').classList.remove('active');
-            selectedId  = null;
+            selectedId    = null;
             pendingAction = null;
 
             closeDetail('detailPanel');
@@ -628,7 +769,7 @@
             updateCounts();
 
         } catch (err) {
-            alert('Error: ' + err.message);
+            errorEl.textContent = 'Error: ' + err.message;
         }
 
         btn.disabled    = false;
@@ -657,37 +798,6 @@
         document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
         selectedId = null;
     };
-
-    // ── Render on hold table ─────────────────────────────────────────────────
-    function renderOnHold() {
-        const list = allApplicants.filter(a => a.status === 'onhold');
-        const el   = document.getElementById('onholdTable');
-        if (list.length === 0) {
-            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
-            closeDetail('detailPanelOnHold');
-            return;
-        }
-        el.innerHTML = `
-            <div class="table-wrap">
-            <table>
-                <thead><tr>
-                    <th>Name</th><th>Position</th><th>Date Submitted</th>
-                    <th>Telephone</th><th>Postcode</th><th>Status</th>
-                </tr></thead>
-                <tbody>
-                ${list.map(a => `
-                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
-                        <td><span class="applicant-name">${fullName(a)}</span></td>
-                        <td>${a.position || '—'}</td>
-                        <td>${fmtDate(a.submittedAt)}</td>
-                        <td>${a.personalDetails?.phone || '—'}</td>
-                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
-                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
-                    </tr>`).join('')}
-                </tbody>
-            </table>
-            </div>`;
-    }
 
     window.filterHistoric = function(f) {
         historicFilter = f;
