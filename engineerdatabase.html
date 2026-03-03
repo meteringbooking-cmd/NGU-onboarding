@@ -106,6 +106,14 @@
         .badge-onboarding { background: rgba(245,158,11,0.2); color: #fcd34d; }
         .badge-pending    { background: rgba(139,154,174,0.15); color: #8B9AAE; }
 
+        /* ── Recruiter badge ── */
+        .recruiter-badge {
+            display: inline-block; padding: 0.15rem 0.55rem; border-radius: 20px;
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+            margin-left: 0.5rem; vertical-align: middle;
+            background: rgba(168,85,247,0.18); color: #c4b5fd; border: 1px solid rgba(168,85,247,0.3);
+        }
+
         /* Action buttons in table */
         .action-btns { display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: nowrap; }
         .action-btns button {
@@ -159,6 +167,20 @@
         .confirm-box h3 { margin-bottom: 0.8rem; font-size: 1.2rem; color: #fca5a5; }
         .confirm-box p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
         .confirm-actions { display: flex; gap: 1rem; justify-content: center; }
+
+        /* ── Rubix notice inside interview modal ── */
+        .rubix-notice {
+            background: rgba(168,85,247,0.1);
+            border: 1px solid rgba(168,85,247,0.3);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.83rem;
+            color: #c4b5fd;
+            text-align: left;
+            line-height: 1.5;
+        }
+        .rubix-notice strong { color: #d8b4fe; }
 
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
@@ -259,9 +281,15 @@
 
 <!-- ── Interview date/time overlay ── -->
 <div class="overlay" id="interviewOverlay">
-    <div class="confirm-box" style="max-width:460px;">
+    <div class="confirm-box" style="max-width:480px;">
         <h3 style="color:var(--accent); margin-bottom:0.4rem;">📅 Schedule Interview</h3>
-        <p id="interviewEngineerName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;"></p>
+        <p id="interviewEngineerName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;"></p>
+
+        <!-- Shown only when the engineer was referred by Rubix -->
+        <div class="rubix-notice" id="rubixNotice" style="display:none;">
+            🔗 <strong>Rubix referral</strong> — a copy of this email will also be sent to the Rubix recruiter at <strong id="rubixEmailDisplay"></strong>
+        </div>
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left; margin-bottom:1.5rem;">
             <div>
                 <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Date</label>
@@ -301,23 +329,29 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    // ── EmailJS ───────────────────────────────────────────────────────────────
     emailjs.init('ziLnha91scpGjFABh');
 
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
-    const colRef  = collection(db, "NGUO - Engineers");
-    const tableEl = document.getElementById('engineersTable');
+    const colRef         = collection(db, "NGUO - Engineers");
+    const tableEl        = document.getElementById('engineersTable');
 
-    let allEngineers    = [];
-    let selectedDocId   = null;
-    let pendingDeleteId = null;
+    let allEngineers     = [];
+    let selectedDocId    = null;
+    let pendingDeleteId  = null;
     let pendingOnboardId = null;
 
     // ── Contract badge ────────────────────────────────────────────────────────
     function contractBadge(contract) {
         const map = { 'Sureserve - OES': 'badge-ss-oes', 'Sureserve - SP': 'badge-ss-sp', 'Calisen - SP': 'badge-cal-sp' };
         return `<span class="badge ${map[contract] || 'badge-ss-oes'}">${contract || '—'}</span>`;
+    }
+
+    // ── Recruiter badge ───────────────────────────────────────────────────────
+    function recruiterBadge(eng) {
+        if (!eng.recruiter) return '';
+        const label = eng.recruiter.charAt(0).toUpperCase() + eng.recruiter.slice(1);
+        return `<span class="recruiter-badge">${label}</span>`;
     }
 
     // ── Load engineers (exclude deleted) ─────────────────────────────────────
@@ -345,7 +379,7 @@
                 const isOnboarding = d.status === 'onboarding';
 
                 rows += `<tr data-id="${d.id}">
-                    <td><strong>${d.name || '—'}</strong></td>
+                    <td><strong>${d.name || '—'}</strong>${recruiterBadge(d)}</td>
                     <td>${d.email || '—'}</td>
                     <td>${d.phone || '—'}</td>
                     <td>${contractBadge(d.contract)}</td>
@@ -396,11 +430,22 @@
                     e.stopPropagation();
                     const eng = allEngineers.find(en => en.id === btn.dataset.id);
                     pendingOnboardId = btn.dataset.id;
+
                     document.getElementById('interviewEngineerName').textContent =
                         `Set an interview date and time for ${eng ? eng.name : 'this engineer'} before beginning onboarding.`;
-                    document.getElementById('interviewDate').value  = '';
-                    document.getElementById('interviewTime').value  = '';
+                    document.getElementById('interviewDate').value        = '';
+                    document.getElementById('interviewTime').value        = '';
                     document.getElementById('interviewError').textContent = '';
+
+                    // Show Rubix notice if applicable
+                    const rubixNotice = document.getElementById('rubixNotice');
+                    if (eng && eng.recruiter === 'rubix' && eng.recruiterEmail) {
+                        document.getElementById('rubixEmailDisplay').textContent = eng.recruiterEmail;
+                        rubixNotice.style.display = 'block';
+                    } else {
+                        rubixNotice.style.display = 'none';
+                    }
+
                     document.getElementById('interviewOverlay').classList.add('active');
                 });
             });
@@ -481,10 +526,12 @@
             if (idx !== -1) allEngineers[idx] = { ...allEngineers[idx], ...updates };
             const row = tableEl.querySelector(`tr[data-id="${selectedDocId}"]`);
             if (row) {
-                row.cells[0].innerHTML = `<strong>${updates.name}</strong>`;
+                const eng = allEngineers.find(e => e.id === selectedDocId);
+                // Preserve recruiter badge when updating name cell
+                row.cells[0].innerHTML   = `<strong>${updates.name}</strong>${recruiterBadge(eng || {})}`;
                 row.cells[1].textContent = updates.email;
                 row.cells[2].textContent = updates.phone;
-                row.cells[3].innerHTML  = contractBadge(updates.contract);
+                row.cells[3].innerHTML   = contractBadge(updates.contract);
                 row.cells[4].textContent = updates.ftl;
             }
             document.getElementById('editTitle').textContent = `Editing — ${updates.name}`;
@@ -530,7 +577,7 @@
         }
     });
 
-    // ── Interview modal ───────────────────────────────────────────────────────
+    // ── Interview modal & dual-email send ─────────────────────────────────────
     document.getElementById('confirmInterviewBtn').addEventListener('click', async () => {
         const date    = document.getElementById('interviewDate').value;
         const time    = document.getElementById('interviewTime').value;
@@ -547,13 +594,15 @@
         btn.disabled    = true;
         btn.textContent = 'Saving…';
 
+        // Format date & time for the email
         const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
         });
-        const [h, m] = time.split(':');
-        const hour   = parseInt(h);
+        const [h, m]        = time.split(':');
+        const hour          = parseInt(h);
         const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
 
+        // Fetch contract document link
         let contractLink     = null;
         let contractFileName = null;
         try {
@@ -578,10 +627,24 @@
             console.warn('Could not fetch contract doc:', contractErr);
         }
 
-        const contractDisplay  = contractFileName ? `${contractFileName}` : `${eng.contract || 'your'} Contract`;
-        const contractLinkText = contractLink ? contractLink : '(No contract document uploaded yet for this campaign)';
+        const contractDisplay  = contractFileName || `${eng.contract || 'your'} Contract`;
+        const contractLinkText = contractLink     || '(No contract document uploaded yet for this campaign)';
+
+        // Base email params (same content goes to both addresses)
+        const emailParams = {
+            engineer_name:  eng.name,
+            interview_date: dateFormatted,
+            interview_time: timeFormatted,
+            contract_name:  eng.contract  || 'your contract',
+            contract_doc:   contractDisplay,
+            contract_link:  contractLinkText,
+            portal_link:    'https://ngu-onboarding.vercel.app/uploaddocuments.html',
+            login_email:    eng.email,
+            login_password: eng.password  || '(see your welcome pack)'
+        };
 
         try {
+            // 1. Save onboarding status to Firestore
             await updateDoc(doc(db, "NGUO - Engineers", pendingOnboardId), {
                 status:              'onboarding',
                 onboardingStartedAt: serverTimestamp(),
@@ -590,25 +653,35 @@
                 interviewDateTime:   `${date}T${time}`
             });
 
+            // 2. Send email to engineer
             try {
                 await emailjs.send('service_g9nll6f', 'template_risvowl', {
-                    to_email:          eng.email,
-                    engineer_name:     eng.name,
-                    interview_date:    dateFormatted,
-                    interview_time:    timeFormatted,
-                    contract_name:     eng.contract || 'your contract',
-                    contract_doc:      contractDisplay,
-                    contract_link:     contractLinkText,
-                    portal_link:       'https://ngu-onboarding.vercel.app/uploaddocuments.html',
-                    login_email:       eng.email,
-                    login_password:    eng.password || '(see your welcome pack)'
+                    ...emailParams,
+                    to_email: eng.email
                 });
             } catch (emailErr) {
-                console.warn('Email failed (onboarding status was still saved):', emailErr);
-                errorEl.textContent = '⚠️ Onboarding saved but email failed: ' + (emailErr.text || emailErr.message || 'unknown error');
+                console.warn('Engineer email failed:', emailErr);
+                errorEl.textContent = '⚠️ Onboarding saved but engineer email failed: ' + (emailErr.text || emailErr.message || 'unknown error');
                 btn.disabled    = false;
                 btn.textContent = 'Begin Onboarding';
                 return;
+            }
+
+            // 3. If Rubix referral — also send a copy to the recruiter
+            if (eng.recruiter === 'rubix' && eng.recruiterEmail) {
+                try {
+                    await emailjs.send('service_g9nll6f', 'template_risvowl', {
+                        ...emailParams,
+                        to_email: eng.recruiterEmail
+                    });
+                } catch (recruiterEmailErr) {
+                    // Non-fatal: onboarding saved and engineer emailed successfully
+                    console.warn('Rubix recruiter email failed:', recruiterEmailErr);
+                    errorEl.textContent = '⚠️ Onboarding saved & engineer emailed, but Rubix recruiter copy failed.';
+                    btn.disabled    = false;
+                    btn.textContent = 'Begin Onboarding';
+                    return;
+                }
             }
 
             document.getElementById('interviewOverlay').classList.remove('active');
