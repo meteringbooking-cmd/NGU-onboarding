@@ -294,7 +294,7 @@
                 <div class="form-group">
                     <label>Email Address <span class="req">*</span></label>
                     <input type="email" id="email" placeholder="you@example.com">
-                    <!-- Rubix engineer email — shown only when @rubix.com is detected -->
+                    <!-- Rubix engineer email — shown only when @rubix.co.uk is detected -->
                     <div class="rubix-notice" id="rubixNotice">
                         <div class="rubix-notice-label">🔗 Rubix Recruitment</div>
                         <div class="form-group">
@@ -590,7 +590,7 @@
     const rubixNotice  = document.getElementById('rubixNotice');
 
     function isRubix(email) {
-        return email.trim().toLowerCase().endsWith('@rubix.com');
+        return email.trim().toLowerCase().endsWith('@rubix.co.uk');
     }
 
     emailInput.addEventListener('input', () => {
