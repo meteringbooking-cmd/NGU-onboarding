@@ -3,481 +3,705 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU — Engineer Portal</title>
+    <title>NGU — New Applicants</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --primary:#005EB8;--accent:#00A3E0;--bg-dark:#0A1628;--bg-card:#1a2942;--bg-input:#0d1f3a;--text-light:#E8EDF2;--text-muted:#8B9AAE;--border:#2a3f5f;--success:#10B981;--error:#EF4444;--warning:#F59E0B; }
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Work Sans',sans-serif;background:linear-gradient(135deg,var(--bg-dark) 0%,#0d1f3a 100%);color:var(--text-light);min-height:100vh;padding:2rem 1.5rem;}
-        body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(0,163,224,0.09) 0%,transparent 60%),radial-gradient(circle at 85% 75%,rgba(0,94,184,0.07) 0%,transparent 60%);pointer-events:none;z-index:-1;}
-        #loginScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;}
-        .logo{max-height:80px;display:block;margin:0 auto 2.5rem;}
-        .login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2.8rem 2.2rem;width:100%;max-width:420px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
-        .login-card h1{font-size:1.9rem;font-weight:700;text-align:center;margin-bottom:0.4rem;background:linear-gradient(90deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-        .login-card .tagline{text-align:center;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:0.85rem;margin-bottom:2rem;}
-        #portalScreen{display:none;max-width:860px;margin:0 auto;}
-        .portal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
-        .portal-header .logo-sm{max-height:50px;}
-        .welcome-name{font-size:1.1rem;font-weight:600;color:var(--accent);font-family:'DM Mono',monospace;}
-        .progress-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:2.5rem;}
-        .prog-step{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:0.7rem 0.5rem;text-align:center;font-size:0.8rem;font-weight:600;color:var(--text-muted);transition:all 0.3s;}
-        .prog-step.done{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
-        .prog-step.done::after{content:' ✓';}
-        .prog-step.active{background:rgba(0,163,224,0.12);border-color:rgba(0,163,224,0.5);color:var(--accent);}
-        #completeBanner{display:none;background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.4);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;text-align:center;animation:fadeIn 0.4s ease;}
-        #completeBanner .banner-icon{font-size:2rem;margin-bottom:0.4rem;}
-        #completeBanner h3{color:#6ee7b7;font-size:1.1rem;margin-bottom:0.3rem;}
-        #completeBanner p{color:var(--text-muted);font-size:0.88rem;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-        .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem 2rem 2.2rem;margin-bottom:1.5rem;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
-        .card-header{display:flex;align-items:center;gap:0.9rem;margin-bottom:1.6rem;}
-        .card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
-        .icon-blue{background:rgba(0,163,224,0.15);}
-        .icon-green{background:rgba(16,185,129,0.15);}
-        .card-header h2{font-size:1.2rem;font-weight:700;}
-        .card-header p{font-size:0.83rem;color:var(--text-muted);margin-top:0.1rem;}
-        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;}
-        .form-group{display:flex;flex-direction:column;gap:0.5rem;}
-        .form-group label{font-weight:600;font-size:0.9rem;}
-        input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.97rem;font-family:inherit;transition:all 0.2s;}
-        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
-        .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.8rem 1rem;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;background:var(--bg-input);}
-        .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,163,224,0.05);}
-        .upload-zone.has-file{border-color:var(--success);border-style:solid;background:rgba(16,185,129,0.05);}
-        .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-        .upload-icon{font-size:2rem;margin-bottom:0.5rem;}
-        .upload-label{font-weight:600;font-size:0.92rem;margin-bottom:0.3rem;}
-        .upload-hint{font-size:0.78rem;color:var(--text-muted);}
-        .upload-filename{font-size:0.82rem;color:#6ee7b7;margin-top:0.5rem;font-family:'DM Mono',monospace;word-break:break-all;}
-        .upload-status{display:inline-block;margin-top:0.5rem;font-size:0.78rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:20px;}
-        .status-saved{background:rgba(16,185,129,0.2);color:#6ee7b7;}
-        .status-pending{background:rgba(245,158,11,0.2);color:#fcd34d;}
-        .status-none{background:rgba(139,154,174,0.1);color:var(--text-muted);}
-        .btn{padding:0.9rem 2rem;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.22s;font-family:inherit;}
-        .btn-primary{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;width:100%;}
-        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,163,224,0.35);}
-        .btn-secondary{background:var(--bg-input);border:2px solid var(--border);color:var(--text-light);}
-        .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
-        .btn-save{background:rgba(16,185,129,0.15);border:2px solid rgba(16,185,129,0.4);color:#6ee7b7;}
-        .btn-save:hover{background:rgba(16,185,129,0.25);}
-        .btn:disabled{opacity:0.5;cursor:not-allowed;}
-        .save-row{display:flex;gap:1rem;align-items:center;margin-top:1.5rem;flex-wrap:wrap;}
-        .save-msg{font-size:0.9rem;}
-        .save-msg.ok{color:var(--success);}
-        .save-msg.err{color:var(--error);}
-        .error-msg{color:var(--error);font-size:0.88rem;margin-top:0.6rem;text-align:center;min-height:1.2rem;}
-        .divider{border:none;border-top:1px solid var(--border);margin:0.5rem 0 1.5rem;}
-        .upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;}
-        .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
-        @keyframes spin{to{transform:rotate(360deg);}}
-        .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
-        @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
+        :root {
+            --primary: #005EB8; --accent: #00A3E0;
+            --bg-dark: #0A1628; --bg-card: #1a2942; --bg-input: #0d1f3a;
+            --text-light: #E8EDF2; --text-muted: #8B9AAE; --border: #2a3f5f;
+            --success: #10B981; --error: #EF4444; --warning: #F59E0B;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light); min-height: 100vh; padding: 2rem 1.5rem 4rem;
+        }
+        body::before {
+            content:''; position:fixed; inset:0;
+            background: radial-gradient(circle at 15% 20%, rgba(0,163,224,0.08) 0%, transparent 55%),
+                        radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 55%);
+            pointer-events:none; z-index:-1;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .logo { max-height: 70px; display:block; margin: 0 auto 2rem; }
+        h1 {
+            font-size: 2.1rem; font-weight: 800; text-align: center; margin-bottom: 0.4rem;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:2.5rem; font-size:0.88rem; }
+
+        .protected-bar {
+            background: rgba(0,163,224,0.1); border:1px solid rgba(0,163,224,0.3);
+            border-radius:12px; padding:1rem 1.4rem; margin-bottom:2.5rem;
+            color:#bae6fd; font-size:0.95rem;
+            display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+        }
+
+        /* Tabs */
+        .tabs { display:flex; gap:0.5rem; margin-bottom:1.8rem; flex-wrap:wrap; }
+        .tab {
+            padding:0.65rem 1.4rem; border-radius:10px; font-size:0.92rem; font-weight:700;
+            cursor:pointer; border:2px solid var(--border); background:var(--bg-input);
+            color:var(--text-muted); transition:all 0.2s; font-family:inherit;
+        }
+        .tab:hover { border-color:var(--accent); color:var(--accent); }
+        .tab.active { background:rgba(0,163,224,0.12); border-color:var(--accent); color:var(--accent); }
+        .tab .tab-count {
+            display:inline-block; background:rgba(0,163,224,0.2); color:var(--accent);
+            border-radius:20px; padding:0.1rem 0.55rem; font-size:0.75rem; margin-left:0.4rem;
+        }
+        .tab.tab-historic.active { background:rgba(139,154,174,0.1); border-color:var(--text-muted); color:var(--text-muted); }
+        .tab.tab-historic .tab-count { background:rgba(139,154,174,0.15); color:var(--text-muted); }
+        .tab.tab-onhold.active { background:rgba(245,158,11,0.1); border-color:var(--warning); color:var(--warning); }
+        .tab.tab-onhold .tab-count { background:rgba(245,158,11,0.15); color:var(--warning); }
+        .status-onhold { background:rgba(245,158,11,0.18); color:#fcd34d; }
+        .btn-onhold { background:rgba(245,158,11,0.13); border:2px solid rgba(245,158,11,0.4); color:#fcd34d; }
+        .btn-onhold:hover { background:rgba(245,158,11,0.25); border-color:var(--warning); }
+
+        /* Card */
+        .card {
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:16px; padding:2rem 2.2rem;
+            box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-bottom:2rem;
+        }
+        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; flex-wrap:wrap; gap:1rem; }
+        .card-header h2 { font-size:1.2rem; font-weight:700; }
+
+        /* Table */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:0.9rem; min-width:700px; }
+        th { padding:0.8rem 1rem; text-align:left; background:rgba(0,163,224,0.07); font-weight:700; text-transform:uppercase; font-size:0.76rem; letter-spacing:0.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+        td { padding:0.95rem 1rem; border-bottom:1px solid rgba(42,63,95,0.5); vertical-align:middle; }
+        tbody tr { cursor:pointer; transition:background 0.15s; }
+        tbody tr:hover { background:rgba(0,163,224,0.06); }
+        tbody tr.selected { background:rgba(0,163,224,0.12); outline:1px solid rgba(0,163,224,0.3); }
+
+        .applicant-name { font-weight:700; font-size:0.95rem; color:var(--accent); }
+        .applicant-name:hover { text-decoration:underline; }
+
+        .status-badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.75rem; font-weight:700; }
+        .status-new      { background:rgba(0,163,224,0.18); color:#7dd3fc; }
+        .status-proceed  { background:rgba(16,185,129,0.18); color:#6ee7b7; }
+        .status-declined { background:rgba(239,68,68,0.18); color:#fca5a5; }
+
+        .empty-state { text-align:center; padding:3.5rem 1rem; color:var(--text-muted); }
+        .empty-state .ei { font-size:2.5rem; margin-bottom:0.7rem; }
+
+        /* Buttons */
+        .btn { padding:0.7rem 1.6rem; border:none; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.22s; font-family:inherit; }
+        .btn-secondary { background:var(--bg-input); border:2px solid var(--border); color:var(--text-light); }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-proceed { background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.4); color:#6ee7b7; }
+        .btn-proceed:hover { background:rgba(16,185,129,0.28); border-color:var(--success); }
+        .btn-decline { background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.3); color:#fca5a5; }
+        .btn-decline:hover { background:rgba(239,68,68,0.22); border-color:var(--error); }
+
+        /* Detail panel */
+        #detailPanel {
+            display:none; background:rgba(5,15,35,0.8); border:2px solid var(--accent);
+            border-radius:16px; padding:2rem 2.2rem; margin-top:1.5rem;
+            animation: slideIn 0.22s ease;
+        }
+        @keyframes slideIn { from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);} }
+
+        .detail-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.6rem; flex-wrap:wrap; gap:1rem; }
+        .detail-name { font-size:1.4rem; font-weight:800; color:var(--accent); }
+        .detail-pos  { font-size:0.9rem; color:var(--text-muted); margin-top:0.2rem; font-family:'DM Mono',monospace; }
+        .detail-actions { display:flex; gap:0.7rem; flex-wrap:wrap; }
+
+        /* Application detail sections */
+        .detail-section { margin-bottom:1.6rem; }
+        .detail-section-title {
+            font-size:0.75rem; text-transform:uppercase; letter-spacing:0.8px;
+            color:var(--text-muted); font-weight:700; margin-bottom:0.9rem;
+            padding-bottom:0.5rem; border-bottom:1px solid var(--border);
+        }
+        .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.8rem; }
+        .detail-field label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-muted); display:block; margin-bottom:0.2rem; }
+        .detail-field span  { font-size:0.9rem; font-weight:600; }
+        .detail-field.full  { grid-column:1/-1; }
+
+        .detail-text {
+            background:var(--bg-input); border:1px solid var(--border); border-radius:8px;
+            padding:0.8rem 1rem; font-size:0.88rem; line-height:1.5; color:var(--text-light);
+            white-space:pre-wrap; word-break:break-word;
+        }
+
+        /* Employment / Reference sub-items */
+        .sub-item {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.6rem;
+        }
+        .sub-item-title { font-weight:700; font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem; font-family:'DM Mono',monospace; }
+
+        /* Signature display */
+        .sig-display {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:10px; padding:0.5rem; max-width:400px;
+        }
+        .sig-display img { width:100%; border-radius:6px; display:block; }
+
+        /* CV link */
+        .cv-link {
+            display:inline-flex; align-items:center; gap:0.5rem;
+            background:rgba(0,163,224,0.1); border:1.5px solid rgba(0,163,224,0.35);
+            border-radius:8px; padding:0.55rem 1rem; color:var(--accent);
+            text-decoration:none; font-size:0.88rem; font-weight:600; transition:all 0.18s;
+        }
+        .cv-link:hover { background:rgba(0,163,224,0.2); border-color:var(--accent); }
+
+        /* Confirm overlay */
+        .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; }
+        .overlay.active { display:flex; }
+        .confirm-box {
+            background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
+            padding:2.2rem; max-width:420px; width:90%; text-align:center;
+            box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease;
+        }
+        @keyframes popIn { from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);} }
+        .confirm-box .ci { font-size:2.5rem; margin-bottom:0.7rem; }
+        .confirm-box h3  { font-size:1.1rem; margin-bottom:0.5rem; }
+        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.6rem; line-height:1.5; }
+        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; }
+
+        .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
+        @keyframes spin { to{transform:rotate(360deg);} }
+
+        @media (max-width:700px) { .detail-grid { grid-template-columns:1fr 1fr; } }
     </style>
 </head>
 <body>
-
-<div id="loginScreen">
+<div class="container">
     <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
-    <div class="login-card">
-        <h1>Engineer Portal</h1>
-        <p class="tagline">Upload your documents to get started</p>
-        <div class="form-group" style="margin-bottom:1.2rem;">
-            <label>Email Address</label>
-            <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+    <h1>Applicants</h1>
+    <p class="subtitle">Manage and review incoming applications</p>
+
+    <div class="protected-bar">
+        🔒 <strong>Protected page</strong> — only signed-in users can access this.
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" onclick="window.location.href='index.html'">← Dashboard</button>
+            <button class="btn btn-secondary" style="padding:0.5rem 1.2rem;font-size:0.9rem;" id="signOutBtn">Sign Out</button>
         </div>
-        <div class="form-group" style="margin-bottom:1.6rem;">
-            <label>Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" id="tabNew" onclick="switchTab('new')">
+            New Applicants <span class="tab-count" id="countNew">0</span>
+        </button>
+        <button class="tab tab-onhold" id="tabOnHold" onclick="switchTab('onhold')">
+            On Hold <span class="tab-count" id="countOnHold">0</span>
+        </button>
+        <button class="tab tab-historic" id="tabHistoric" onclick="switchTab('historic')">
+            Historic Applicants <span class="tab-count" id="countHistoric">0</span>
+        </button>
+    </div>
+
+    <!-- New Applicants -->
+    <div id="panelNew">
+        <div class="card">
+            <div class="card-header">
+                <h2>New Applicants</h2>
+                <button class="btn btn-secondary" style="padding:0.45rem 1rem;font-size:0.85rem;" id="refreshBtn">↻ Refresh</button>
+            </div>
+            <div id="newTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanel"></div>
         </div>
-        <button class="btn btn-primary" id="loginBtn">Sign In</button>
-        <div class="error-msg" id="loginError"></div>
+    </div>
+
+    <!-- On Hold -->
+    <div id="panelOnHold" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <h2>On Hold Applicants</h2>
+            </div>
+            <div id="onholdTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanelOnHold"></div>
+        </div>
+    </div>
+
+    <!-- Historic -->
+    <div id="panelHistoric" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <h2>Historic Applicants</h2>
+                <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+                    <span style="font-size:0.82rem;color:var(--text-muted);">Filter:</span>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterAll" onclick="filterHistoric('all')">All</button>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterProceed" onclick="filterHistoric('proceed')">Proceeded</button>
+                    <button class="tab" style="padding:0.3rem 0.9rem;font-size:0.8rem;" id="hFilterDeclined" onclick="filterHistoric('declined')">Declined</button>
+                </div>
+            </div>
+            <div id="historicTable"><div class="empty-state"><p>Loading…</p></div></div>
+            <div id="detailPanelHistoric"></div>
+        </div>
     </div>
 </div>
 
-<div id="portalScreen">
-    <div class="portal-header">
-        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo-sm">
-        <span class="welcome-name" id="welcomeName"></span>
-    </div>
-    <div class="signout-bar">
-        <span>🔒 You are securely signed in to your onboarding portal</span>
-        <button class="btn btn-secondary" style="padding:0.4rem 1rem;font-size:0.85rem;" id="signOutBtn">Sign Out</button>
-    </div>
-    <div class="progress-bar">
-        <div class="prog-step" id="prog-licence">Driving Licence</div>
-        <div class="prog-step" id="prog-certs">Certificates</div>
-        <div class="prog-step" id="prog-address">Proof of Address</div>
-        <div class="prog-step" id="prog-bank">Bank Details</div>
-    </div>
-
-    <!-- All complete banner -->
-    <div id="completeBanner">
-        <div class="banner-icon">🎉</div>
-        <h3>All documents submitted!</h3>
-        <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="card-icon icon-blue">📎</div>
-            <div><h2>Your Documents</h2><p>Upload clear photos or scans. Accepted: JPG, PNG, PDF (max 10MB each)</p></div>
-        </div>
-        <hr class="divider">
-        <div class="upload-grid">
-            <div>
-                <div class="upload-zone" id="zone-licence">
-                    <input type="file" id="file-licence" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence', this)">
-                    <div class="upload-icon">🪪</div>
-                    <div class="upload-label">Driving Licence</div>
-                    <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-licence"></div>
-                </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence" onclick="uploadFile('licence')" disabled>Upload</button>
-            </div>
-            <div>
-                <div class="upload-zone" id="zone-certs">
-                    <input type="file" id="file-certs" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('certs', this)">
-                    <div class="upload-icon">📜</div>
-                    <div class="upload-label">Certificates</div>
-                    <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-certs"></div>
-                </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-certs">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-certs" onclick="uploadFile('certs')" disabled>Upload</button>
-            </div>
-            <div>
-                <div class="upload-zone" id="zone-address">
-                    <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address', this)">
-                    <div class="upload-icon">🏠</div>
-                    <div class="upload-label">Proof of Address</div>
-                    <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-address"></div>
-                </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="card-icon icon-green">🏦</div>
-            <div><h2>Bank Details</h2><p>Your details are stored securely and only accessible to the payroll team</p></div>
-        </div>
-        <hr class="divider">
-        <div class="form-grid">
-            <div class="form-group"><label>Name on Account</label><input type="text" id="bankName" placeholder="Full name as it appears on account"></div>
-            <div class="form-group"><label>Bank Name</label><input type="text" id="bankBankName" placeholder="e.g. Barclays, HSBC, Lloyds"></div>
-            <div class="form-group"><label>Sort Code</label><input type="text" id="bankSortCode" placeholder="00-00-00" maxlength="8"></div>
-            <div class="form-group"><label>Account Number</label><input type="text" id="bankAccountNo" placeholder="8-digit account number" maxlength="8"></div>
-        </div>
-        <div class="save-row">
-            <button class="btn btn-save" id="saveBankBtn" style="padding:0.75rem 1.8rem;">Save Bank Details</button>
-            <span class="save-msg" id="bankMsg"></span>
+<!-- Confirm overlay -->
+<div class="overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="ci" id="confirmIcon">✅</div>
+        <h3 id="confirmTitle">Proceed with Applicant?</h3>
+        <p id="confirmText">This will move the applicant to historic records and mark them as proceeded.</p>
+        <div class="confirm-actions">
+            <button class="btn" id="confirmYesBtn" style="padding:0.7rem 1.6rem;">Confirm</button>
+            <button class="btn btn-secondary" id="confirmNoBtn" style="padding:0.7rem 1.4rem;">Cancel</button>
         </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-    import { getStorage, ref, uploadBytes, getDownloadURL }
-        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
-        authDomain: "oesperformance-a54c0.firebaseapp.com",
-        projectId: "oesperformance-a54c0",
-        storageBucket: "oesperformance-a54c0.firebasestorage.app",
-        messagingSenderId: "484894102454",
-        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+        apiKey:"AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain:"oesperformance-a54c0.firebaseapp.com",
+        projectId:"oesperformance-a54c0",
+        storageBucket:"oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId:"484894102454",
+        appId:"1:484894102454:web:17535ee497eac2d90d6717"
     };
 
-    emailjs.init('ziLnha91scpGjFABh');
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+    const col  = collection(db, "NGUO New Applicants");
 
-    const BANK_SERVICE_ID      = 'service_gmlx02k';
-    const BANK_TEMPLATE_ID     = 'template_xkortjd';
-    const COMPLETE_SERVICE_ID  = 'service_xyxy4ea';
-    const COMPLETE_TEMPLATE_ID = 'template_owcpuso';
+    onAuthStateChanged(auth, u => { if (!u) window.location.href = 'index.html'; });
 
-    const app     = initializeApp(firebaseConfig);
-    const db      = getFirestore(app);
-    const storage = getStorage(app);
+    let allApplicants   = [];
+    let activeTab       = 'new';
+    let selectedId      = null;
+    let historicFilter  = 'all';
+    let pendingAction   = null; // { id, type: 'proceed'|'decline' }
 
-    let currentEngineer      = null;
-    let allCompleteEmailSent = false;
-
-    window.handleFileSelect = handleFileSelect;
-    window.uploadFile       = uploadFile;
-
-    document.getElementById('loginBtn').addEventListener('click', doLogin);
-    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-    async function doLogin() {
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const pass  = document.getElementById('loginPassword').value;
-        const errEl = document.getElementById('loginError');
-        const btn   = document.getElementById('loginBtn');
-
-        errEl.textContent = '';
-        if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; return; }
-
-        btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Signing in…';
-
+    // ── Load all ──────────────────────────────────────────────────────────────
+    async function loadAll() {
         try {
-            const q    = query(collection(db, "NGUO - Engineers"), where("email", "==", email));
+            const q    = query(col, orderBy('submittedAt', 'desc'));
             const snap = await getDocs(q);
-
-            if (snap.empty) { errEl.textContent = 'No engineer account found for this email.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-
-            const engineerDoc  = snap.docs[0];
-            const engineerData = engineerDoc.data();
-
-            if (engineerData.password !== pass) { errEl.textContent = 'Incorrect password. Please try again.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-            if (engineerData.status === 'deleted') { errEl.textContent = 'This account is no longer active.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-
-            currentEngineer = { docId: engineerDoc.id, ...engineerData };
-
-            // If all docs were already complete before this session, mark email as sent
-            // so we don't fire it again just from logging in
-            allCompleteEmailSent = !!(
-                currentEngineer.docs_licence &&
-                currentEngineer.docs_certs &&
-                currentEngineer.docs_address &&
-                currentEngineer.bank_name &&
-                currentEngineer.bank_accountNo
-            );
-
-            showPortal();
-
+            allApplicants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderNew();
+            renderOnHold();
+            renderHistoric();
+            updateCounts();
         } catch (err) {
-            errEl.textContent = 'Login error: ' + err.message;
-        }
-
-        btn.disabled    = false;
-        btn.textContent = 'Sign In';
-    }
-
-    function showPortal() {
-        document.getElementById('loginScreen').style.display  = 'none';
-        document.getElementById('portalScreen').style.display = 'block';
-        document.getElementById('welcomeName').textContent    = `👋 ${currentEngineer.name}`;
-        loadExistingData();
-    }
-
-    function loadExistingData() {
-        const d = currentEngineer;
-        setDocStatus('licence', d.docs_licence);
-        setDocStatus('certs',   d.docs_certs);
-        setDocStatus('address', d.docs_address);
-        if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
-        if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
-        if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
-        if (d.bank_accountNo) document.getElementById('bankAccountNo').value = d.bank_accountNo;
-        updateProgress();
-    }
-
-    function setDocStatus(key, fileUrl) {
-        const statusEl = document.getElementById(`status-${key}`);
-        const zoneEl   = document.getElementById(`zone-${key}`);
-        if (fileUrl) {
-            statusEl.textContent = '✓ Uploaded';
-            statusEl.className   = 'upload-status status-saved';
-            zoneEl.classList.add('has-file');
-            document.getElementById(`fname-${key}`).textContent = 'Previously uploaded — click to replace';
-        } else {
-            statusEl.textContent = 'Not uploaded';
-            statusEl.className   = 'upload-status status-none';
+            document.getElementById('newTable').innerHTML = `<div class="empty-state"><p style="color:var(--error)">Error: ${err.message}</p></div>`;
         }
     }
 
-    function handleFileSelect(key, input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        if (file.size > 10 * 1024 * 1024) { alert('File is too large. Maximum size is 10MB.'); input.value = ''; return; }
-        document.getElementById(`fname-${key}`).textContent   = `📎 ${file.name}`;
-        document.getElementById(`zone-${key}`).classList.remove('has-file');
-        document.getElementById(`status-${key}`).textContent  = 'Ready to upload';
-        document.getElementById(`status-${key}`).className    = 'upload-status status-pending';
-        document.getElementById(`upload-btn-${key}`).disabled = false;
+    function updateCounts() {
+        const newOnes = allApplicants.filter(a => !a.status || a.status === 'new');
+        const onhold  = allApplicants.filter(a => a.status === 'onhold');
+        const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
+        document.getElementById('countNew').textContent      = newOnes.length;
+        document.getElementById('countOnHold').textContent   = onhold.length;
+        document.getElementById('countHistoric').textContent = historic.length;
     }
 
-    async function uploadFile(key) {
-        const input  = document.getElementById(`file-${key}`);
-        const upBtn  = document.getElementById(`upload-btn-${key}`);
-        const status = document.getElementById(`status-${key}`);
-        const zone   = document.getElementById(`zone-${key}`);
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
+    // ── Format date ───────────────────────────────────────────────────────────
+    function fmtDate(ts) {
+        if (!ts) return '—';
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    }
 
-        upBtn.disabled     = true;
-        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
-        status.textContent = 'Uploading…';
-        status.className   = 'upload-status status-pending';
-
-        try {
-            const storageRef  = ref(storage, `engineers/${currentEngineer.docId}/${key}/${file.name}`);
-            const snapshot    = await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-
-            const fieldName = `docs_${key}`;
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                [fieldName]: downloadURL,
-                [`docs_${key}_filename`]: file.name,
-                [`docs_${key}_uploadedAt`]: serverTimestamp()
-            });
-
-            currentEngineer[fieldName] = downloadURL;
-            status.textContent = '✓ Uploaded';
-            status.className   = 'upload-status status-saved';
-            zone.classList.add('has-file');
-            upBtn.textContent  = 'Re-upload';
-            upBtn.disabled     = false;
-            updateProgress();
-
-        } catch (err) {
-            status.textContent = '✗ Upload failed';
-            status.className   = 'upload-status status-none';
-            upBtn.textContent  = 'Retry';
-            upBtn.disabled     = false;
-            alert('Upload failed: ' + err.message);
+    // ── Render new applicants table ───────────────────────────────────────────
+    function renderNew() {
+        const list = allApplicants.filter(a => !a.status || a.status === 'new');
+        const el   = document.getElementById('newTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>No new applicants.</p></div>';
+            closeDetail('detailPanel');
+            return;
         }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','new')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-new">New</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
     }
 
-    document.getElementById('saveBankBtn').addEventListener('click', async () => {
-        const btn   = document.getElementById('saveBankBtn');
-        const msgEl = document.getElementById('bankMsg');
+    // ── Render historic table ─────────────────────────────────────────────────
+    function renderHistoric() {
+        let list = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
+        if (historicFilter === 'proceed')  list = list.filter(a => a.status === 'proceed');
+        if (historicFilter === 'declined') list = list.filter(a => a.status === 'declined');
 
-        const bank_name      = document.getElementById('bankName').value.trim();
-        const bank_bankName  = document.getElementById('bankBankName').value.trim();
-        const bank_sortCode  = document.getElementById('bankSortCode').value.trim();
-        const bank_accountNo = document.getElementById('bankAccountNo').value.trim();
+        const el = document.getElementById('historicTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">🗂️</div><p>No historic applicants yet.</p></div>';
+            closeDetail('detailPanelHistoric');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','historic')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}">
+                            ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
+                        </span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
+    }
 
-        msgEl.textContent = '';
-        if (!bank_name || !bank_bankName || !bank_sortCode || !bank_accountNo) {
-            msgEl.className = 'save-msg err';
-            msgEl.textContent = 'Please fill in all bank detail fields.';
+    // ── Full name helper ──────────────────────────────────────────────────────
+    function fullName(a) {
+        if (a.fullName) return a.fullName;
+        const p = a.personalDetails || {};
+        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
+    }
+
+    // ── Select applicant → show detail ────────────────────────────────────────
+    window.selectApplicant = function(id, panel) {
+        const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
+        const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
+
+        // Toggle
+        if (selectedId === id) {
+            selectedId = null;
+            closeDetail(panelId);
+            document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => r.classList.remove('selected'));
             return;
         }
 
+        selectedId = id;
+        document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => {
+            r.classList.toggle('selected', r.dataset.id === id);
+        });
+
+        const a = allApplicants.find(x => x.id === id);
+        if (!a) return;
+        renderDetailPanel(a, panelId, panel === 'new' || panel === 'onhold');
+    };
+
+    function closeDetail(panelId) {
+        const p = document.getElementById(panelId);
+        p.style.display = 'none';
+        p.innerHTML = '';
+    }
+
+    function renderDetailPanel(a, panelId, showActions) {
+        const p   = a.personalDetails || {};
+        const ra  = a.reasonableAdjustments || {};
+        const dec = a.declaration || {};
+        const con = a.consent     || {};
+        const emp = a.employment  || [];
+        const refs = a.references  || [];
+
+        const yesNo = v => v === 'yes' ? '<span style="color:var(--warning)">Yes</span>' : '<span style="color:#6ee7b7">No</span>';
+
+        const actionBtns = showActions ? `
+            <div class="detail-actions">
+                <button class="btn btn-proceed" onclick="triggerAction('${a.id}','proceed')">✓ Proceed with Applicant</button>
+                <button class="btn btn-onhold" onclick="triggerAction('${a.id}','onhold')">⏸ Place On Hold</button>
+                <button class="btn btn-decline" onclick="triggerAction('${a.id}','decline')">✗ Decline Applicant</button>
+                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
+            </div>` : `
+            <div class="detail-actions">
+                <span class="status-badge ${a.status === 'proceed' ? 'status-proceed' : 'status-declined'}" style="font-size:0.9rem;padding:0.35rem 1rem;">
+                    ${a.status === 'proceed' ? '✓ Proceeded' : '✗ Declined'}
+                </span>
+                <button class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;" onclick="closeDetailById('${panelId}')">✕ Close</button>
+            </div>`;
+
+        const empHTML = emp.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No employment history provided.</p>' :
+            emp.map((e,i) => `
+                <div class="sub-item">
+                    <div class="sub-item-title">Employment ${i+1}</div>
+                    <div class="detail-grid">
+                        <div class="detail-field"><label>Company</label><span>${e.company||'—'}</span></div>
+                        <div class="detail-field"><label>Position</label><span>${e.position||'—'}</span></div>
+                        <div class="detail-field full"><label>Reason for Leaving</label><span>${e.reason||'—'}</span></div>
+                    </div>
+                </div>`).join('');
+
+        const refHTML = refs.length === 0 ? '<p style="color:var(--text-muted);font-size:0.88rem;">No references provided.</p>' :
+            refs.map(r => `
+                <div class="sub-item">
+                    <div class="sub-item-title">${r.label||'Referee'}</div>
+                    <div class="detail-grid">
+                        <div class="detail-field"><label>Company</label><span>${r.company||'—'}</span></div>
+                        <div class="detail-field"><label>Name</label><span>${r.name||'—'}</span></div>
+                        <div class="detail-field"><label>Position</label><span>${r.position||'—'}</span></div>
+                        <div class="detail-field"><label>Telephone</label><span>${r.phone||'—'}</span></div>
+                        <div class="detail-field"><label>Email</label><span>${r.email||'—'}</span></div>
+                    </div>
+                </div>`).join('');
+
+        const sigHTML = (sig, label) => sig && sig.startsWith('data:')
+            ? `<div class="sig-display"><img src="${sig}" alt="${label}"></div>`
+            : `<span style="color:var(--text-muted);font-size:0.85rem;">No signature captured</span>`;
+
+        const cvHTML = a.cv?.url
+            ? `<a href="${a.cv.url}" target="_blank" rel="noopener" class="cv-link">📄 ${a.cv.filename || 'Download CV'}</a>`
+            : `<span style="color:var(--text-muted);font-size:0.85rem;">No CV uploaded</span>`;
+
+        const panel = document.getElementById(panelId);
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <div class="detail-top">
+                <div>
+                    <div class="detail-name">${fullName(a)}</div>
+                    <div class="detail-pos">${a.position || '—'} · Applied ${fmtDate(a.submittedAt)}</div>
+                </div>
+                ${actionBtns}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Personal Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Title</label><span>${p.title||'—'}</span></div>
+                    <div class="detail-field"><label>Forename</label><span>${p.forename||'—'}</span></div>
+                    <div class="detail-field"><label>Surname</label><span>${p.surname||'—'}</span></div>
+                    <div class="detail-field"><label>Email</label><span>${p.email||'—'}</span></div>
+                    <div class="detail-field"><label>Telephone</label><span>${p.phone||'—'}</span></div>
+                    <div class="detail-field"><label>Address</label><span>${p.address||'—'}</span></div>
+                    <div class="detail-field"><label>Postcode</label><span>${p.postcode||'—'}</span></div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Reasonable Adjustments</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Disability Adjustment Required</label><span>${yesNo(ra.disability)}</span></div>
+                    ${ra.disability==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.disabilityText||'—'}</div></div>`:''}
+                    <div class="detail-field"><label>Medical Adjustment Required</label><span>${yesNo(ra.medical)}</span></div>
+                    ${ra.medical==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${ra.medicalText||'—'}</div></div>`:''}
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Background</div>
+                <div class="detail-grid">
+                    <div class="detail-field"><label>Unspent Convictions</label><span>${yesNo(a.convictions)}</span></div>
+                    ${a.convictions==='yes'?`<div class="detail-field full"><label>Details</label><div class="detail-text">${a.convictionsText||'—'}</div></div>`:''}
+                    <div class="detail-field"><label>Requires Work Permit</label><span>${yesNo(a.workPermit)}</span></div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Qualifications</div>
+                <div class="detail-text">${a.qualifications||'—'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">CV</div>
+                ${cvHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Employment History (5 Years)</div>
+                ${empHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">References</div>
+                ${refHTML}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Interview Availability</div>
+                <div class="detail-text">${a.unavailability||'No unavailable dates noted'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Declaration</div>
+                <div class="detail-grid" style="margin-bottom:0.8rem;">
+                    <div class="detail-field"><label>Name</label><span>${dec.name||'—'}</span></div>
+                    <div class="detail-field"><label>Date</label><span>${dec.date||'—'}</span></div>
+                </div>
+                ${sigHTML(dec.signature, 'Declaration signature')}
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Data Consent</div>
+                <div class="detail-grid" style="margin-bottom:0.8rem;">
+                    <div class="detail-field"><label>Name</label><span>${con.name||'—'}</span></div>
+                    <div class="detail-field"><label>Date</label><span>${con.date||'—'}</span></div>
+                </div>
+                ${sigHTML(con.signature, 'Consent signature')}
+            </div>
+        `;
+
+        setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+    }
+
+    window.closeDetailById = function(panelId) {
+        selectedId = null;
+        closeDetail(panelId);
+        document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+    };
+
+    // ── Proceed / Decline ─────────────────────────────────────────────────────
+    window.triggerAction = function(id, type) {
+        pendingAction = { id, type };
+        const a = allApplicants.find(x => x.id === id);
+        const name = fullName(a);
+
+        if (type === 'proceed') {
+            document.getElementById('confirmIcon').textContent  = '✅';
+            document.getElementById('confirmTitle').textContent = 'Proceed with Applicant?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Proceeded.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-proceed';
+            document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+        } else if (type === 'onhold') {
+            document.getElementById('confirmIcon').textContent  = '⏸️';
+            document.getElementById('confirmTitle').textContent = 'Place Applicant On Hold?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to the On Hold list. You can review them there at any time.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-onhold';
+            document.getElementById('confirmYesBtn').textContent = '⏸ Yes, Place On Hold';
+        } else {
+            document.getElementById('confirmIcon').textContent  = '✗';
+            document.getElementById('confirmTitle').textContent = 'Decline Applicant?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Declined.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-decline';
+            document.getElementById('confirmYesBtn').textContent = '✗ Yes, Decline';
+        }
+        document.getElementById('confirmOverlay').classList.add('active');
+    };
+
+    document.getElementById('confirmYesBtn').addEventListener('click', async () => {
+        if (!pendingAction) return;
+        const btn = document.getElementById('confirmYesBtn');
         btn.disabled  = true;
         btn.innerHTML = '<span class="spinner"></span>Saving…';
 
         try {
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                bank_name, bank_bankName, bank_sortCode, bank_accountNo,
-                bank_savedAt: serverTimestamp()
+            await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
+                status:     pendingAction.type,
+                decidedAt:  serverTimestamp()
             });
 
-            Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
+            // Update local cache
+            const a = allApplicants.find(x => x.id === pendingAction.id);
+            if (a) a.status = pendingAction.type;
 
-            // Bank details notification
-            try {
-                await emailjs.send(BANK_SERVICE_ID, BANK_TEMPLATE_ID, {
-                    engineer_name: currentEngineer.name,
-                    to_email:      'barryddixon@outlook.com',
-                    message:       `${currentEngineer.name} has uploaded their bank details to the onboarding platform.`
-                });
-            } catch (e) { console.warn('Bank email failed:', e); }
+            document.getElementById('confirmOverlay').classList.remove('active');
+            selectedId  = null;
+            pendingAction = null;
 
-            msgEl.className   = 'save-msg ok';
-            msgEl.textContent = '✓ Bank details saved securely';
-            updateProgress();
+            closeDetail('detailPanel');
+            closeDetail('detailPanelHistoric');
+            closeDetail('detailPanelOnHold');
+            document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+            renderNew();
+            renderOnHold();
+            renderHistoric();
+            updateCounts();
 
         } catch (err) {
-            msgEl.className   = 'save-msg err';
-            msgEl.textContent = 'Error saving: ' + err.message;
+            alert('Error: ' + err.message);
         }
 
         btn.disabled    = false;
-        btn.textContent = 'Save Bank Details';
+        btn.textContent = 'Confirm';
     });
 
-    // ── Progress + all-complete trigger ───────────────────────────────────────
-    function updateProgress() {
-        const d = currentEngineer;
-        const licenceDone = !!d.docs_licence;
-        const certsDone   = !!d.docs_certs;
-        const addressDone = !!d.docs_address;
-        const bankDone    = !!(d.bank_name && d.bank_accountNo);
-
-        toggleProg('prog-licence', licenceDone);
-        toggleProg('prog-certs',   certsDone);
-        toggleProg('prog-address', addressDone);
-        toggleProg('prog-bank',    bankDone);
-
-        const allDone = licenceDone && certsDone && addressDone && bankDone;
-
-        // Show celebration banner
-        document.getElementById('completeBanner').style.display = allDone ? 'block' : 'none';
-
-        // Fire all-complete email only once per session, only when it just became complete
-        if (allDone && !allCompleteEmailSent) {
-            allCompleteEmailSent = true;
-            sendAllCompleteEmail();
+    document.getElementById('confirmNoBtn').addEventListener('click', () => {
+        document.getElementById('confirmOverlay').classList.remove('active');
+        pendingAction = null;
+    });
+    document.getElementById('confirmOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('confirmOverlay').classList.remove('active');
+            pendingAction = null;
         }
-    }
+    });
 
-    async function sendAllCompleteEmail() {
-        try {
-            await emailjs.send(COMPLETE_SERVICE_ID, COMPLETE_TEMPLATE_ID, {
-                to_email:       'barryddixon@outlook.com',
-                engineer_name:  currentEngineer.name,
-                engineer_email: currentEngineer.email,
-                contract_name:  currentEngineer.contract || '—',
-                message:        `${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Certificates, Proof of Address, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.`
-            });
-            console.log('All-complete email sent for', currentEngineer.name);
-        } catch (err) {
-            console.warn('All-complete email failed:', err);
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    window.switchTab = function(tab) {
+        activeTab = tab;
+        document.getElementById('panelNew').style.display      = tab === 'new'      ? 'block' : 'none';
+        document.getElementById('panelOnHold').style.display   = tab === 'onhold'   ? 'block' : 'none';
+        document.getElementById('panelHistoric').style.display = tab === 'historic' ? 'block' : 'none';
+        document.getElementById('tabNew').classList.toggle('active',      tab === 'new');
+        document.getElementById('tabOnHold').classList.toggle('active',   tab === 'onhold');
+        document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
+        selectedId = null;
+    };
+
+    // ── Render on hold table ─────────────────────────────────────────────────
+    function renderOnHold() {
+        const list = allApplicants.filter(a => a.status === 'onhold');
+        const el   = document.getElementById('onholdTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
+            closeDetail('detailPanelOnHold');
+            return;
         }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
     }
 
-    function toggleProg(id, done) {
-        const el = document.getElementById(id);
-        el.classList.toggle('done',   done);
-        el.classList.toggle('active', !done);
-    }
-
-    ['licence','certs','address'].forEach(key => {
-        const zone = document.getElementById(`zone-${key}`);
-        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-        zone.addEventListener('drop', e => {
-            e.preventDefault();
-            zone.classList.remove('dragover');
-            const input = document.getElementById(`file-${key}`);
-            if (e.dataTransfer.files[0]) {
-                const dt = new DataTransfer();
-                dt.items.add(e.dataTransfer.files[0]);
-                input.files = dt.files;
-                handleFileSelect(key, input);
-            }
+    window.filterHistoric = function(f) {
+        historicFilter = f;
+        ['hFilterAll','hFilterProceed','hFilterDeclined'].forEach(id => {
+            document.getElementById(id).classList.remove('active');
         });
-    });
+        document.getElementById(f === 'all' ? 'hFilterAll' : f === 'proceed' ? 'hFilterProceed' : 'hFilterDeclined').classList.add('active');
+        renderHistoric();
+    };
 
-    document.getElementById('bankSortCode').addEventListener('input', function() {
-        let v = this.value.replace(/\D/g, '').slice(0,6);
-        if (v.length > 4) v = v.slice(0,2) + '-' + v.slice(2,4) + '-' + v.slice(4);
-        else if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-        this.value = v;
-    });
+    document.getElementById('refreshBtn').addEventListener('click', loadAll);
+    document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
 
-    document.getElementById('signOutBtn').addEventListener('click', () => {
-        currentEngineer      = null;
-        allCompleteEmailSent = false;
-        document.getElementById('portalScreen').style.display  = 'none';
-        document.getElementById('loginScreen').style.display   = 'flex';
-        document.getElementById('loginEmail').value    = '';
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginError').textContent = '';
-    });
+    loadAll();
 </script>
 </body>
 </html>
