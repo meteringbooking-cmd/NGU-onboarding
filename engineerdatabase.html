@@ -183,56 +183,6 @@
         </div>
     </div>
 
-    <!-- ── Add Engineer ── -->
-    <div class="card">
-        <h2>Add New Engineer</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Engineer Name</label>
-                <input type="text" id="engName" placeholder="Jane Doe" required>
-            </div>
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="engEmail" placeholder="jane@company.com" required>
-            </div>
-            <div class="form-group">
-                <label>Contact Number</label>
-                <input type="tel" id="engPhone" placeholder="+44 7700 000000" required>
-            </div>
-            <div class="form-group">
-                <label>Contract</label>
-                <select id="engContract">
-                    <option value="" disabled selected>Select contract…</option>
-                    <option value="Sureserve - OES">Sureserve - OES</option>
-                    <option value="Sureserve - SP">Sureserve - SP</option>
-                    <option value="Calisen - SP">Calisen - SP</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>FTL</label>
-                <select id="engFTL">
-                    <option value="" disabled selected>Select FTL…</option>
-                    <option value="Richard Wiecko">Richard Wiecko</option>
-                    <option value="Scott Carson">Scott Carson</option>
-                    <option value="Stuart Whyte">Stuart Whyte</option>
-                    <option value="Tom Green">Tom Green</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Proposed Start Date</label>
-                <input type="date" id="engStartDate" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="text" id="engPassword" placeholder="Set a password for this engineer" required>
-            </div>
-        </div>
-        <div style="display:flex; gap:1rem; align-items:center; margin-top:2rem; flex-wrap:wrap;">
-            <button class="btn btn-primary" id="addEngineerBtn">Add Engineer</button>
-        </div>
-        <div id="addMsg"></div>
-    </div>
-
     <!-- ── Engineer List ── -->
     <div class="card">
         <div class="header-actions">
@@ -334,7 +284,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
-        getFirestore, collection, addDoc, getDocs, doc, updateDoc,
+        getFirestore, collection, getDocs, doc, updateDoc,
         serverTimestamp, query, orderBy, where
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -357,12 +307,10 @@
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
     const colRef  = collection(db, "NGUO - Engineers");
-    const addBtn  = document.getElementById('addEngineerBtn');
-    const msgEl   = document.getElementById('addMsg');
     const tableEl = document.getElementById('engineersTable');
 
-    let allEngineers  = [];
-    let selectedDocId = null;
+    let allEngineers    = [];
+    let selectedDocId   = null;
     let pendingDeleteId = null;
     let pendingOnboardId = null;
 
@@ -370,11 +318,6 @@
     function contractBadge(contract) {
         const map = { 'Sureserve - OES': 'badge-ss-oes', 'Sureserve - SP': 'badge-ss-sp', 'Calisen - SP': 'badge-cal-sp' };
         return `<span class="badge ${map[contract] || 'badge-ss-oes'}">${contract || '—'}</span>`;
-    }
-
-    function statusBadge(status) {
-        if (status === 'onboarding') return `<span class="badge badge-onboarding">⚡ Onboarding</span>`;
-        return `<span class="badge badge-pending">Pending</span>`;
     }
 
     // ── Load engineers (exclude deleted) ─────────────────────────────────────
@@ -385,13 +328,12 @@
             const q    = query(colRef, orderBy('createdAt', 'desc'));
             const snap = await getDocs(q);
 
-            // Filter out deleted records
             allEngineers = snap.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(d => d.status !== 'deleted');
 
             if (allEngineers.length === 0) {
-                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers added yet</p>';
+                tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers yet. Proceed an applicant to add one.</p>';
                 return;
             }
 
@@ -448,7 +390,7 @@
                 });
             });
 
-            // Begin Onboard buttons → open interview modal
+            // Begin Onboard buttons
             tableEl.querySelectorAll('.btn-onboard:not(.active)').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     e.stopPropagation();
@@ -535,12 +477,16 @@
             await updateDoc(doc(db, "NGUO - Engineers", selectedDocId), updates);
             editMsg.className   = 'success-msg';
             editMsg.textContent = `✓ Changes saved for ${updates.name}`;
-            // Update local cache
             const idx = allEngineers.findIndex(e => e.id === selectedDocId);
             if (idx !== -1) allEngineers[idx] = { ...allEngineers[idx], ...updates };
-            // Refresh table row name
             const row = tableEl.querySelector(`tr[data-id="${selectedDocId}"]`);
-            if (row) { row.cells[0].innerHTML = `<strong>${updates.name}</strong>`; row.cells[1].textContent = updates.email; row.cells[2].textContent = updates.phone; row.cells[3].innerHTML = contractBadge(updates.contract); row.cells[4].textContent = updates.ftl; }
+            if (row) {
+                row.cells[0].innerHTML = `<strong>${updates.name}</strong>`;
+                row.cells[1].textContent = updates.email;
+                row.cells[2].textContent = updates.phone;
+                row.cells[3].innerHTML  = contractBadge(updates.contract);
+                row.cells[4].textContent = updates.ftl;
+            }
             document.getElementById('editTitle').textContent = `Editing — ${updates.name}`;
         } catch (err) {
             editMsg.className   = 'error-msg';
@@ -577,53 +523,11 @@
         pendingDeleteId = null;
     });
 
-    // Close overlay on backdrop click
     document.getElementById('deleteOverlay').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
             document.getElementById('deleteOverlay').classList.remove('active');
             pendingDeleteId = null;
         }
-    });
-
-    // ── Add engineer ──────────────────────────────────────────────────────────
-    addBtn.addEventListener('click', async () => {
-        const name      = document.getElementById('engName').value.trim();
-        const email     = document.getElementById('engEmail').value.trim();
-        const phone     = document.getElementById('engPhone').value.trim();
-        const contract  = document.getElementById('engContract').value;
-        const ftl       = document.getElementById('engFTL').value;
-        const startDate = document.getElementById('engStartDate').value;
-        const password  = document.getElementById('engPassword').value.trim();
-
-        msgEl.className = 'error-msg';
-        msgEl.textContent = '';
-
-        if (!name || !email || !phone || !contract || !ftl || !startDate || !password) {
-            msgEl.textContent = 'Please fill in all fields.'; return;
-        }
-
-        addBtn.disabled = true;
-        addBtn.textContent = 'Adding...';
-
-        try {
-            await addDoc(colRef, { name, email, phone, contract, ftl, startDate, password, status: 'pending', createdAt: serverTimestamp() });
-            msgEl.className = 'success-msg';
-            msgEl.textContent = `✓ Engineer "${name}" added successfully.`;
-            document.getElementById('engName').value      = '';
-            document.getElementById('engEmail').value     = '';
-            document.getElementById('engPhone').value     = '';
-            document.getElementById('engContract').value  = '';
-            document.getElementById('engFTL').value       = '';
-            document.getElementById('engStartDate').value = '';
-            document.getElementById('engPassword').value  = '';
-            loadEngineers();
-        } catch (err) {
-            msgEl.className = 'error-msg';
-            msgEl.textContent = err.code === 'permission-denied' ? 'Firestore permission denied.' : err.message;
-        }
-
-        addBtn.disabled = false;
-        addBtn.textContent = 'Add Engineer';
     });
 
     // ── Interview modal ───────────────────────────────────────────────────────
@@ -637,23 +541,19 @@
         if (!date || !time) { errorEl.textContent = 'Please set both a date and time for the interview.'; return; }
         if (!pendingOnboardId) return;
 
-        // Find the engineer data
         const eng = allEngineers.find(e => e.id === pendingOnboardId);
         if (!eng) { errorEl.textContent = 'Engineer not found.'; return; }
 
         btn.disabled    = true;
         btn.textContent = 'Saving…';
 
-        // Format date nicely e.g. "Monday 15 March 2026"
         const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
         });
-        // Format time nicely e.g. "10:30 AM"
         const [h, m] = time.split(':');
         const hour   = parseInt(h);
         const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
 
-        // Fetch the most recent contract document for this engineer's campaign from NGUO contract
         let contractLink     = null;
         let contractFileName = null;
         try {
@@ -661,7 +561,6 @@
             const contractQ    = query(contractCol, where("campaign", "==", eng.contract));
             const contractSnap = await getDocs(contractQ);
             if (!contractSnap.empty) {
-                // Sort by uploadedAt descending in JS (avoids needing a Firestore composite index)
                 const docs = contractSnap.docs
                     .map(d => d.data())
                     .filter(d => d.downloadURL)
@@ -679,15 +578,10 @@
             console.warn('Could not fetch contract doc:', contractErr);
         }
 
-        const contractDisplay = contractFileName
-            ? `${contractFileName}`
-            : `${eng.contract || 'your'} Contract`;
-        const contractLinkText = contractLink
-            ? contractLink
-            : '(No contract document uploaded yet for this campaign)';
+        const contractDisplay  = contractFileName ? `${contractFileName}` : `${eng.contract || 'your'} Contract`;
+        const contractLinkText = contractLink ? contractLink : '(No contract document uploaded yet for this campaign)';
 
         try {
-            // 1. Save to Firestore
             await updateDoc(doc(db, "NGUO - Engineers", pendingOnboardId), {
                 status:              'onboarding',
                 onboardingStartedAt: serverTimestamp(),
@@ -696,7 +590,6 @@
                 interviewDateTime:   `${date}T${time}`
             });
 
-            // 2. Send email via EmailJS
             try {
                 await emailjs.send('service_g9nll6f', 'template_risvowl', {
                     to_email:          eng.email,
