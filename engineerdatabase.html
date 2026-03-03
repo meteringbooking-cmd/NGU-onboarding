@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
     <style>
         :root {
             --primary: #005EB8;
@@ -348,6 +351,9 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
+    // ── EmailJS ───────────────────────────────────────────────────────────────
+    emailjs.init('ziLnha91scpGjFABh');
+
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
     const colRef  = collection(db, "NGUO - Engineers");
@@ -622,19 +628,41 @@
 
     // ── Interview modal ───────────────────────────────────────────────────────
     document.getElementById('confirmInterviewBtn').addEventListener('click', async () => {
-        const date     = document.getElementById('interviewDate').value;
-        const time     = document.getElementById('interviewTime').value;
-        const errorEl  = document.getElementById('interviewError');
-        const btn      = document.getElementById('confirmInterviewBtn');
+        const date    = document.getElementById('interviewDate').value;
+        const time    = document.getElementById('interviewTime').value;
+        const errorEl = document.getElementById('interviewError');
+        const btn     = document.getElementById('confirmInterviewBtn');
 
         errorEl.textContent = '';
         if (!date || !time) { errorEl.textContent = 'Please set both a date and time for the interview.'; return; }
         if (!pendingOnboardId) return;
 
-        btn.disabled  = true;
+        // Find the engineer data
+        const eng = allEngineers.find(e => e.id === pendingOnboardId);
+        if (!eng) { errorEl.textContent = 'Engineer not found.'; return; }
+
+        btn.disabled    = true;
         btn.textContent = 'Saving…';
 
+        // Format date nicely for email e.g. "Monday 15 March 2026"
+        const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+        });
+        // Format time nicely e.g. "10:30 AM"
+        const [h, m]   = time.split(':');
+        const hour     = parseInt(h);
+        const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
+
+        // Contract-specific document name
+        const contractDocMap = {
+            'Sureserve - OES': 'Sureserve OES Contract',
+            'Sureserve - SP':  'Sureserve SP Contract',
+            'Calisen - SP':    'Calisen SP Contract'
+        };
+        const contractDoc = contractDocMap[eng.contract] || `${eng.contract || 'your'} Contract`;
+
         try {
+            // 1. Save to Firestore
             await updateDoc(doc(db, "NGUO - Engineers", pendingOnboardId), {
                 status:              'onboarding',
                 onboardingStartedAt: serverTimestamp(),
@@ -642,9 +670,32 @@
                 interviewTime:       time,
                 interviewDateTime:   `${date}T${time}`
             });
+
+            // 2. Send email via EmailJS
+            try {
+                await emailjs.send('service_g9nll6f', 'template_risvowl', {
+                    to_email:        eng.email,
+                    engineer_name:   eng.name,
+                    interview_date:  dateFormatted,
+                    interview_time:  timeFormatted,
+                    contract_name:   eng.contract || 'your contract',
+                    contract_doc:    contractDoc,
+                    portal_link:     'https://ngu-onboarding.vercel.app/uploaddocuments.html',
+                    login_email:     eng.email,
+                    login_password:  eng.password || '(see your welcome pack)'
+                });
+            } catch (emailErr) {
+                console.warn('Email failed (onboarding status was still saved):', emailErr);
+                errorEl.textContent = '⚠️ Onboarding saved but email failed to send: ' + (emailErr.text || emailErr.message || 'unknown error');
+                btn.disabled    = false;
+                btn.textContent = 'Begin Onboarding';
+                return;
+            }
+
             document.getElementById('interviewOverlay').classList.remove('active');
             pendingOnboardId = null;
             loadEngineers();
+
         } catch (err) {
             errorEl.textContent = 'Error saving: ' + err.message;
         }
