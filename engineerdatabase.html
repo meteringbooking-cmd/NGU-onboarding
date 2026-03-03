@@ -347,11 +347,13 @@
         return `<span class="badge ${map[contract] || 'badge-ss-oes'}">${contract || '—'}</span>`;
     }
 
-    // ── Recruiter badge ───────────────────────────────────────────────────────
+    // ── Recruiter badge — shows recruiter's name if available, else agency ────
     function recruiterBadge(eng) {
         if (!eng.recruiter) return '';
-        const label = eng.recruiter.charAt(0).toUpperCase() + eng.recruiter.slice(1);
-        return `<span class="recruiter-badge">${label}</span>`;
+        const label = eng.recruiterName
+            ? eng.recruiterName
+            : (eng.recruiter.charAt(0).toUpperCase() + eng.recruiter.slice(1));
+        return `<span class="recruiter-badge">via ${label}</span>`;
     }
 
     // ── Load engineers (exclude deleted) ─────────────────────────────────────
@@ -440,7 +442,10 @@
                     // Show Rubix notice if applicable
                     const rubixNotice = document.getElementById('rubixNotice');
                     if (eng && eng.recruiter === 'rubix' && eng.recruiterEmail) {
-                        document.getElementById('rubixEmailDisplay').textContent = eng.recruiterEmail;
+                        const recruiterLabel = eng.recruiterName
+                            ? `${eng.recruiterName} (${eng.recruiterEmail})`
+                            : eng.recruiterEmail;
+                        document.getElementById('rubixEmailDisplay').textContent = recruiterLabel;
                         rubixNotice.style.display = 'block';
                     } else {
                         rubixNotice.style.display = 'none';
