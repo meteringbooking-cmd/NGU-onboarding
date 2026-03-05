@@ -84,14 +84,6 @@
         .applicant-name { font-weight:700; font-size:0.95rem; color:var(--accent); }
         .applicant-name:hover { text-decoration:underline; }
 
-        /* Recruiter badge */
-        .recruiter-badge {
-            display:inline-block; padding:0.15rem 0.55rem; border-radius:20px;
-            font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
-            margin-left:0.5rem; vertical-align:middle;
-            background:rgba(168,85,247,0.18); color:#c4b5fd; border:1px solid rgba(168,85,247,0.3);
-        }
-
         .status-badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.75rem; font-weight:700; }
         .status-new      { background:rgba(0,163,224,0.18); color:#7dd3fc; }
         .status-proceed  { background:rgba(16,185,129,0.18); color:#6ee7b7; }
@@ -163,43 +155,22 @@
         }
         .cv-link:hover { background:rgba(0,163,224,0.2); border-color:var(--accent); }
 
-        /* Proceed modal extras */
-        .proceed-form { margin-top: 1.2rem; text-align: left; }
-        .proceed-form label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-light); margin-bottom:0.4rem; margin-top:0.9rem; }
-        .proceed-form input,
-        .proceed-form select {
-            width:100%; padding:0.75rem 1rem; background:var(--bg-dark);
-            border:2px solid var(--border); border-radius:10px; color:white;
-            font-size:0.95rem; font-family:inherit; appearance:none; -webkit-appearance:none;
-        }
-        .proceed-form select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B9AAE' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer;
-        }
-        .proceed-form select option { background:var(--bg-card); color:var(--text-light); }
-        .proceed-form input:focus,
-        .proceed-form select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
-        .proceed-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
-        @media(max-width:480px){ .proceed-form .form-row { grid-template-columns:1fr; } }
-
         /* Confirm overlay */
         .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; }
         .overlay.active { display:flex; }
         .confirm-box {
             background:var(--bg-card); border:1px solid var(--border); border-radius:16px;
-            padding:2.2rem; max-width:480px; width:90%; text-align:center;
+            padding:2.2rem; max-width:420px; width:90%; text-align:center;
             box-shadow:0 20px 50px rgba(0,0,0,0.6); animation:popIn 0.18s ease;
         }
         @keyframes popIn { from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);} }
         .confirm-box .ci { font-size:2.5rem; margin-bottom:0.7rem; }
         .confirm-box h3  { font-size:1.1rem; margin-bottom:0.5rem; }
-        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem; line-height:1.5; }
-        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1.4rem; }
+        .confirm-box p   { color:var(--text-muted); font-size:0.88rem; margin-bottom:1.6rem; line-height:1.5; }
+        .confirm-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; }
 
         .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
         @keyframes spin { to{transform:rotate(360deg);} }
-
-        #proceedError { color:var(--error); font-size:0.83rem; margin-top:0.6rem; min-height:1.1rem; }
 
         @media (max-width:700px) { .detail-grid { grid-template-columns:1fr 1fr; } }
     </style>
@@ -272,50 +243,12 @@
     </div>
 </div>
 
-<!-- ── Proceed modal ── -->
+<!-- Confirm overlay -->
 <div class="overlay" id="confirmOverlay">
     <div class="confirm-box">
         <div class="ci" id="confirmIcon">✅</div>
         <h3 id="confirmTitle">Proceed with Applicant?</h3>
-        <p id="confirmText">This will move the applicant to historic records and add them to the Engineer Database.</p>
-
-        <div id="proceedFields" style="display:none;">
-            <div class="proceed-form">
-                <div class="form-row">
-                    <div>
-                        <label>Contract</label>
-                        <select id="proceedContract">
-                            <option value="" disabled selected>Select contract…</option>
-                            <option value="Sureserve - OES">Sureserve - OES</option>
-                            <option value="Sureserve - SP">Sureserve - SP</option>
-                            <option value="Calisen - SP">Calisen - SP</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>FTL</label>
-                        <select id="proceedFTL">
-                            <option value="" disabled selected>Select FTL…</option>
-                            <option value="Richard Wiecko">Richard Wiecko</option>
-                            <option value="Scott Carson">Scott Carson</option>
-                            <option value="Stuart Whyte">Stuart Whyte</option>
-                            <option value="Tom Green">Tom Green</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div>
-                        <label>Proposed Start Date</label>
-                        <input type="date" id="proceedStartDate">
-                    </div>
-                    <div>
-                        <label>Portal Password</label>
-                        <input type="text" id="proceedPassword" placeholder="Set a password">
-                    </div>
-                </div>
-            </div>
-            <div id="proceedError"></div>
-        </div>
-
+        <p id="confirmText">This will move the applicant to historic records and mark them as proceeded.</p>
         <div class="confirm-actions">
             <button class="btn" id="confirmYesBtn" style="padding:0.7rem 1.6rem;">Confirm</button>
             <button class="btn btn-secondary" id="confirmNoBtn" style="padding:0.7rem 1.4rem;">Cancel</button>
@@ -326,7 +259,7 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, getDocs, doc, addDoc, updateDoc, serverTimestamp, query, orderBy }
+    import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -338,31 +271,18 @@
         appId:"1:484894102454:web:17535ee497eac2d90d6717"
     };
 
-    const app    = initializeApp(firebaseConfig);
-    const auth   = getAuth(app);
-    const db     = getFirestore(app);
-    const col    = collection(db, "NGUO New Applicants");
-    const engCol = collection(db, "NGUO - Engineers");
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+    const col  = collection(db, "NGUO New Applicants");
 
     onAuthStateChanged(auth, u => { if (!u) window.location.href = 'index.html'; });
 
-    let allApplicants  = [];
-    let activeTab      = 'new';
-    let selectedId     = null;
-    let historicFilter = 'all';
-    let pendingAction  = null;
-
-    // ── Recruiter badge HTML helper ───────────────────────────────────────────
-    function recruiterBadge(a) {
-        if (!a.recruiter) return '';
-        const label = a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1);
-        return `<span class="recruiter-badge">${label}</span>`;
-    }
-
-    // ── Name cell: name + optional recruiter badge ────────────────────────────
-    function nameCellHTML(a) {
-        return `<span class="applicant-name">${fullName(a)}</span>${recruiterBadge(a)}`;
-    }
+    let allApplicants   = [];
+    let activeTab       = 'new';
+    let selectedId      = null;
+    let historicFilter  = 'all';
+    let pendingAction   = null; // { id, type: 'proceed'|'decline' }
 
     // ── Load all ──────────────────────────────────────────────────────────────
     async function loadAll() {
@@ -380,24 +300,19 @@
     }
 
     function updateCounts() {
-        const newOnes  = allApplicants.filter(a => !a.status || a.status === 'new');
-        const onhold   = allApplicants.filter(a => a.status === 'onhold');
+        const newOnes = allApplicants.filter(a => !a.status || a.status === 'new');
+        const onhold  = allApplicants.filter(a => a.status === 'onhold');
         const historic = allApplicants.filter(a => a.status === 'proceed' || a.status === 'declined');
         document.getElementById('countNew').textContent      = newOnes.length;
         document.getElementById('countOnHold').textContent   = onhold.length;
         document.getElementById('countHistoric').textContent = historic.length;
     }
 
+    // ── Format date ───────────────────────────────────────────────────────────
     function fmtDate(ts) {
         if (!ts) return '—';
         const d = ts.toDate ? ts.toDate() : new Date(ts);
         return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-    }
-
-    function fullName(a) {
-        if (a.fullName) return a.fullName;
-        const p = a.personalDetails || {};
-        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
     }
 
     // ── Render new applicants table ───────────────────────────────────────────
@@ -410,7 +325,8 @@
             return;
         }
         el.innerHTML = `
-            <div class="table-wrap"><table>
+            <div class="table-wrap">
+            <table>
                 <thead><tr>
                     <th>Name</th><th>Position</th><th>Date Submitted</th>
                     <th>Telephone</th><th>Postcode</th><th>Status</th>
@@ -418,7 +334,7 @@
                 <tbody>
                 ${list.map(a => `
                     <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','new')">
-                        <td>${nameCellHTML(a)}</td>
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
                         <td>${a.position || '—'}</td>
                         <td>${fmtDate(a.submittedAt)}</td>
                         <td>${a.personalDetails?.phone || '—'}</td>
@@ -426,36 +342,8 @@
                         <td><span class="status-badge status-new">New</span></td>
                     </tr>`).join('')}
                 </tbody>
-            </table></div>`;
-    }
-
-    // ── Render on hold table ──────────────────────────────────────────────────
-    function renderOnHold() {
-        const list = allApplicants.filter(a => a.status === 'onhold');
-        const el   = document.getElementById('onholdTable');
-        if (list.length === 0) {
-            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
-            closeDetail('detailPanelOnHold');
-            return;
-        }
-        el.innerHTML = `
-            <div class="table-wrap"><table>
-                <thead><tr>
-                    <th>Name</th><th>Position</th><th>Date Submitted</th>
-                    <th>Telephone</th><th>Postcode</th><th>Status</th>
-                </tr></thead>
-                <tbody>
-                ${list.map(a => `
-                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
-                        <td>${nameCellHTML(a)}</td>
-                        <td>${a.position || '—'}</td>
-                        <td>${fmtDate(a.submittedAt)}</td>
-                        <td>${a.personalDetails?.phone || '—'}</td>
-                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
-                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
-                    </tr>`).join('')}
-                </tbody>
-            </table></div>`;
+            </table>
+            </div>`;
     }
 
     // ── Render historic table ─────────────────────────────────────────────────
@@ -471,7 +359,8 @@
             return;
         }
         el.innerHTML = `
-            <div class="table-wrap"><table>
+            <div class="table-wrap">
+            <table>
                 <thead><tr>
                     <th>Name</th><th>Position</th><th>Date Submitted</th>
                     <th>Telephone</th><th>Postcode</th><th>Status</th>
@@ -479,7 +368,7 @@
                 <tbody>
                 ${list.map(a => `
                     <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','historic')">
-                        <td>${nameCellHTML(a)}</td>
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
                         <td>${a.position || '—'}</td>
                         <td>${fmtDate(a.submittedAt)}</td>
                         <td>${a.personalDetails?.phone || '—'}</td>
@@ -489,7 +378,15 @@
                         </span></td>
                     </tr>`).join('')}
                 </tbody>
-            </table></div>`;
+            </table>
+            </div>`;
+    }
+
+    // ── Full name helper ──────────────────────────────────────────────────────
+    function fullName(a) {
+        if (a.fullName) return a.fullName;
+        const p = a.personalDetails || {};
+        return [p.title, p.forename, p.surname].filter(Boolean).join(' ') || '—';
     }
 
     // ── Select applicant → show detail ────────────────────────────────────────
@@ -497,6 +394,7 @@
         const panelId = panel === 'new' ? 'detailPanel' : panel === 'onhold' ? 'detailPanelOnHold' : 'detailPanelHistoric';
         const tableId = panel === 'new' ? 'newTable'    : panel === 'onhold' ? 'onholdTable' : 'historicTable';
 
+        // Toggle
         if (selectedId === id) {
             selectedId = null;
             closeDetail(panelId);
@@ -521,11 +419,11 @@
     }
 
     function renderDetailPanel(a, panelId, showActions) {
-        const p    = a.personalDetails || {};
-        const ra   = a.reasonableAdjustments || {};
-        const dec  = a.declaration || {};
-        const con  = a.consent     || {};
-        const emp  = a.employment  || [];
+        const p   = a.personalDetails || {};
+        const ra  = a.reasonableAdjustments || {};
+        const dec = a.declaration || {};
+        const con = a.consent     || {};
+        const emp = a.employment  || [];
         const refs = a.references  || [];
 
         const yesNo = v => v === 'yes' ? '<span style="color:var(--warning)">Yes</span>' : '<span style="color:#6ee7b7">No</span>';
@@ -572,33 +470,20 @@
             ? `<div class="sig-display"><img src="${sig}" alt="${label}"></div>`
             : `<span style="color:var(--text-muted);font-size:0.85rem;">No signature captured</span>`;
 
-        const cvHTML = a.cv?.url
-            ? `<a href="${a.cv.url}" target="_blank" rel="noopener" class="cv-link">📄 ${a.cv.filename || 'Download CV'}</a>`
+        const cvHTML = a.cv?.data
+            ? `<a href="${a.cv.data}" download="${a.cv.filename || 'CV'}" class="cv-link">📄 ${a.cv.filename || 'Download CV'}</a>`
             : `<span style="color:var(--text-muted);font-size:0.85rem;">No CV uploaded</span>`;
-
-        // Recruiter section — only shown if recruiter field is present
-        const recruiterSection = a.recruiter ? `
-            <div class="detail-section">
-                <div class="detail-section-title">Recruiter</div>
-                <div class="detail-grid">
-                    <div class="detail-field"><label>Agency</label><span>${a.recruiter.charAt(0).toUpperCase() + a.recruiter.slice(1)}</span></div>
-                    <div class="detail-field"><label>Recruiter Email</label><span>${a.recruiterEmail || '—'}</span></div>
-                    <div class="detail-field"><label>Engineer's Personal Email</label><span>${a.engineerEmail || '—'}</span></div>
-                </div>
-            </div>` : '';
 
         const panel = document.getElementById(panelId);
         panel.style.display = 'block';
         panel.innerHTML = `
             <div class="detail-top">
                 <div>
-                    <div class="detail-name">${fullName(a)}${recruiterBadge(a)}</div>
+                    <div class="detail-name">${fullName(a)}</div>
                     <div class="detail-pos">${a.position || '—'} · Applied ${fmtDate(a.submittedAt)}</div>
                 </div>
                 ${actionBtns}
             </div>
-
-            ${recruiterSection}
 
             <div class="detail-section">
                 <div class="detail-section-title">Personal Details</div>
@@ -685,37 +570,29 @@
         document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
     };
 
-    // ── Trigger action modal ──────────────────────────────────────────────────
+    // ── Proceed / Decline ─────────────────────────────────────────────────────
     window.triggerAction = function(id, type) {
         pendingAction = { id, type };
-        const a    = allApplicants.find(x => x.id === id);
+        const a = allApplicants.find(x => x.id === id);
         const name = fullName(a);
 
-        document.getElementById('proceedFields').style.display   = 'none';
-        document.getElementById('proceedContract').value          = '';
-        document.getElementById('proceedFTL').value               = '';
-        document.getElementById('proceedStartDate').value         = '';
-        document.getElementById('proceedPassword').value          = '';
-        document.getElementById('proceedError').textContent       = '';
-
         if (type === 'proceed') {
-            document.getElementById('confirmIcon').textContent   = '✅';
-            document.getElementById('confirmTitle').textContent  = 'Proceed with Applicant?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic records and added to the Engineer Database.`;
-            document.getElementById('confirmYesBtn').className   = 'btn btn-proceed';
+            document.getElementById('confirmIcon').textContent  = '✅';
+            document.getElementById('confirmTitle').textContent = 'Proceed with Applicant?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Proceeded.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-proceed';
             document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
-            document.getElementById('proceedFields').style.display = 'block';
         } else if (type === 'onhold') {
-            document.getElementById('confirmIcon').textContent   = '⏸️';
-            document.getElementById('confirmTitle').textContent  = 'Place Applicant On Hold?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to the On Hold list.`;
-            document.getElementById('confirmYesBtn').className   = 'btn btn-onhold';
+            document.getElementById('confirmIcon').textContent  = '⏸️';
+            document.getElementById('confirmTitle').textContent = 'Place Applicant On Hold?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to the On Hold list. You can review them there at any time.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-onhold';
             document.getElementById('confirmYesBtn').textContent = '⏸ Yes, Place On Hold';
         } else {
-            document.getElementById('confirmIcon').textContent   = '✗';
-            document.getElementById('confirmTitle').textContent  = 'Decline Applicant?';
-            document.getElementById('confirmText').textContent   = `"${name}" will be moved to historic applicants and marked as Declined.`;
-            document.getElementById('confirmYesBtn').className   = 'btn btn-decline';
+            document.getElementById('confirmIcon').textContent  = '✗';
+            document.getElementById('confirmTitle').textContent = 'Decline Applicant?';
+            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Declined.`;
+            document.getElementById('confirmYesBtn').className  = 'btn btn-decline';
             document.getElementById('confirmYesBtn').textContent = '✗ Yes, Decline';
         }
         document.getElementById('confirmOverlay').classList.add('active');
@@ -723,57 +600,22 @@
 
     document.getElementById('confirmYesBtn').addEventListener('click', async () => {
         if (!pendingAction) return;
-        const btn     = document.getElementById('confirmYesBtn');
-        const errorEl = document.getElementById('proceedError');
-        errorEl.textContent = '';
-
-        if (pendingAction.type === 'proceed') {
-            const contract  = document.getElementById('proceedContract').value;
-            const ftl       = document.getElementById('proceedFTL').value;
-            const startDate = document.getElementById('proceedStartDate').value;
-            const password  = document.getElementById('proceedPassword').value.trim();
-            if (!contract || !ftl || !startDate || !password) {
-                errorEl.textContent = 'Please fill in all fields above before proceeding.';
-                return;
-            }
-        }
-
+        const btn = document.getElementById('confirmYesBtn');
         btn.disabled  = true;
         btn.innerHTML = '<span class="spinner"></span>Saving…';
 
         try {
             await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
-                status:    pendingAction.type,
-                decidedAt: serverTimestamp()
+                status:     pendingAction.type,
+                decidedAt:  serverTimestamp()
             });
 
-            if (pendingAction.type === 'proceed') {
-                const a         = allApplicants.find(x => x.id === pendingAction.id);
-                const p         = a?.personalDetails || {};
-                const contract  = document.getElementById('proceedContract').value;
-                const ftl       = document.getElementById('proceedFTL').value;
-                const startDate = document.getElementById('proceedStartDate').value;
-                const password  = document.getElementById('proceedPassword').value.trim();
-
-                await addDoc(engCol, {
-                    name:              fullName(a),
-                    email:             p.email  || '',
-                    phone:             p.phone  || '',
-                    contract,
-                    ftl,
-                    startDate,
-                    password,
-                    status:            'pending',
-                    sourceApplicantId: pendingAction.id,
-                    createdAt:         serverTimestamp()
-                });
-            }
-
+            // Update local cache
             const a = allApplicants.find(x => x.id === pendingAction.id);
             if (a) a.status = pendingAction.type;
 
             document.getElementById('confirmOverlay').classList.remove('active');
-            selectedId    = null;
+            selectedId  = null;
             pendingAction = null;
 
             closeDetail('detailPanel');
@@ -786,7 +628,7 @@
             updateCounts();
 
         } catch (err) {
-            errorEl.textContent = 'Error: ' + err.message;
+            alert('Error: ' + err.message);
         }
 
         btn.disabled    = false;
@@ -815,6 +657,37 @@
         document.getElementById('tabHistoric').classList.toggle('active', tab === 'historic');
         selectedId = null;
     };
+
+    // ── Render on hold table ─────────────────────────────────────────────────
+    function renderOnHold() {
+        const list = allApplicants.filter(a => a.status === 'onhold');
+        const el   = document.getElementById('onholdTable');
+        if (list.length === 0) {
+            el.innerHTML = '<div class="empty-state"><div class="ei">⏸️</div><p>No applicants on hold.</p></div>';
+            closeDetail('detailPanelOnHold');
+            return;
+        }
+        el.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>Name</th><th>Position</th><th>Date Submitted</th>
+                    <th>Telephone</th><th>Postcode</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${list.map(a => `
+                    <tr data-id="${a.id}" onclick="selectApplicant('${a.id}','onhold')">
+                        <td><span class="applicant-name">${fullName(a)}</span></td>
+                        <td>${a.position || '—'}</td>
+                        <td>${fmtDate(a.submittedAt)}</td>
+                        <td>${a.personalDetails?.phone || '—'}</td>
+                        <td style="font-family:'DM Mono',monospace;">${a.personalDetails?.postcode || '—'}</td>
+                        <td><span class="status-badge status-onhold">⏸ On Hold</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+            </div>`;
+    }
 
     window.filterHistoric = function(f) {
         historicFilter = f;
