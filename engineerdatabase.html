@@ -317,7 +317,7 @@
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
         getFirestore, collection, addDoc, getDocs, doc, updateDoc,
-        serverTimestamp, query, orderBy, where
+        serverTimestamp, where
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -365,13 +365,17 @@
         tableEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:3rem 0;">Loading engineers...</p>';
         closeEditPanel();
         try {
-            const q    = query(colRef, orderBy('createdAt', 'desc'));
-            const snap = await getDocs(q);
+            const snap = await getDocs(colRef);
 
-            // Filter out deleted records
+            // Filter out deleted records, sort by createdAt descending in JS
             allEngineers = snap.docs
                 .map(d => ({ id: d.id, ...d.data() }))
-                .filter(d => d.status !== 'deleted');
+                .filter(d => d.status !== 'deleted')
+                .sort((a, b) => {
+                    const aT = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+                    const bT = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+                    return bT - aT;
+                });
 
             if (allEngineers.length === 0) {
                 tableEl.innerHTML = '<p style="text-align:center; padding:3rem 0; color:var(--text-muted);">No engineers added yet</p>';
