@@ -384,7 +384,7 @@
                 card.style.gridColumn = '1 / -1'; // full width
 
                 const linksHtml = uploaded
-                    ? certsArr.map((c, i) => `<a href="${c.url}" target="_blank" rel="noopener" class="doc-preview-link" style="margin-bottom:0.4rem;">📎 ${c.name || 'Certificate ' + (i+1)}</a>`).join('')
+                    ? certsArr.map((c, i) => `<a href="${c.data || c.url || '#'}" download="${c.name || 'Certificate'}" class="doc-preview-link" style="margin-bottom:0.4rem;">📎 ${c.name || 'Certificate ' + (i+1)}</a>`).join('')
                     : `<div class="doc-preview-link disabled">No certificates uploaded</div>`;
 
                 card.innerHTML = `
@@ -425,8 +425,8 @@
                 ? `<div style="padding:0.6rem; background:var(--bg-input); border-radius:8px; font-size:0.85rem; margin-bottom:0.9rem; color:${uploaded ? 'var(--text-light)' : 'var(--text-muted)'}">
                     ${uploaded ? `<strong>${eng.bank_name}</strong><br><span style="color:var(--text-muted)">${eng.bank_bankName || ''}</span>` : 'No bank details submitted'}
                    </div>`
-                : `<a href="${fileUrl || '#'}" target="_blank" class="doc-preview-link${!uploaded ? ' disabled' : ''}">
-                    ${uploaded ? `📎 ${filename || 'View Document'}` : 'No file uploaded'}
+                : `<a href="${fileUrl || '#'}" download="${filename || 'document'}" class="doc-preview-link${!uploaded ? ' disabled' : ''}">
+                    ${uploaded ? `📎 ${filename || 'Download Document'}` : 'No file uploaded'}
                    </a>`;
 
             card.innerHTML = `
