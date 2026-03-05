@@ -336,7 +336,13 @@
     // ── EmailJS ───────────────────────────────────────────────────────────────
     emailjs.init('ziLnha91scpGjFABh');
 
-    onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            window.location.href = 'index.html';
+        } else {
+            loadEngineers();
+        }
+    });
 
     const colRef  = collection(db, "NGUO - Engineers");
     const addBtn  = document.getElementById('addEngineerBtn');
@@ -537,7 +543,11 @@
             });
 
         } catch (err) {
-            tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">Error: ${err.message}</p>`;
+            console.error('loadEngineers error:', err);
+            tableEl.innerHTML = `<p style="color:var(--error); text-align:center; padding:2rem;">
+                Error loading engineers: ${err.message}<br>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Code: ${err.code || 'unknown'} — Check the browser console for details.</span>
+            </p>`;
         }
     }
 
@@ -865,8 +875,6 @@
 
     document.getElementById('refreshBtn').addEventListener('click', loadEngineers);
     document.getElementById('signOutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'index.html'; });
-
-    loadEngineers();
 </script>
 </body>
 </html>
