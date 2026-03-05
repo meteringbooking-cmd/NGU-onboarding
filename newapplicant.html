@@ -6,6 +6,7 @@
     <title>NGU — New Applicants</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -243,6 +244,30 @@
     </div>
 </div>
 
+
+<!-- Interview scheduling overlay (shown when proceeding an applicant) -->
+<div class="overlay" id="interviewOverlay">
+    <div class="confirm-box" style="max-width:480px; text-align:left;">
+        <h3 style="color:var(--accent); margin-bottom:0.4rem; text-align:center;">📅 Schedule Interview</h3>
+        <p id="interviewApplicantName" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.4rem; text-align:center;"></p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.4rem;">
+            <div>
+                <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Date</label>
+                <input type="date" id="intDate" style="width:100%; padding:0.8rem 1rem; background:var(--bg-dark); border:2px solid var(--border); border-radius:10px; color:white; font-size:0.95rem; font-family:inherit;">
+            </div>
+            <div>
+                <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:0.5rem; color:var(--text-light);">Interview Time</label>
+                <input type="time" id="intTime" style="width:100%; padding:0.8rem 1rem; background:var(--bg-dark); border:2px solid var(--border); border-radius:10px; color:white; font-size:0.95rem; font-family:inherit;">
+            </div>
+        </div>
+        <div id="intError" style="color:var(--error); font-size:0.85rem; margin-bottom:1rem; min-height:1.2rem;"></div>
+        <div class="confirm-actions" style="justify-content:center;">
+            <button class="btn btn-proceed" id="confirmInterviewBtn" style="padding:0.8rem 1.8rem; font-size:0.95rem;">✓ Proceed & Send Email</button>
+            <button class="btn btn-secondary" id="cancelInterviewBtn" style="padding:0.8rem 1.4rem;">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <!-- Confirm overlay -->
 <div class="overlay" id="confirmOverlay">
     <div class="confirm-box">
@@ -259,7 +284,7 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy }
+    import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, serverTimestamp, query, orderBy, where }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -577,11 +602,14 @@
         const name = fullName(a);
 
         if (type === 'proceed') {
-            document.getElementById('confirmIcon').textContent  = '✅';
-            document.getElementById('confirmTitle').textContent = 'Proceed with Applicant?';
-            document.getElementById('confirmText').textContent  = `"${name}" will be moved to historic applicants and marked as Proceeded.`;
-            document.getElementById('confirmYesBtn').className  = 'btn btn-proceed';
-            document.getElementById('confirmYesBtn').textContent = '✓ Yes, Proceed';
+            // Open interview scheduling overlay instead of simple confirm
+            document.getElementById('interviewApplicantName').textContent =
+                `Set an interview date and time for ${name} before proceeding.`;
+            document.getElementById('intDate').value  = '';
+            document.getElementById('intTime').value  = '';
+            document.getElementById('intError').textContent = '';
+            document.getElementById('interviewOverlay').classList.add('active');
+            return; // don't open the confirm overlay
         } else if (type === 'onhold') {
             document.getElementById('confirmIcon').textContent  = '⏸️';
             document.getElementById('confirmTitle').textContent = 'Place Applicant On Hold?';
@@ -597,6 +625,129 @@
         }
         document.getElementById('confirmOverlay').classList.add('active');
     };
+
+
+    // ── EmailJS init ──────────────────────────────────────────────────────────
+    emailjs.init('ziLnha91scpGjFABh');
+
+    // ── Interview confirm → create engineer + send email ──────────────────────
+    document.getElementById('confirmInterviewBtn').addEventListener('click', async () => {
+        const date    = document.getElementById('intDate').value;
+        const time    = document.getElementById('intTime').value;
+        const errorEl = document.getElementById('intError');
+        const btn     = document.getElementById('confirmInterviewBtn');
+
+        errorEl.textContent = '';
+        if (!date || !time) { errorEl.textContent = 'Please set both a date and time.'; return; }
+        if (!pendingAction || pendingAction.type !== 'proceed') return;
+
+        const a = allApplicants.find(x => x.id === pendingAction.id);
+        if (!a) { errorEl.textContent = 'Applicant not found.'; return; }
+
+        btn.disabled    = true;
+        btn.innerHTML   = '<span class="spinner"></span>Saving…';
+
+        const forename = a.personalDetails?.forename || '';
+        const surname  = a.personalDetails?.surname  || '';
+        const fullname = `${forename} ${surname}`.trim() || a.fullName || '—';
+        const email    = a.personalDetails?.email    || a.engineerEmail || '';
+        const phone    = a.personalDetails?.phone    || '';
+        const position = a.position || '';
+
+        // Format date/time for email
+        const dateFormatted = new Date(date).toLocaleDateString('en-GB', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+        });
+        const [h, m] = time.split(':');
+        const hour   = parseInt(h);
+        const timeFormatted = `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
+
+        try {
+            // 1. Mark applicant as proceeded in NGUO New Applicants
+            await updateDoc(doc(db, "NGUO New Applicants", pendingAction.id), {
+                status:    'proceed',
+                decidedAt: serverTimestamp()
+            });
+            a.status = 'proceed';
+
+            // 2. Generate a simple password
+            const password = forename.toLowerCase().replace(/\s+/g, '') +
+                Math.floor(1000 + Math.random() * 9000);
+
+            // 3. Create engineer record in NGUO - Engineers
+            const engRef = await addDoc(collection(db, "NGUO - Engineers"), {
+                name:            fullname,
+                email:           email,
+                phone:           phone,
+                contract:        '',        // admin can fill in later via edit panel
+                ftl:             '',
+                startDate:       '',
+                password:        password,
+                status:          'onboarding',
+                recruiter:       a.recruiter       || '',
+                recruiterName:   a.recruiterName   || '',
+                recruiterEmail:  a.recruiterEmail  || '',
+                interviewDate:   date,
+                interviewTime:   time,
+                interviewDateTime: `${date}T${time}`,
+                onboardingStartedAt: serverTimestamp(),
+                createdAt:       serverTimestamp(),
+                sourceApplicantId: pendingAction.id
+            });
+
+            // 4. Send onboarding email via EmailJS
+            try {
+                await emailjs.send('service_g9nll6f', 'template_risvowl', {
+                    to_email:       email,
+                    engineer_name:  fullname,
+                    interview_date: dateFormatted,
+                    interview_time: timeFormatted,
+                    contract_name:  '(to be confirmed)',
+                    contract_doc:   '(to be confirmed)',
+                    contract_link:  '(to be confirmed)',
+                    portal_link:    'https://ngu-onboarding.vercel.app/uploaddocuments.html',
+                    login_email:    email,
+                    login_password: password
+                });
+            } catch (emailErr) {
+                console.warn('Email failed (engineer was still created):', emailErr);
+                errorEl.textContent = '⚠️ Engineer created but email failed: ' + (emailErr.text || emailErr.message || '');
+                btn.disabled    = false;
+                btn.textContent = '✓ Proceed & Send Email';
+                return;
+            }
+
+            // 5. Close overlay and refresh UI
+            document.getElementById('interviewOverlay').classList.remove('active');
+            pendingAction = null;
+            selectedId    = null;
+            closeDetail('detailPanel');
+            closeDetail('detailPanelHistoric');
+            closeDetail('detailPanelOnHold');
+            document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+            renderNew();
+            renderOnHold();
+            renderHistoric();
+            updateCounts();
+
+        } catch (err) {
+            errorEl.textContent = 'Error: ' + err.message;
+        }
+
+        btn.disabled    = false;
+        btn.textContent = '✓ Proceed & Send Email';
+    });
+
+    document.getElementById('cancelInterviewBtn').addEventListener('click', () => {
+        document.getElementById('interviewOverlay').classList.remove('active');
+        pendingAction = null;
+    });
+    document.getElementById('interviewOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            document.getElementById('interviewOverlay').classList.remove('active');
+            pendingAction = null;
+        }
+    });
 
     document.getElementById('confirmYesBtn').addEventListener('click', async () => {
         if (!pendingAction) return;
