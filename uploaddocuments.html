@@ -234,8 +234,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-    import { getStorage, ref, uploadBytes, getDownloadURL }
-        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
 
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
@@ -255,7 +254,6 @@
 
     const app     = initializeApp(firebaseConfig);
     const db      = getFirestore(app);
-    const storage = getStorage(app);
 
     let currentEngineer      = null;
     let allCompleteEmailSent = false;
@@ -444,14 +442,17 @@
         status.className   = 'upload-status status-pending';
 
         try {
-            const safeName   = `${Date.now()}_${slot.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-            const sRef       = ref(storage, `engineers/${currentEngineer.docId}/certs/${safeName}`);
-            const snapshot   = await uploadBytes(sRef, slot.file);
-            const downloadURL = await getDownloadURL(snapshot.ref);
+            // Read file as base64 data URL (no Storage auth needed)
+            const fileData = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload  = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Could not read file'));
+                reader.readAsDataURL(slot.file);
+            });
 
             // Merge into certs_uploaded array
             const existing = currentEngineer.certs_uploaded || [];
-            const newEntry = { name: slot.file.name, url: downloadURL, uploadedAt: new Date().toISOString() };
+            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
             // Replace if re-upload of same slot index, else push
             const slotIndex = certSlots.filter(s => s.uploaded || s.id <= id).findIndex(s => s.id === id);
             if (slot.uploaded && slotIndex >= 0 && slotIndex < existing.length) {
@@ -540,18 +541,22 @@
         status.className   = 'upload-status status-pending';
 
         try {
-            const storageRef  = ref(storage, `engineers/${currentEngineer.docId}/${key}/${file.name}`);
-            const snapshot    = await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(snapshot.ref);
+            // Read file as base64 data URL (no Storage auth needed)
+            const fileData = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload  = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Could not read file'));
+                reader.readAsDataURL(file);
+            });
 
             const fieldName = `docs_${key}`;
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                [fieldName]: downloadURL,
+                [fieldName]: fileData,
                 [`docs_${key}_filename`]: file.name,
                 [`docs_${key}_uploadedAt`]: serverTimestamp()
             });
 
-            currentEngineer[fieldName] = downloadURL;
+            currentEngineer[fieldName] = fileData;
             status.textContent = '✓ Uploaded';
             status.className   = 'upload-status status-saved';
             zone.classList.add('has-file');
