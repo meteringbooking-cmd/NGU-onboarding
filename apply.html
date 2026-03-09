@@ -41,7 +41,6 @@
         .container { max-width: 860px; margin: 0 auto; }
         .logo { max-height: 70px; display: block; margin: 0 auto 2rem; }
 
-        /* Header */
         .page-header { text-align: center; margin-bottom: 3rem; }
         .page-header h1 {
             font-size: 2.2rem; font-weight: 800;
@@ -51,7 +50,6 @@
         }
         .page-header p { color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 0.88rem; }
 
-        /* Section cards */
         .section {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 16px; padding: 2rem 2.2rem 2.4rem;
@@ -71,14 +69,11 @@
         .section-header h2 { font-size: 1.15rem; font-weight: 700; }
         .section-header p  { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.1rem; }
 
-        /* Form elements */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; }
         .form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
         .form-group.full { grid-column: 1 / -1; }
-        label {
-            font-weight: 600; font-size: 0.88rem; color: var(--text-light);
-        }
+        label { font-weight: 600; font-size: 0.88rem; color: var(--text-light); }
         label .req { color: var(--accent); margin-left: 2px; }
         input[type="text"],
         input[type="email"],
@@ -106,7 +101,6 @@
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
         textarea { min-height: 100px; line-height: 1.5; }
 
-        /* Radio / Yes-No */
         .radio-group { display: flex; gap: 1rem; flex-wrap: wrap; }
         .radio-option {
             display: flex; align-items: center; gap: 0.5rem;
@@ -118,12 +112,10 @@
         .radio-option.selected { border-color: var(--accent); background: rgba(0,163,224,0.1); color: var(--accent); }
         .radio-option:hover { border-color: var(--accent); }
 
-        /* Conditional reveal */
         .conditional { display: none; margin-top: 1rem; }
         .conditional.visible { display: block; animation: slideDown 0.2s ease; }
         @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Upload zone */
         .upload-zone {
             border: 2px dashed var(--border); border-radius: 12px;
             padding: 2rem 1rem; text-align: center; cursor: pointer;
@@ -137,7 +129,6 @@
         .upload-zone-hint  { font-size: 0.78rem; color: var(--text-muted); }
         .upload-zone-filename { font-size: 0.82rem; color: #6ee7b7; margin-top: 0.4rem; font-family: 'DM Mono', monospace; }
 
-        /* Employment history */
         .employment-entry {
             background: var(--bg-input); border: 1px solid var(--border);
             border-radius: 12px; padding: 1.4rem; margin-bottom: 1rem;
@@ -156,13 +147,11 @@
         }
         .btn-remove:hover { background: rgba(239,68,68,0.2); border-color: var(--error); }
 
-        /* Reference entries */
         .reference-entry {
             background: var(--bg-input); border: 1px solid var(--border);
             border-radius: 12px; padding: 1.4rem; margin-bottom: 1rem;
         }
 
-        /* Signature box */
         .sig-wrap { position: relative; }
         .sig-canvas {
             width: 100%; height: 120px; border: 2px solid var(--border);
@@ -179,7 +168,6 @@
         }
         .btn-clear-sig:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* Buttons */
         .btn {
             padding: 0.85rem 2rem; border: none; border-radius: 12px;
             font-size: 1rem; font-weight: 700; cursor: pointer;
@@ -201,17 +189,14 @@
 
         .divider { border: none; border-top: 1px solid var(--border); margin: 1.4rem 0; }
 
-        /* Spinner */
         .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Submit area */
         .submit-area { text-align: center; margin-top: 2rem; }
         .submit-msg { font-size: 0.95rem; margin-top: 1rem; min-height: 1.4rem; }
         .submit-msg.ok  { color: var(--success); }
         .submit-msg.err { color: var(--error); }
 
-        /* Success screen */
         #successScreen {
             display: none; text-align: center; padding: 4rem 2rem;
             animation: fadeIn 0.4s ease;
@@ -220,6 +205,13 @@
         #successScreen .success-icon { font-size: 4rem; margin-bottom: 1rem; }
         #successScreen h2 { font-size: 1.8rem; font-weight: 800; color: #6ee7b7; margin-bottom: 0.8rem; }
         #successScreen p  { color: var(--text-muted); font-size: 1rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+        /* No vacancies notice */
+        .no-vacancies {
+            background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 12px; padding: 1.4rem 1.6rem;
+            color: #fcd34d; font-size: 0.92rem; line-height: 1.6;
+        }
 
         @media (max-width: 600px) {
             .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
@@ -244,9 +236,11 @@
                 <div class="section-num">1</div>
                 <div><h2>Position Applied For</h2></div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="positionGroup">
                 <label>Position <span class="req">*</span></label>
-                <input type="text" id="position" placeholder="e.g. Field Engineer, Smart Meter Installer…">
+                <select id="position">
+                    <option value="" disabled selected>Loading available positions…</option>
+                </select>
             </div>
         </div>
 
@@ -299,41 +293,26 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-num">3</div>
-                <div>
-                    <h2>Reasonable Adjustments</h2>
-                    <p>Interview accommodations</p>
-                </div>
+                <div><h2>Reasonable Adjustments</h2><p>Interview accommodations</p></div>
             </div>
-
-            <!-- Disability -->
             <div class="form-group" style="margin-bottom:1.4rem;">
                 <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>disability</strong>? <span class="req">*</span></label>
                 <div class="radio-group" id="disabilityGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="disabilityYesLabel">
-                        <input type="radio" name="disability" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="disabilityNoLabel">
-                        <input type="radio" name="disability" value="no"> No
-                    </label>
+                    <label class="radio-option" id="disabilityYesLabel"><input type="radio" name="disability" value="yes"> Yes</label>
+                    <label class="radio-option" id="disabilityNoLabel"><input type="radio" name="disability" value="no"> No</label>
                 </div>
                 <div class="conditional" id="disabilityDetails">
-                    <textarea id="disabilityText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you in your application or with our recruitment process…" style="min-height:90px;"></textarea>
+                    <textarea id="disabilityText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you…" style="min-height:90px;"></textarea>
                 </div>
             </div>
-
-            <!-- Medical -->
             <div class="form-group">
                 <label>If selected for interview, do you require any reasonable adjustments to be made on account of a <strong>medical condition</strong>? <span class="req">*</span></label>
                 <div class="radio-group" id="medicalGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="medicalYesLabel">
-                        <input type="radio" name="medical" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="medicalNoLabel">
-                        <input type="radio" name="medical" value="no"> No
-                    </label>
+                    <label class="radio-option" id="medicalYesLabel"><input type="radio" name="medical" value="yes"> Yes</label>
+                    <label class="radio-option" id="medicalNoLabel"><input type="radio" name="medical" value="no"> No</label>
                 </div>
                 <div class="conditional" id="medicalDetails">
-                    <textarea id="medicalText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you in your application or with our recruitment process…" style="min-height:90px;"></textarea>
+                    <textarea id="medicalText" placeholder="Please tell us if there are any 'reasonable adjustments' we can make to assist you…" style="min-height:90px;"></textarea>
                 </div>
             </div>
         </div>
@@ -347,12 +326,8 @@
             <div class="form-group">
                 <label>Have you any convictions that are not spent under the Rehabilitation of Offenders Act? <span class="req">*</span></label>
                 <div class="radio-group" id="convictionsGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="convictionsYesLabel">
-                        <input type="radio" name="convictions" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="convictionsNoLabel">
-                        <input type="radio" name="convictions" value="no"> No
-                    </label>
+                    <label class="radio-option" id="convictionsYesLabel"><input type="radio" name="convictions" value="yes"> Yes</label>
+                    <label class="radio-option" id="convictionsNoLabel"><input type="radio" name="convictions" value="no"> No</label>
                 </div>
                 <div class="conditional" id="convictionsDetails">
                     <textarea id="convictionsText" placeholder="Please provide further details…" style="min-height:90px;"></textarea>
@@ -369,12 +344,8 @@
             <div class="form-group">
                 <label>Do you need a work permit to be employed in the UK? <span class="req">*</span></label>
                 <div class="radio-group" id="workPermitGroup" style="margin-top:0.5rem;">
-                    <label class="radio-option" id="workPermitYesLabel">
-                        <input type="radio" name="workPermit" value="yes"> Yes
-                    </label>
-                    <label class="radio-option" id="workPermitNoLabel">
-                        <input type="radio" name="workPermit" value="no"> No
-                    </label>
+                    <label class="radio-option" id="workPermitYesLabel"><input type="radio" name="workPermit" value="yes"> Yes</label>
+                    <label class="radio-option" id="workPermitNoLabel"><input type="radio" name="workPermit" value="no"> No</label>
                 </div>
             </div>
         </div>
@@ -383,10 +354,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-num">6</div>
-                <div>
-                    <h2>Qualifications</h2>
-                    <p>I confirm I have the minimum required qualifications for the role</p>
-                </div>
+                <div><h2>Qualifications</h2><p>I confirm I have the minimum required qualifications for the role</p></div>
             </div>
             <div class="form-group" style="margin-bottom:1.4rem;">
                 <label>Please specify your qualifications below <span class="req">*</span></label>
@@ -408,10 +376,7 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-num">7</div>
-                <div>
-                    <h2>Employment History</h2>
-                    <p>Please provide details for the past 5 years</p>
-                </div>
+                <div><h2>Employment History</h2><p>Please provide details for the past 5 years</p></div>
             </div>
             <div id="employmentList"></div>
             <button class="btn-add" id="addEmploymentBtn">+ Add Employment</button>
@@ -421,12 +386,8 @@
         <div class="section">
             <div class="section-header">
                 <div class="section-num">8</div>
-                <div>
-                    <h2>References</h2>
-                    <p>Please provide two referees — one should be your most recent employer. By providing their details, you consent to us contacting them.</p>
-                </div>
+                <div><h2>References</h2><p>Please provide two referees — one should be your most recent employer. By providing their details, you consent to us contacting them.</p></div>
             </div>
-
             <div class="reference-entry">
                 <div class="entry-label" style="margin-bottom:1.1rem;">Referee 1</div>
                 <div class="form-grid" style="margin-bottom:1rem;">
@@ -439,7 +400,6 @@
                     <div class="form-group"><label>Email <span class="req">*</span></label><input type="email" class="ref-email" placeholder="referee@company.com"></div>
                 </div>
             </div>
-
             <div class="reference-entry">
                 <div class="entry-label" style="margin-bottom:1.1rem;">Referee 2</div>
                 <div class="form-grid" style="margin-bottom:1rem;">
@@ -466,7 +426,7 @@
             </div>
         </div>
 
-        <!-- ── 10. DECLARATION 1 ── -->
+        <!-- ── 10. DECLARATION ── -->
         <div class="section">
             <div class="section-header">
                 <div class="section-num">10</div>
@@ -476,14 +436,8 @@
                 I confirm that the information I have provided on this form is correct and I accept that providing deliberately false information could result in my dismissal.
             </p>
             <div class="form-grid" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Applicant Name <span class="req">*</span></label>
-                    <input type="text" id="declarationName" placeholder="Your full name">
-                </div>
-                <div class="form-group">
-                    <label>Date <span class="req">*</span></label>
-                    <input type="date" id="declarationDate">
-                </div>
+                <div class="form-group"><label>Applicant Name <span class="req">*</span></label><input type="text" id="declarationName" placeholder="Your full name"></div>
+                <div class="form-group"><label>Date <span class="req">*</span></label><input type="date" id="declarationDate"></div>
             </div>
             <div class="form-group">
                 <label>Signature <span class="req">*</span></label>
@@ -505,14 +459,8 @@
                 I hereby give my consent for the contact information provided on this form to be held on computer or other relevant filing systems and to be shared with other accredited organisations or agencies for recruitment opportunities.
             </p>
             <div class="form-grid" style="margin-bottom:1.2rem;">
-                <div class="form-group">
-                    <label>Applicant Name <span class="req">*</span></label>
-                    <input type="text" id="consentName" placeholder="Your full name">
-                </div>
-                <div class="form-group">
-                    <label>Date <span class="req">*</span></label>
-                    <input type="date" id="consentDate">
-                </div>
+                <div class="form-group"><label>Applicant Name <span class="req">*</span></label><input type="text" id="consentName" placeholder="Your full name"></div>
+                <div class="form-group"><label>Date <span class="req">*</span></label><input type="date" id="consentDate"></div>
             </div>
             <div class="form-group">
                 <label>Signature <span class="req">*</span></label>
@@ -531,20 +479,18 @@
 
     </div><!-- end applicationForm -->
 
-    <!-- Success -->
     <div id="successScreen">
         <div class="success-icon">🎉</div>
         <h2>Application Submitted!</h2>
         <p>Thank you for applying. We have received your application and will be in touch shortly regarding the next steps.</p>
     </div>
 
-</div><!-- end container -->
+</div>
 
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, addDoc, serverTimestamp }
+    import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
 
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
@@ -555,9 +501,56 @@
         appId: "1:484894102454:web:17535ee497eac2d90d6717"
     };
 
-    const app     = initializeApp(firebaseConfig);
-    const db      = getFirestore(app);
-    const colRef  = collection(db, "NGUO New Applicants");
+    const app    = initializeApp(firebaseConfig);
+    const db     = getFirestore(app);
+    const colRef = collection(db, "NGUO New Applicants");
+
+    // ── Load live vacancies into the position dropdown ────────────────────────
+    async function loadVacancies() {
+        const select = document.getElementById('position');
+        try {
+            const snap = await getDoc(doc(db, 'NGUO Config', 'jobVacancies'));
+            const jobs = snap.exists() ? (snap.data().jobs || {}) : {};
+            const liveJobs = Object.entries(jobs).filter(([, v]) => v).map(([k]) => k);
+
+            select.innerHTML = '';
+
+            if (liveJobs.length === 0) {
+                select.innerHTML = '<option value="" disabled selected>No vacancies currently available</option>';
+                select.disabled = true;
+                // Show a notice
+                const notice = document.createElement('div');
+                notice.className = 'no-vacancies';
+                notice.style.marginTop = '1rem';
+                notice.innerHTML = '⚠️ There are currently no open vacancies. Please check back soon.';
+                document.getElementById('positionGroup').appendChild(notice);
+            } else {
+                const placeholder = document.createElement('option');
+                placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+                placeholder.textContent = 'Select a position…';
+                select.appendChild(placeholder);
+                liveJobs.forEach(title => {
+                    const opt = document.createElement('option');
+                    opt.value = title; opt.textContent = title;
+                    select.appendChild(opt);
+                });
+            }
+        } catch (e) {
+            // Fallback — show all jobs if Firestore unreachable
+            const ALL_JOBS = [
+                'Smart Meter Engineer','Solar Installation Team',
+                'Quality Assessor - Metering','Quality Assessor - Solar',
+                'Field Team Leader - Metering','Metering Manager','Solar Manager'
+            ];
+            select.innerHTML = '<option value="" disabled selected>Select a position…</option>';
+            ALL_JOBS.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t; opt.textContent = t;
+                select.appendChild(opt);
+            });
+        }
+    }
+    loadVacancies();
 
     // ── Radio yes/no helpers ──────────────────────────────────────────────────
     function setupRadio(name, yesId, noId, conditionalId) {
@@ -571,7 +564,6 @@
                 }
             });
         });
-        // Click on label toggles radio
         [yesId, noId].forEach(id => {
             document.getElementById(id).addEventListener('click', function() {
                 const radio = this.querySelector('input[type="radio"]');
@@ -591,7 +583,7 @@
         return r ? r.value : '';
     }
 
-    // ── CV upload zone ────────────────────────────────────────────────────────
+    // ── CV upload ─────────────────────────────────────────────────────────────
     const cvZone = document.getElementById('cvZone');
     const cvFile = document.getElementById('cvFile');
     cvFile.addEventListener('change', () => handleCVSelect(cvFile.files[0]));
@@ -635,70 +627,34 @@
             </div>`;
         document.getElementById('employmentList').appendChild(div);
     }
-    // Start with one entry
     addEmployment();
     document.getElementById('addEmploymentBtn').addEventListener('click', addEmployment);
-
-    window.removeEntry = function(btn, cls) {
-        const entry = btn.closest('.' + cls);
-        if (entry) entry.remove();
-    };
+    window.removeEntry = function(btn, cls) { btn.closest('.' + cls)?.remove(); };
 
     // ── Signature canvases ────────────────────────────────────────────────────
     function setupCanvas(id) {
         const canvas = document.getElementById(id);
         const ctx    = canvas.getContext('2d');
-        let drawing  = false;
-        let lastX = 0, lastY = 0;
-
+        let drawing = false, lastX = 0, lastY = 0;
         function getPos(e) {
             const r = canvas.getBoundingClientRect();
-            const scaleX = canvas.width  / r.width;
-            const scaleY = canvas.height / r.height;
-            if (e.touches) {
-                return [(e.touches[0].clientX - r.left) * scaleX, (e.touches[0].clientY - r.top) * scaleY];
-            }
-            return [(e.clientX - r.left) * scaleX, (e.clientY - r.top) * scaleY];
+            const sx = canvas.width / r.width, sy = canvas.height / r.height;
+            if (e.touches) return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
+            return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
         }
-
-        ctx.strokeStyle = '#00A3E0';
-        ctx.lineWidth   = 2.5;
-        ctx.lineCap     = 'round';
-        ctx.lineJoin    = 'round';
-
+        ctx.strokeStyle = '#00A3E0'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         canvas.addEventListener('mousedown',  e => { drawing = true; [lastX, lastY] = getPos(e); });
-        canvas.addEventListener('mousemove',  e => {
-            if (!drawing) return;
-            const [x, y] = getPos(e);
-            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-            [lastX, lastY] = [x, y];
-        });
+        canvas.addEventListener('mousemove',  e => { if (!drawing) return; const [x,y] = getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; });
         canvas.addEventListener('mouseup',   () => drawing = false);
         canvas.addEventListener('mouseleave',() => drawing = false);
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
-        canvas.addEventListener('touchmove',  e => {
-            e.preventDefault();
-            if (!drawing) return;
-            const [x, y] = getPos(e);
-            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-            [lastX, lastY] = [x, y];
-        }, { passive: false });
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX,lastY] = getPos(e); }, { passive: false });
+        canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const [x,y]=getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; }, { passive: false });
         canvas.addEventListener('touchend', () => drawing = false);
     }
-
     setupCanvas('sigCanvas1');
     setupCanvas('sigCanvas2');
-
-    window.clearSig = function(id) {
-        const c = document.getElementById(id);
-        c.getContext('2d').clearRect(0, 0, c.width, c.height);
-    };
-
-    function isCanvasBlank(canvas) {
-        const blank = document.createElement('canvas');
-        blank.width = canvas.width; blank.height = canvas.height;
-        return canvas.toDataURL() === blank.toDataURL();
-    }
+    window.clearSig = function(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); };
+    function isCanvasBlank(canvas) { const b = document.createElement('canvas'); b.width=canvas.width; b.height=canvas.height; return canvas.toDataURL()===b.toDataURL(); }
 
     // ── Submit ────────────────────────────────────────────────────────────────
     document.getElementById('submitBtn').addEventListener('click', async () => {
@@ -706,8 +662,7 @@
         const msgEl = document.getElementById('submitMsg');
         msgEl.textContent = '';
 
-        // Basic validation
-        const position       = document.getElementById('position').value.trim();
+        const position       = document.getElementById('position').value;
         const title          = document.getElementById('title').value;
         const forename       = document.getElementById('forename').value.trim();
         const surname        = document.getElementById('surname').value.trim();
@@ -758,23 +713,18 @@
         btn.innerHTML = '<span class="spinner"></span>Submitting…';
 
         try {
-            // Read CV as base64 and store in Firestore (avoids Storage auth requirements)
-            let cvBase64 = '';
-            let cvName   = '';
-            let cvType   = '';
+            let cvBase64 = '', cvName = '', cvType = '';
             if (cvFile.files[0]) {
                 const file = cvFile.files[0];
-                cvName = file.name;
-                cvType = file.type;
+                cvName = file.name; cvType = file.type;
                 cvBase64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload  = () => resolve(reader.result); // full data URL
+                    reader.onload  = () => resolve(reader.result);
                     reader.onerror = () => reject(new Error('Could not read CV file'));
                     reader.readAsDataURL(file);
                 });
             }
 
-            // Collect employment history
             const employment = [];
             document.querySelectorAll('.employment-entry').forEach(entry => {
                 employment.push({
@@ -784,10 +734,8 @@
                 });
             });
 
-            // Collect references
-            const refEls  = document.querySelectorAll('.reference-entry');
             const references = [];
-            refEls.forEach((r, i) => {
+            document.querySelectorAll('.reference-entry').forEach((r, i) => {
                 references.push({
                     label:    `Referee ${i + 1}`,
                     company:  r.querySelector('.ref-company')?.value.trim()  || '',
@@ -798,35 +746,30 @@
                 });
             });
 
-            // Signatures as base64 data URLs
             const sig1 = document.getElementById('sigCanvas1').toDataURL('image/png');
             const sig2 = document.getElementById('sigCanvas2').toDataURL('image/png');
 
-            // Save to Firestore
             await addDoc(colRef, {
-                submittedAt:      serverTimestamp(),
+                submittedAt:  serverTimestamp(),
                 position,
                 personalDetails: { title, forename, surname, email, phone, address, postcode },
-                fullName:        `${forename} ${surname}`,
+                fullName: `${forename} ${surname}`,
                 reasonableAdjustments: {
-                    disability:     disability,
-                    disabilityText: disability === 'yes' ? document.getElementById('disabilityText').value.trim() : '',
-                    medical:        medical,
-                    medicalText:    medical    === 'yes' ? document.getElementById('medicalText').value.trim()    : ''
+                    disability, disabilityText: disability === 'yes' ? document.getElementById('disabilityText').value.trim() : '',
+                    medical,    medicalText:    medical    === 'yes' ? document.getElementById('medicalText').value.trim()    : ''
                 },
-                convictions:     convictions,
+                convictions,
                 convictionsText: convictions === 'yes' ? document.getElementById('convictionsText').value.trim() : '',
                 workPermit,
                 qualifications,
                 cv: { data: cvBase64, filename: cvName, type: cvType },
                 employment,
                 references,
-                unavailability:  document.getElementById('unavailability').value.trim(),
+                unavailability: document.getElementById('unavailability').value.trim(),
                 declaration: { name: declarationName, date: declarationDate, signature: sig1 },
                 consent:     { name: consentName,     date: consentDate,     signature: sig2 }
             });
 
-            // Show success
             document.getElementById('applicationForm').style.display = 'none';
             document.getElementById('successScreen').style.display   = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -839,7 +782,6 @@
         }
     });
 
-    // Postcode uppercase
     document.getElementById('postcode').addEventListener('input', function() {
         this.value = this.value.toUpperCase();
     });
