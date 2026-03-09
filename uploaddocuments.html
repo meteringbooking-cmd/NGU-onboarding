@@ -75,7 +75,6 @@
         @keyframes spin{to{transform:rotate(360deg);}}
         .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
         @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
-        /* Locked section overlay */
         .section-locked {
             position: relative; pointer-events: none;
         }
@@ -93,14 +92,11 @@
         }
         .lock-banner .lock-icon { font-size: 1.3rem; flex-shrink: 0; }
         .lock-banner strong { color: var(--text-light); }
-
-        /* Certs upload grid */
         .certs-upload-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1rem;
         }
         .cert-item { display: flex; flex-direction: column; gap: 0.5rem; }
-
     </style>
 </head>
 <body>
@@ -135,7 +131,7 @@
     <div class="progress-bar" style="grid-template-columns:repeat(5,1fr);">
         <div class="prog-step" id="prog-certs-upload">Certificates</div>
         <div class="prog-step" id="prog-licence">Driving Licence</div>
-        <div class="prog-step" id="prog-docs-certs">Doc Certs</div>
+        <div class="prog-step" id="prog-passport">Passport</div>
         <div class="prog-step" id="prog-address">Proof of Address</div>
         <div class="prog-step" id="prog-bank">Bank Details</div>
     </div>
@@ -146,7 +142,6 @@
         <h3>All documents submitted!</h3>
         <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
     </div>
-
 
     <!-- ── Certificates upload (always unlocked) ── -->
     <div class="card" id="certsCard">
@@ -165,7 +160,7 @@
     <!-- Lock banner shown when interview not yet passed -->
     <div id="lockBanner" class="lock-banner">
         <span class="lock-icon">🔒</span>
-        <div><strong>Documents & Bank Details are locked</strong><br>These sections will unlock once you have successfully passed your interview.</div>
+        <div><strong>Documents &amp; Bank Details are locked</strong><br>These sections will unlock once you have successfully passed your interview.</div>
     </div>
 
     <div class="card" id="docsCard">
@@ -175,28 +170,55 @@
         </div>
         <hr class="divider">
         <div class="upload-grid">
+            <!-- Driving Licence Front -->
             <div>
-                <div class="upload-zone" id="zone-licence">
-                    <input type="file" id="file-licence" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence', this)">
+                <div class="upload-zone" id="zone-licence-front">
+                    <input type="file" id="file-licence-front" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-front', this)">
                     <div class="upload-icon">🪪</div>
-                    <div class="upload-label">Driving Licence</div>
+                    <div class="upload-label">Driving Licence Front</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-licence"></div>
+                    <div class="upload-filename" id="fname-licence-front"></div>
                 </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence" onclick="uploadFile('licence')" disabled>Upload</button>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-front">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-front" onclick="uploadFile('licence-front')" disabled>Upload</button>
             </div>
+            <!-- Driving Licence Back -->
             <div>
-                <div class="upload-zone" id="zone-certs">
-                    <input type="file" id="file-certs" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('certs', this)">
-                    <div class="upload-icon">📜</div>
-                    <div class="upload-label">Certificates</div>
+                <div class="upload-zone" id="zone-licence-back">
+                    <input type="file" id="file-licence-back" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-back', this)">
+                    <div class="upload-icon">🪪</div>
+                    <div class="upload-label">Driving Licence Back</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-certs"></div>
+                    <div class="upload-filename" id="fname-licence-back"></div>
                 </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-certs">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-certs" onclick="uploadFile('certs')" disabled>Upload</button>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-back">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-back" onclick="uploadFile('licence-back')" disabled>Upload</button>
             </div>
+            <!-- Passport Cover -->
+            <div>
+                <div class="upload-zone" id="zone-passport-cover">
+                    <input type="file" id="file-passport-cover" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-cover', this)">
+                    <div class="upload-icon">📔</div>
+                    <div class="upload-label">Passport Cover</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-passport-cover"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-cover">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-cover" onclick="uploadFile('passport-cover')" disabled>Upload</button>
+            </div>
+            <!-- Passport Information -->
+            <div>
+                <div class="upload-zone" id="zone-passport-info">
+                    <input type="file" id="file-passport-info" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-info', this)">
+                    <div class="upload-icon">🛂</div>
+                    <div class="upload-label">Passport Information</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-passport-info"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-info">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-info" onclick="uploadFile('passport-info')" disabled>Upload</button>
+            </div>
+            <!-- Proof of Address -->
             <div>
                 <div class="upload-zone" id="zone-address">
                     <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address', this)">
@@ -207,6 +229,18 @@
                 </div>
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
+            </div>
+            <!-- Proof of NI Number -->
+            <div>
+                <div class="upload-zone" id="zone-ni-number">
+                    <input type="file" id="file-ni-number" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('ni-number', this)">
+                    <div class="upload-icon">🔢</div>
+                    <div class="upload-label">Proof of NI Number</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-ni-number"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-ni-number">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-ni-number" onclick="uploadFile('ni-number')" disabled>Upload</button>
             </div>
         </div>
     </div>
@@ -235,7 +269,6 @@
     import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-
     const firebaseConfig = {
         apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
         authDomain: "oesperformance-a54c0.firebaseapp.com",
@@ -252,12 +285,15 @@
     const COMPLETE_SERVICE_ID  = 'service_xyxy4ea';
     const COMPLETE_TEMPLATE_ID = 'template_owcpuso';
 
-    const app     = initializeApp(firebaseConfig);
-    const db      = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // All document keys in the "Your Documents" section
+    const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'ni-number'];
 
     let currentEngineer      = null;
     let allCompleteEmailSent = false;
-    let certSlots            = [];   // array of { id, file, uploaded }
+    let certSlots            = [];
     let certSlotCounter      = 0;
 
     window.handleFileSelect = handleFileSelect;
@@ -292,14 +328,10 @@
 
             currentEngineer = { docId: engineerDoc.id, ...engineerData };
 
-            // If all docs were already complete before this session, mark email as sent
-            // so we don't fire it again just from logging in
             allCompleteEmailSent = !!(
-                currentEngineer.docs_licence &&
-                currentEngineer.docs_certs &&
-                currentEngineer.docs_address &&
-                currentEngineer.bank_name &&
-                currentEngineer.bank_accountNo
+                currentEngineer.certs_uploaded && currentEngineer.certs_uploaded.length > 0 &&
+                DOC_KEYS.every(k => currentEngineer[`docs_${k}`]) &&
+                currentEngineer.bank_name && currentEngineer.bank_accountNo
             );
 
             showPortal();
@@ -321,11 +353,10 @@
         loadExistingData();
     }
 
-    // ── Interview lock ────────────────────────────────────────────────────────
     function applyInterviewLock() {
-        const passed = currentEngineer.interviewPassed === true;
-        const docsCard = document.getElementById('docsCard');
-        const bankCard = document.getElementById('bankCard');
+        const passed     = currentEngineer.interviewPassed === true;
+        const docsCard   = document.getElementById('docsCard');
+        const bankCard   = document.getElementById('bankCard');
         const lockBanner = document.getElementById('lockBanner');
 
         if (passed) {
@@ -339,18 +370,15 @@
         }
     }
 
-    // ── Certs grid ────────────────────────────────────────────────────────────
     function setupCertsGrid() {
         certSlots = [];
         certSlotCounter = 0;
         const grid = document.getElementById('certsGrid');
         grid.innerHTML = '';
-        // Load previously uploaded certs
         const existing = currentEngineer.certs_uploaded || [];
         if (existing.length > 0) {
             existing.forEach(c => addCertSlotUploaded(c));
         }
-        // Always show at least one empty slot
         addCertSlot();
     }
 
@@ -436,13 +464,12 @@
         const status = document.getElementById(`cert-status-${id}`);
         const zone   = document.getElementById(`cert-zone-${id}`);
 
-        upBtn.disabled    = true;
-        upBtn.innerHTML   = '<span class="spinner"></span>Uploading…';
+        upBtn.disabled     = true;
+        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
         status.textContent = 'Uploading…';
         status.className   = 'upload-status status-pending';
 
         try {
-            // Read file as base64 data URL (no Storage auth needed)
             const fileData = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload  = () => resolve(reader.result);
@@ -450,10 +477,8 @@
                 reader.readAsDataURL(slot.file);
             });
 
-            // Merge into certs_uploaded array
-            const existing = currentEngineer.certs_uploaded || [];
-            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
-            // Replace if re-upload of same slot index, else push
+            const existing  = currentEngineer.certs_uploaded || [];
+            const newEntry  = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
             const slotIndex = certSlots.filter(s => s.uploaded || s.id <= id).findIndex(s => s.id === id);
             if (slot.uploaded && slotIndex >= 0 && slotIndex < existing.length) {
                 existing[slotIndex] = newEntry;
@@ -462,8 +487,8 @@
             }
 
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                certs_uploaded:    existing,
-                certs_updatedAt:   serverTimestamp()
+                certs_uploaded:  existing,
+                certs_updatedAt: serverTimestamp()
             });
 
             currentEngineer.certs_uploaded = existing;
@@ -492,9 +517,7 @@
 
     function loadExistingData() {
         const d = currentEngineer;
-        setDocStatus('licence', d.docs_licence);
-        setDocStatus('certs',   d.docs_certs);
-        setDocStatus('address', d.docs_address);
+        DOC_KEYS.forEach(key => setDocStatus(key, d[`docs_${key}`]));
         if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
         if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
         if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
@@ -541,7 +564,6 @@
         status.className   = 'upload-status status-pending';
 
         try {
-            // Read file as base64 data URL (no Storage auth needed)
             const fileData = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload  = () => resolve(reader.result);
@@ -552,7 +574,7 @@
             const fieldName = `docs_${key}`;
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
                 [fieldName]: fileData,
-                [`docs_${key}_filename`]: file.name,
+                [`docs_${key}_filename`]:   file.name,
                 [`docs_${key}_uploadedAt`]: serverTimestamp()
             });
 
@@ -584,7 +606,7 @@
 
         msgEl.textContent = '';
         if (!bank_name || !bank_bankName || !bank_sortCode || !bank_accountNo) {
-            msgEl.className = 'save-msg err';
+            msgEl.className   = 'save-msg err';
             msgEl.textContent = 'Please fill in all bank detail fields.';
             return;
         }
@@ -600,7 +622,6 @@
 
             Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
 
-            // Bank details notification
             try {
                 await emailjs.send(BANK_SERVICE_ID, BANK_TEMPLATE_ID, {
                     engineer_name: currentEngineer.name,
@@ -622,27 +643,23 @@
         btn.textContent = 'Save Bank Details';
     });
 
-    // ── Progress + all-complete trigger ───────────────────────────────────────
     function updateProgress() {
         const d = currentEngineer;
         const certsUploadDone = !!(d.certs_uploaded && d.certs_uploaded.length > 0);
-        const licenceDone     = !!d.docs_licence;
-        const docCertsDone    = !!d.docs_certs;
-        const addressDone     = !!d.docs_address;
+        const licenceDone     = !!(d['docs_licence-front'] && d['docs_licence-back']);
+        const passportDone    = !!(d['docs_passport-cover'] && d['docs_passport-info']);
+        const addressDone     = !!(d['docs_address'] && d['docs_ni-number']);
         const bankDone        = !!(d.bank_name && d.bank_accountNo);
 
         toggleProg('prog-certs-upload', certsUploadDone);
         toggleProg('prog-licence',      licenceDone);
-        toggleProg('prog-docs-certs',   docCertsDone);
+        toggleProg('prog-passport',     passportDone);
         toggleProg('prog-address',      addressDone);
         toggleProg('prog-bank',         bankDone);
 
-        const allDone = certsUploadDone && licenceDone && docCertsDone && addressDone && bankDone;
-
-        // Show celebration banner
+        const allDone = certsUploadDone && licenceDone && passportDone && addressDone && bankDone;
         document.getElementById('completeBanner').style.display = allDone ? 'block' : 'none';
 
-        // Fire all-complete email only once per session, only when it just became complete
         if (allDone && !allCompleteEmailSent) {
             allCompleteEmailSent = true;
             sendAllCompleteEmail();
@@ -656,7 +673,7 @@
                 engineer_name:  currentEngineer.name,
                 engineer_email: currentEngineer.email,
                 contract_name:  currentEngineer.contract || '—',
-                message:        `${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Certificates, Proof of Address, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.`
+                message:        `${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Passport, Proof of Address, NI Number, Certificates, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.`
             });
             console.log('All-complete email sent for', currentEngineer.name);
         } catch (err) {
@@ -670,7 +687,7 @@
         el.classList.toggle('active', !done);
     }
 
-    ['licence','certs','address'].forEach(key => {
+    DOC_KEYS.forEach(key => {
         const zone = document.getElementById(`zone-${key}`);
         zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
         zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
