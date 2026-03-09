@@ -22,7 +22,7 @@
         .portal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
         .portal-header .logo-sm{max-height:50px;}
         .welcome-name{font-size:1.1rem;font-weight:600;color:var(--accent);font-family:'DM Mono',monospace;}
-        .progress-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:2.5rem;}
+        .progress-bar{display:grid;gap:0.5rem;margin-bottom:2.5rem;}
         .prog-step{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:0.7rem 0.5rem;text-align:center;font-size:0.8rem;font-weight:600;color:var(--text-muted);transition:all 0.3s;}
         .prog-step.done{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
         .prog-step.done::after{content:' ✓';}
@@ -44,7 +44,7 @@
         .form-group label{font-weight:600;font-size:0.9rem;}
         input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="date"]{width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.97rem;font-family:inherit;transition:all 0.2s;}
         input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
-        input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.6;cursor:pointer;}
+        input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.6);}
         .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.8rem 1rem;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;background:var(--bg-input);}
         .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,163,224,0.05);}
         .upload-zone.has-file{border-color:var(--success);border-style:solid;background:rgba(16,185,129,0.05);}
@@ -75,29 +75,48 @@
         .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
         @keyframes spin{to{transform:rotate(360deg);}}
         .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
-        @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr)!important;} .cert-upload-row{flex-wrap:wrap;}.cert-row-actions{flex-wrap:wrap;}}
         .section-locked{position:relative;pointer-events:none;}
         .section-locked::after{content:'';position:absolute;inset:0;border-radius:16px;background:rgba(10,22,40,0.65);z-index:10;}
         .lock-banner{background:rgba(139,154,174,0.1);border:1.5px solid rgba(139,154,174,0.3);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;font-size:0.9rem;color:var(--text-muted);}
         .lock-banner .lock-icon{font-size:1.3rem;flex-shrink:0;}
         .lock-banner strong{color:var(--text-light);}
 
-        /* ── Certificates section styles ── */
-        .cert-section-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:1.4rem 0 0.8rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);}
-        .cert-section-label:first-child{margin-top:0;}
-        .cert-question-row{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;}
-        .cert-question-row label{font-weight:600;font-size:0.9rem;}
-        .radio-group{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;}
-        .radio-option{display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.92rem;}
-        .radio-option input[type="radio"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
-        .cert-upload-item{display:flex;flex-direction:column;gap:0.5rem;}
-        .certs-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
-        .inline-field{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;margin-top:0.4rem;}
-        .inline-field label{font-size:0.88rem;color:var(--text-muted);white-space:nowrap;}
-        .inline-field input{max-width:200px;padding:0.6rem 0.8rem;font-size:0.88rem;}
-        .sub-field{margin-top:0.6rem;padding:0.8rem 1rem;background:rgba(0,163,224,0.06);border:1px solid rgba(0,163,224,0.2);border-radius:8px;}
-        .badge-mandatory{display:inline-block;font-size:0.7rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:20px;background:rgba(239,68,68,0.15);color:#fca5a5;margin-left:0.4rem;vertical-align:middle;}
-        .badge-desirable{display:inline-block;font-size:0.7rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:20px;background:rgba(0,163,224,0.15);color:var(--accent);margin-left:0.4rem;vertical-align:middle;}
+        .cert-section-label{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:1.4rem 0 0.8rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);}
+        .cert-section-label.mandatory{color:#f87171;border-color:rgba(248,113,113,0.3);}
+        .cert-section-label.desirable{color:#60a5fa;border-color:rgba(96,165,250,0.3);}
+        .cert-section-label.additional{color:var(--accent);border-color:rgba(0,163,224,0.3);}
+
+        .cert-upload-row{background:var(--bg-input);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;margin-bottom:0.7rem;transition:border-color 0.2s;flex-wrap:wrap;}
+        .cert-upload-row.uploaded{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.04);}
+        .cert-row-icon{font-size:1.4rem;flex-shrink:0;}
+        .cert-row-info{flex:1;min-width:0;}
+        .cert-row-title{font-weight:600;font-size:0.9rem;}
+        .cert-row-sub{font-size:0.78rem;color:var(--text-muted);margin-top:0.15rem;font-family:'DM Mono',monospace;word-break:break-all;}
+        .cert-row-actions{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;flex-wrap:wrap;}
+
+        .yn-group{display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;}
+        .yn-btn{padding:0.35rem 1rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-input);color:var(--text-muted);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+        .yn-btn.selected-yes{border-color:var(--success);background:rgba(16,185,129,0.15);color:#6ee7b7;}
+        .yn-btn.selected-no{border-color:var(--error);background:rgba(239,68,68,0.12);color:#fca5a5;}
+
+        .cert-inline-input{margin-top:0.6rem;padding:0.55rem 0.8rem;background:var(--bg-dark);border:1.5px solid var(--border);border-radius:8px;color:white;font-size:0.88rem;font-family:'DM Mono',monospace;width:100%;max-width:260px;transition:border-color 0.2s;}
+        .cert-inline-input:focus{outline:none;border-color:var(--accent);}
+
+        .cert-file-label{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;border-radius:8px;border:1.5px solid rgba(0,163,224,0.4);background:rgba(0,163,224,0.08);color:var(--accent);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;white-space:nowrap;}
+        .cert-file-label:hover{background:rgba(0,163,224,0.15);}
+        .cert-file-label input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+        .cert-upload-action-btn{padding:0.45rem 0.9rem;border-radius:8px;border:1.5px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.12);color:#6ee7b7;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+        .cert-upload-action-btn:hover{background:rgba(16,185,129,0.22);}
+        .cert-upload-action-btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+        .cert-badge{font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:20px;white-space:nowrap;}
+        .cert-badge.done{background:rgba(16,185,129,0.18);color:#6ee7b7;}
+        .cert-badge.ready{background:rgba(245,158,11,0.18);color:#fcd34d;}
+        .cert-badge.none{background:rgba(139,154,174,0.1);color:var(--text-muted);}
+
+        .add-cert-btn{width:100%;padding:0.7rem;border-radius:10px;background:rgba(0,163,224,0.08);border:2px dashed rgba(0,163,224,0.35);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;margin-top:0.5rem;}
+        .add-cert-btn:hover{background:rgba(0,163,224,0.14);border-color:rgba(0,163,224,0.6);}
     </style>
 </head>
 <body>
@@ -137,136 +156,149 @@
         <div class="prog-step" id="prog-bank">Bank Details</div>
     </div>
 
-    <!-- All complete banner -->
     <div id="completeBanner">
         <div class="banner-icon">🎉</div>
         <h3>All documents submitted!</h3>
         <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
     </div>
 
-    <!-- ── Certificates / Qualifications Card ── -->
+    <!-- Certificates Card -->
     <div class="card" id="certsCard">
         <div class="card-header">
             <div class="card-icon icon-blue">📜</div>
-            <div><h2>Your Certificates &amp; Qualifications</h2><p>Please complete all mandatory sections and upload supporting documents where required</p></div>
+            <div><h2>Your Certificates</h2><p>Complete all mandatory items and any desirable qualifications that apply to you</p></div>
         </div>
         <hr class="divider">
 
-        <!-- ── MANDATORY ── -->
-        <div class="cert-section-label">Mandatory Certificates <span class="badge-mandatory">Required</span></div>
+        <div class="cert-section-label mandatory">🔴 Mandatory Certificates</div>
 
-        <!-- Level 3 Power/Smart Meter/Electric MOCOPA -->
-        <div class="cert-question-row">
-            <label>Level 3 Power / Smart Meter / Electric MOCOPA</label>
-            <div class="upload-zone" id="zone-cert-mocopa" style="padding:1.2rem 0.8rem;">
-                <input type="file" id="file-cert-mocopa" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('mocopa',this)">
-                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
-                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
-                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
-                <div class="upload-filename" id="fname-cert-mocopa"></div>
+        <!-- MOCOPA -->
+        <div class="cert-upload-row" id="row-mocopa">
+            <div class="cert-row-icon">⚡</div>
+            <div class="cert-row-info">
+                <div class="cert-row-title">Level 3 Power / Smart Meter / Electric MOCOPA</div>
+                <div id="sub-mocopa" class="cert-row-sub">No file selected</div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
-                <span class="upload-status status-none" id="status-cert-mocopa">Not uploaded</span>
-                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-mocopa" onclick="uploadNamedCert('mocopa','Level 3 Power/Smart Meter/Electric MOCOPA')" disabled>Upload</button>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-mocopa">Not uploaded</span>
+                <label class="cert-file-label">📎 Choose file<input type="file" id="file-mocopa" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFile('mocopa',this)"></label>
+                <button class="cert-upload-action-btn" id="upbtn-mocopa" onclick="uploadCertFile('mocopa')" disabled>Upload</button>
             </div>
         </div>
 
-        <!-- Level 3 Gas/City & Guilds/CMA/CCN -->
-        <div class="cert-question-row" style="margin-top:1rem;">
-            <label>Level 3 Gas / City &amp; Guilds Qualification / CMA / CCN</label>
-            <div class="upload-zone" id="zone-cert-gas3" style="padding:1.2rem 0.8rem;">
-                <input type="file" id="file-cert-gas3" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('gas3',this)">
-                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
-                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
-                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
-                <div class="upload-filename" id="fname-cert-gas3"></div>
+        <!-- Gas Level 3 -->
+        <div class="cert-upload-row" id="row-gasl3">
+            <div class="cert-row-icon">🔥</div>
+            <div class="cert-row-info">
+                <div class="cert-row-title">Level 3 Gas / City &amp; Guilds Qualification / CMA / CCN</div>
+                <div id="sub-gasl3" class="cert-row-sub">No file selected</div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
-                <span class="upload-status status-none" id="status-cert-gas3">Not uploaded</span>
-                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-gas3" onclick="uploadNamedCert('gas3','Level 3 Gas/City & Guilds/CMA/CCN')" disabled>Upload</button>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-gasl3">Not uploaded</span>
+                <label class="cert-file-label">📎 Choose file<input type="file" id="file-gasl3" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFile('gasl3',this)"></label>
+                <button class="cert-upload-action-btn" id="upbtn-gasl3" onclick="uploadCertFile('gasl3')" disabled>Upload</button>
             </div>
         </div>
 
         <!-- CMA Gas Cert -->
-        <div class="cert-question-row" style="margin-top:1rem;">
-            <label>CMA Gas Certificate</label>
-            <div class="upload-zone" id="zone-cert-cma" style="padding:1.2rem 0.8rem;">
-                <input type="file" id="file-cert-cma" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('cma',this)">
-                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
-                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
-                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
-                <div class="upload-filename" id="fname-cert-cma"></div>
+        <div class="cert-upload-row" id="row-cmagas">
+            <div class="cert-row-icon">🔧</div>
+            <div class="cert-row-info">
+                <div class="cert-row-title">CMA Gas Certificate</div>
+                <div id="sub-cmagas" class="cert-row-sub">No file selected</div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
-                <span class="upload-status status-none" id="status-cert-cma">Not uploaded</span>
-                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-cma" onclick="uploadNamedCert('cma','CMA Gas Certificate')" disabled>Upload</button>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-cmagas">Not uploaded</span>
+                <label class="cert-file-label">📎 Choose file<input type="file" id="file-cmagas" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFile('cmagas',this)"></label>
+                <button class="cert-upload-action-btn" id="upbtn-cmagas" onclick="uploadCertFile('cmagas')" disabled>Upload</button>
             </div>
         </div>
 
-        <!-- Driving Licence question -->
-        <div class="cert-question-row" style="margin-top:1.2rem;padding:1rem;background:rgba(0,163,224,0.05);border:1px solid rgba(0,163,224,0.18);border-radius:10px;">
-            <label>I confirm I have a current and valid Driving Licence <span class="badge-mandatory">Required</span></label>
-            <div class="radio-group" style="margin-top:0.5rem;">
-                <label class="radio-option"><input type="radio" name="hasLicence" value="yes" id="licence-yes"> Yes</label>
-                <label class="radio-option"><input type="radio" name="hasLicence" value="no" id="licence-no"> No</label>
-            </div>
-            <div id="licenceExpiryField" style="display:none;" class="sub-field">
-                <div class="form-group">
-                    <label style="font-size:0.88rem;">Licence Expiry Date</label>
-                    <input type="date" id="licenceExpiry" style="max-width:220px;">
+        <!-- Driving Licence Confirmation -->
+        <div class="cert-upload-row" id="row-drivinglicence">
+            <div class="cert-row-icon">🚗</div>
+            <div class="cert-row-info" style="flex:1;min-width:200px;">
+                <div class="cert-row-title">I confirm I have a current and valid Driving Licence</div>
+                <div class="yn-group">
+                    <button class="yn-btn" id="yn-dl-yes" onclick="setDrivingLicence(true)">Yes</button>
+                    <button class="yn-btn" id="yn-dl-no"  onclick="setDrivingLicence(false)">No</button>
+                </div>
+                <div id="dl-expiry-wrap" style="display:none;margin-top:0.7rem;">
+                    <label style="font-size:0.82rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.3rem;">Licence Expiry Date</label>
+                    <input type="date" id="dl-expiry" class="cert-inline-input" style="max-width:200px;" onchange="saveDrivingLicenceData()">
                 </div>
             </div>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-drivinglicence">Not answered</span>
+            </div>
         </div>
 
-        <!-- ── DESIRABLE ── -->
-        <div class="cert-section-label" style="margin-top:1.6rem;">Desirable <span class="badge-desirable">Optional</span></div>
+        <div class="cert-section-label desirable" style="margin-top:1.8rem;">🔵 Desirable Qualifications</div>
 
         <!-- EUSR -->
-        <div class="cert-question-row" style="padding:1rem;background:rgba(0,94,184,0.05);border:1px solid rgba(0,94,184,0.18);border-radius:10px;">
-            <label>EUSR Card</label>
-            <div class="radio-group" style="margin-top:0.5rem;">
-                <label class="radio-option"><input type="radio" name="hasEUSR" value="yes" id="eusr-yes"> Yes</label>
-                <label class="radio-option"><input type="radio" name="hasEUSR" value="no" id="eusr-no"> No</label>
-            </div>
-            <div id="eusrNumberField" style="display:none;" class="sub-field">
-                <div class="form-group">
-                    <label style="font-size:0.88rem;">EUSR Number</label>
-                    <input type="text" id="eusrNumber" placeholder="Enter your EUSR number" style="max-width:280px;">
+        <div class="cert-upload-row" id="row-eusr">
+            <div class="cert-row-icon">🪪</div>
+            <div class="cert-row-info" style="flex:1;min-width:200px;">
+                <div class="cert-row-title">EUSR Card</div>
+                <div class="yn-group">
+                    <button class="yn-btn" id="yn-eusr-yes" onclick="setEUSR(true)">Yes</button>
+                    <button class="yn-btn" id="yn-eusr-no"  onclick="setEUSR(false)">No</button>
+                </div>
+                <div id="eusr-number-wrap" style="display:none;margin-top:0.6rem;">
+                    <label style="font-size:0.82rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.3rem;">EUSR Number</label>
+                    <input type="text" id="eusr-number" class="cert-inline-input" placeholder="Enter your EUSR number" oninput="saveEUSRData()">
                 </div>
             </div>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-eusr">Not answered</span>
+            </div>
         </div>
 
-        <!-- Current Gas Safe Number -->
-        <div class="cert-question-row" style="margin-top:1rem;">
-            <label>Current Gas Safe Registration Number <span class="badge-desirable">Optional</span></label>
-            <input type="text" id="gasSafeNumber" placeholder="Enter your Gas Safe number (if applicable)" style="max-width:320px;">
+        <!-- Gas Safe Number -->
+        <div class="cert-upload-row" id="row-gassafe">
+            <div class="cert-row-icon">🔥</div>
+            <div class="cert-row-info" style="flex:1;min-width:200px;">
+                <div class="cert-row-title">Current Gas Safe Number</div>
+                <div style="margin-top:0.5rem;">
+                    <input type="text" id="gassafe-number" class="cert-inline-input" placeholder="Enter Gas Safe registration number" oninput="saveGasSafeData()">
+                </div>
+                <div style="font-size:0.76rem;color:var(--text-muted);margin-top:0.3rem;">Leave blank if not applicable</div>
+            </div>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-gassafe">Not entered</span>
+            </div>
         </div>
 
-        <!-- Higher Skills Set Certs -->
-        <div class="cert-question-row" style="margin-top:1rem;">
-            <label>Higher Skills Set Certificates <span class="badge-desirable">Optional</span> <span style="font-size:0.8rem;color:var(--text-muted);font-weight:400;">e.g. 3 Phase, Medium Pressure</span></label>
-            <div class="certs-upload-grid" id="higherSkillsGrid"></div>
-            <button id="addHigherSkillBtn" style="margin-top:0.8rem;width:100%;padding:0.6rem;border-radius:10px;background:rgba(0,94,184,0.1);border:2px dashed rgba(0,94,184,0.35);color:#60a5fa;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Higher Skills Certificate</button>
+        <!-- Higher Skills Set -->
+        <div class="cert-upload-row" id="row-higherskills">
+            <div class="cert-row-icon">🏆</div>
+            <div class="cert-row-info">
+                <div class="cert-row-title">Higher Skills Set Certificates (e.g. 3 Phase, Medium Pressure)</div>
+                <div id="sub-higherskills" class="cert-row-sub">No file selected</div>
+            </div>
+            <div class="cert-row-actions">
+                <span class="cert-badge none" id="badge-higherskills">Not uploaded</span>
+                <label class="cert-file-label">📎 Choose file<input type="file" id="file-higherskills" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFile('higherskills',this)"></label>
+                <button class="cert-upload-action-btn" id="upbtn-higherskills" onclick="uploadCertFile('higherskills')" disabled>Upload</button>
+            </div>
         </div>
 
-        <!-- ── ADDITIONAL (free-form) ── -->
-        <div class="cert-section-label" style="margin-top:1.6rem;">Additional Certificates</div>
-        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:0.8rem;">Upload any other certificates relevant to your role</p>
-        <div class="certs-upload-grid" id="additionalCertsGrid"></div>
-        <button id="addCertBtn" style="margin-top:0.8rem;width:100%;padding:0.65rem;border-radius:10px;background:rgba(0,163,224,0.1);border:2px dashed rgba(0,163,224,0.4);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Additional Certificate</button>
+        <div class="cert-section-label additional" style="margin-top:1.8rem;">➕ Additional Certificates</div>
+        <div id="additionalCertsContainer"></div>
+        <button class="add-cert-btn" id="addCertBtn">+ Add Another Certificate</button>
 
-        <div class="save-row" style="margin-top:1.2rem;">
-            <button class="btn btn-save" id="saveCertsInfoBtn" style="padding:0.7rem 1.6rem;">Save Certificate Information</button>
+        <div class="save-row" style="margin-top:1rem;">
             <span class="save-msg" id="certsMsg"></span>
         </div>
     </div>
 
-    <!-- Lock banner shown when interview not yet passed -->
+    <!-- Lock banner -->
     <div id="lockBanner" class="lock-banner">
         <span class="lock-icon">🔒</span>
         <div><strong>Documents &amp; Bank Details are locked</strong><br>These sections will unlock once you have successfully passed your interview.</div>
     </div>
 
+    <!-- Documents Card -->
     <div class="card" id="docsCard">
         <div class="card-header">
             <div class="card-icon icon-blue">📎</div>
@@ -274,10 +306,9 @@
         </div>
         <hr class="divider">
         <div class="upload-grid">
-            <!-- Driving Licence Front -->
             <div>
                 <div class="upload-zone" id="zone-licence-front">
-                    <input type="file" id="file-licence-front" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-front', this)">
+                    <input type="file" id="file-licence-front" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-front',this)">
                     <div class="upload-icon">🪪</div>
                     <div class="upload-label">Driving Licence Front</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -286,10 +317,9 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-front">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-front" onclick="uploadFile('licence-front')" disabled>Upload</button>
             </div>
-            <!-- Driving Licence Back -->
             <div>
                 <div class="upload-zone" id="zone-licence-back">
-                    <input type="file" id="file-licence-back" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-back', this)">
+                    <input type="file" id="file-licence-back" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-back',this)">
                     <div class="upload-icon">🪪</div>
                     <div class="upload-label">Driving Licence Back</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -298,10 +328,9 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-back">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-back" onclick="uploadFile('licence-back')" disabled>Upload</button>
             </div>
-            <!-- Passport Cover -->
             <div>
                 <div class="upload-zone" id="zone-passport-cover">
-                    <input type="file" id="file-passport-cover" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-cover', this)">
+                    <input type="file" id="file-passport-cover" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-cover',this)">
                     <div class="upload-icon">📔</div>
                     <div class="upload-label">Passport Cover</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -310,10 +339,9 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-cover">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-cover" onclick="uploadFile('passport-cover')" disabled>Upload</button>
             </div>
-            <!-- Passport Information -->
             <div>
                 <div class="upload-zone" id="zone-passport-info">
-                    <input type="file" id="file-passport-info" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-info', this)">
+                    <input type="file" id="file-passport-info" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-info',this)">
                     <div class="upload-icon">🛂</div>
                     <div class="upload-label">Passport Information</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -322,10 +350,9 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-info">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-info" onclick="uploadFile('passport-info')" disabled>Upload</button>
             </div>
-            <!-- Proof of Address -->
             <div>
                 <div class="upload-zone" id="zone-address">
-                    <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address', this)">
+                    <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address',this)">
                     <div class="upload-icon">🏠</div>
                     <div class="upload-label">Proof of Address</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -334,10 +361,9 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
             </div>
-            <!-- Right to Work -->
             <div>
                 <div class="upload-zone" id="zone-right-to-work">
-                    <input type="file" id="file-right-to-work" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('right-to-work', this)">
+                    <input type="file" id="file-right-to-work" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('right-to-work',this)">
                     <div class="upload-icon">✅</div>
                     <div class="upload-label">Right to Work</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
@@ -349,6 +375,7 @@
         </div>
     </div>
 
+    <!-- Bank Details Card -->
     <div class="card" id="bankCard">
         <div class="card-header">
             <div class="card-icon icon-green">🏦</div>
@@ -392,99 +419,58 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // Updated DOC_KEYS — removed ni-number, added right-to-work
-    const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'right-to-work'];
-
-    // Named mandatory cert slots
-    const NAMED_CERT_KEYS = ['mocopa', 'gas3', 'cma'];
+    const DOC_KEYS       = ['licence-front','licence-back','passport-cover','passport-info','address','right-to-work'];
+    const CERT_FILE_KEYS = ['mocopa','gasl3','cmagas','higherskills'];
 
     let currentEngineer      = null;
     let allCompleteEmailSent = false;
-
-    // Additional certs (free-form)
-    let additionalCertSlots  = [];
     let additionalCertCounter = 0;
-
-    // Higher skills certs
-    let higherSkillSlots  = [];
-    let higherSkillCounter = 0;
-
-    // Named cert file staging
-    const namedCertFiles = {};
 
     window.handleFileSelect       = handleFileSelect;
     window.uploadFile             = uploadFile;
-    window.handleCertFileSelect   = handleCertFileSelect;
-    window.uploadNamedCert        = uploadNamedCert;
+    window.handleCertFile         = handleCertFile;
+    window.uploadCertFile         = uploadCertFile;
+    window.setDrivingLicence      = setDrivingLicence;
+    window.saveDrivingLicenceData = saveDrivingLicenceData;
+    window.setEUSR                = setEUSR;
+    window.saveEUSRData           = saveEUSRData;
+    window.saveGasSafeData        = saveGasSafeData;
+    window.removeAdditionalCert   = removeAdditionalCert;
 
     document.getElementById('loginBtn').addEventListener('click', doLogin);
-    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-    // Driving Licence radio toggle
-    document.querySelectorAll('input[name="hasLicence"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            document.getElementById('licenceExpiryField').style.display =
-                document.getElementById('licence-yes').checked ? 'block' : 'none';
-        });
-    });
-
-    // EUSR radio toggle
-    document.querySelectorAll('input[name="hasEUSR"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            document.getElementById('eusrNumberField').style.display =
-                document.getElementById('eusr-yes').checked ? 'block' : 'none';
-        });
-    });
-
-    // Add Higher Skills Certificate button
-    document.getElementById('addHigherSkillBtn').addEventListener('click', () => addHigherSkillSlot());
-
-    // Add Additional Certificate button
-    document.getElementById('addCertBtn').addEventListener('click', () => addAdditionalCertSlot());
-
-    // Save Cert Info button
-    document.getElementById('saveCertsInfoBtn').addEventListener('click', saveCertsInfo);
+    document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
     async function doLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const pass  = document.getElementById('loginPassword').value;
         const errEl = document.getElementById('loginError');
         const btn   = document.getElementById('loginBtn');
-
         errEl.textContent = '';
-        if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; return; }
-
-        btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Signing in…';
-
+        if (!email||!pass) { errEl.textContent='Please enter your email and password.'; return; }
+        btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Signing in…';
         try {
-            const q    = query(collection(db, "NGUO - Engineers"), where("email", "==", email));
+            const q    = query(collection(db,"NGUO - Engineers"),where("email","==",email));
             const snap = await getDocs(q);
-
-            if (snap.empty) { errEl.textContent = 'No engineer account found for this email.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-
+            if (snap.empty) { errEl.textContent='No engineer account found for this email.'; btn.disabled=false; btn.textContent='Sign In'; return; }
             const engineerDoc  = snap.docs[0];
             const engineerData = engineerDoc.data();
-
-            if (engineerData.password !== pass) { errEl.textContent = 'Incorrect password. Please try again.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-            if (engineerData.status === 'deleted') { errEl.textContent = 'This account is no longer active.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
-
+            if (engineerData.password!==pass)      { errEl.textContent='Incorrect password. Please try again.'; btn.disabled=false; btn.textContent='Sign In'; return; }
+            if (engineerData.status==='deleted')   { errEl.textContent='This account is no longer active.'; btn.disabled=false; btn.textContent='Sign In'; return; }
             currentEngineer = { docId: engineerDoc.id, ...engineerData };
-
-            allCompleteEmailSent = !!(
-                currentEngineer.certs_mandatoryComplete &&
-                DOC_KEYS.every(k => currentEngineer[`docs_${k}`]) &&
-                currentEngineer.bank_name && currentEngineer.bank_accountNo
-            );
-
+            allCompleteEmailSent = isAllComplete();
             showPortal();
+        } catch(err) { errEl.textContent='Login error: '+err.message; }
+        btn.disabled=false; btn.textContent='Sign In';
+    }
 
-        } catch (err) {
-            errEl.textContent = 'Login error: ' + err.message;
-        }
-
-        btn.disabled    = false;
-        btn.textContent = 'Sign In';
+    function isAllComplete() {
+        const d = currentEngineer;
+        const certsDone = CERT_FILE_KEYS.every(k=>d[`cert_${k}`]) &&
+            d.cert_drivinglicence_confirmed!==undefined &&
+            (d.cert_drivinglicence_confirmed===false || !!d.cert_drivinglicence_expiry);
+        const docsDone = DOC_KEYS.every(k=>d[`docs_${k}`]);
+        const bankDone = !!(d.bank_name && d.bank_accountNo);
+        return certsDone && docsDone && bankDone;
     }
 
     function showPortal() {
@@ -493,396 +479,197 @@
         document.getElementById('welcomeName').textContent    = `👋 ${currentEngineer.name}`;
         applyInterviewLock();
         loadExistingData();
-        setupHigherSkillsGrid();
-        setupAdditionalCertsGrid();
-    }
-
-    function applyInterviewLock() {
-        const passed     = currentEngineer.interviewPassed === true;
-        const docsCard   = document.getElementById('docsCard');
-        const bankCard   = document.getElementById('bankCard');
-        const lockBanner = document.getElementById('lockBanner');
-
-        if (passed) {
-            docsCard.classList.remove('section-locked');
-            bankCard.classList.remove('section-locked');
-            lockBanner.style.display = 'none';
-        } else {
-            docsCard.classList.add('section-locked');
-            bankCard.classList.add('section-locked');
-            lockBanner.style.display = 'flex';
-        }
-    }
-
-    // ── Named Cert Upload ──
-    function handleCertFileSelect(key, input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        if (file.size > 10 * 1024 * 1024) { alert('Max 10MB.'); input.value = ''; return; }
-        namedCertFiles[key] = file;
-        document.getElementById(`fname-cert-${key}`).textContent  = `📎 ${file.name}`;
-        document.getElementById(`status-cert-${key}`).textContent = 'Ready to upload';
-        document.getElementById(`status-cert-${key}`).className   = 'upload-status status-pending';
-        document.getElementById(`upload-btn-cert-${key}`).disabled = false;
-        document.getElementById(`zone-cert-${key}`).classList.remove('has-file');
-    }
-
-    window.uploadNamedCert = async function(key, label) {
-        const file   = namedCertFiles[key];
-        if (!file) return;
-        const upBtn  = document.getElementById(`upload-btn-cert-${key}`);
-        const status = document.getElementById(`status-cert-${key}`);
-        const zone   = document.getElementById(`zone-cert-${key}`);
-
-        upBtn.disabled     = true;
-        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
-        status.textContent = 'Uploading…';
-        status.className   = 'upload-status status-pending';
-
-        try {
-            const fileData = await readFileAsDataURL(file);
-            const fieldName = `cert_named_${key}`;
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                [fieldName]: fileData,
-                [`${fieldName}_filename`]:   file.name,
-                [`${fieldName}_uploadedAt`]: serverTimestamp()
-            });
-            currentEngineer[fieldName] = fileData;
-            delete namedCertFiles[key];
-            status.textContent = '✓ Uploaded';
-            status.className   = 'upload-status status-saved';
-            zone.classList.add('has-file');
-            upBtn.textContent  = 'Re-upload';
-            upBtn.disabled     = false;
-            updateProgress();
-        } catch (err) {
-            status.textContent = '✗ Failed';
-            status.className   = 'upload-status status-none';
-            upBtn.textContent  = 'Retry';
-            upBtn.disabled     = false;
-            alert('Upload failed: ' + err.message);
-        }
-    };
-
-    // ── Higher Skills Certs ──
-    function setupHigherSkillsGrid() {
-        higherSkillSlots  = [];
-        higherSkillCounter = 0;
-        const grid = document.getElementById('higherSkillsGrid');
-        grid.innerHTML = '';
-        const existing = currentEngineer.certs_higherSkills || [];
-        existing.forEach(c => addHigherSkillSlotUploaded(c));
-        if (existing.length === 0) addHigherSkillSlot();
-    }
-
-    function addHigherSkillSlot() {
-        higherSkillCounter++;
-        const id   = higherSkillCounter;
-        const slot = { id, file: null, uploaded: false };
-        higherSkillSlots.push(slot);
-        const grid = document.getElementById('higherSkillsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-upload-item';
-        div.id = `higher-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone" id="higher-zone-${id}" style="padding:1rem 0.7rem;">
-                <input type="file" id="higher-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.3rem;margin-bottom:0.3rem;">🎓</div>
-                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">Higher Skills Cert ${id}</div>
-                <div style="font-size:0.7rem;color:var(--text-muted);">JPG, PNG or PDF</div>
-                <div class="upload-filename" id="higher-fname-${id}"></div>
-            </div>
-            <div style="text-align:center;"><span class="upload-status status-none" id="higher-status-${id}">Not uploaded</span></div>
-            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="higher-upload-btn-${id}" onclick="uploadHigherSkillCert(${id})" disabled>Upload</button>
-        `;
-        grid.appendChild(div);
-        document.getElementById(`higher-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            if (this.files[0].size > 10*1024*1024) { alert('Max 10MB.'); this.value=''; return; }
-            const s = higherSkillSlots.find(s=>s.id===id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`higher-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`higher-status-${id}`).textContent  = 'Ready';
-            document.getElementById(`higher-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`higher-upload-btn-${id}`).disabled = false;
-        });
-    }
-
-    function addHigherSkillSlotUploaded(certData) {
-        higherSkillCounter++;
-        const id = higherSkillCounter;
-        higherSkillSlots.push({ id, file: null, uploaded: true });
-        const grid = document.getElementById('higherSkillsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-upload-item';
-        div.id = `higher-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone has-file" id="higher-zone-${id}" style="padding:1rem 0.7rem;">
-                <input type="file" id="higher-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.3rem;margin-bottom:0.3rem;">🎓</div>
-                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">${certData.name||'Higher Skills Cert'}</div>
-                <div class="upload-filename">✓ Uploaded</div>
-            </div>
-            <div style="text-align:center;"><span class="upload-status status-saved" id="higher-status-${id}">✓ Uploaded</span></div>
-            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="higher-upload-btn-${id}" onclick="uploadHigherSkillCert(${id})" disabled>Re-upload</button>
-        `;
-        grid.appendChild(div);
-        document.getElementById(`higher-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            const s = higherSkillSlots.find(s=>s.id===id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`higher-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`higher-status-${id}`).textContent  = 'Ready';
-            document.getElementById(`higher-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`higher-upload-btn-${id}`).disabled = false;
-        });
-    }
-
-    window.uploadHigherSkillCert = async function(id) {
-        const slot   = higherSkillSlots.find(s=>s.id===id);
-        if (!slot || !slot.file) return;
-        const upBtn  = document.getElementById(`higher-upload-btn-${id}`);
-        const status = document.getElementById(`higher-status-${id}`);
-        const zone   = document.getElementById(`higher-zone-${id}`);
-        upBtn.disabled = true; upBtn.innerHTML = '<span class="spinner"></span>Uploading…';
-        status.textContent = 'Uploading…'; status.className = 'upload-status status-pending';
-        try {
-            const fileData = await readFileAsDataURL(slot.file);
-            const existing = currentEngineer.certs_higherSkills || [];
-            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
-            if (slot.uploaded) {
-                const idx = higherSkillSlots.filter(s=>s.uploaded||s.id<=id).findIndex(s=>s.id===id);
-                if (idx >= 0 && idx < existing.length) existing[idx] = newEntry; else existing.push(newEntry);
-            } else { existing.push(newEntry); }
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), { certs_higherSkills: existing, certs_higherSkillsAt: serverTimestamp() });
-            currentEngineer.certs_higherSkills = existing;
-            slot.uploaded = true; slot.file = null;
-            status.textContent = '✓ Uploaded'; status.className = 'upload-status status-saved';
-            zone.classList.add('has-file'); upBtn.textContent = 'Re-upload'; upBtn.disabled = false;
-        } catch (err) {
-            status.textContent = '✗ Failed'; status.className = 'upload-status status-none';
-            upBtn.textContent = 'Retry'; upBtn.disabled = false; alert('Upload failed: '+err.message);
-        }
-    };
-
-    // ── Additional Certs (free-form) ──
-    function setupAdditionalCertsGrid() {
-        additionalCertSlots  = [];
-        additionalCertCounter = 0;
-        const grid = document.getElementById('additionalCertsGrid');
-        grid.innerHTML = '';
-        const existing = currentEngineer.certs_additional || [];
-        if (existing.length > 0) existing.forEach(c => addAdditionalCertSlotUploaded(c));
-        else addAdditionalCertSlot();
-    }
-
-    function addAdditionalCertSlot() {
-        additionalCertCounter++;
-        const id   = additionalCertCounter;
-        const slot = { id, file: null, uploaded: false };
-        additionalCertSlots.push(slot);
-        const grid = document.getElementById('additionalCertsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-upload-item';
-        div.id = `add-cert-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone" id="add-cert-zone-${id}" style="padding:1.1rem 0.7rem;">
-                <input type="file" id="add-cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.3rem;margin-bottom:0.3rem;">📜</div>
-                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">Additional Cert ${id}</div>
-                <div style="font-size:0.7rem;color:var(--text-muted);">JPG, PNG or PDF</div>
-                <div class="upload-filename" id="add-cert-fname-${id}"></div>
-            </div>
-            <div style="text-align:center;"><span class="upload-status status-none" id="add-cert-status-${id}">Not uploaded</span></div>
-            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="add-cert-upload-btn-${id}" onclick="uploadAdditionalCert(${id})" disabled>Upload</button>
-        `;
-        grid.appendChild(div);
-        document.getElementById(`add-cert-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            if (this.files[0].size > 10*1024*1024) { alert('Max 10MB.'); this.value=''; return; }
-            const s = additionalCertSlots.find(s=>s.id===id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`add-cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`add-cert-status-${id}`).textContent  = 'Ready';
-            document.getElementById(`add-cert-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`add-cert-upload-btn-${id}`).disabled = false;
-        });
-    }
-
-    function addAdditionalCertSlotUploaded(certData) {
-        additionalCertCounter++;
-        const id = additionalCertCounter;
-        additionalCertSlots.push({ id, file: null, uploaded: true });
-        const grid = document.getElementById('additionalCertsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-upload-item';
-        div.id = `add-cert-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone has-file" id="add-cert-zone-${id}" style="padding:1.1rem 0.7rem;">
-                <input type="file" id="add-cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.3rem;margin-bottom:0.3rem;">📜</div>
-                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">${certData.name||'Additional Cert'}</div>
-                <div class="upload-filename">✓ Uploaded</div>
-            </div>
-            <div style="text-align:center;"><span class="upload-status status-saved" id="add-cert-status-${id}">✓ Uploaded</span></div>
-            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="add-cert-upload-btn-${id}" onclick="uploadAdditionalCert(${id})" disabled>Re-upload</button>
-        `;
-        grid.appendChild(div);
-        document.getElementById(`add-cert-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            const s = additionalCertSlots.find(s=>s.id===id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`add-cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`add-cert-status-${id}`).textContent  = 'Ready';
-            document.getElementById(`add-cert-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`add-cert-upload-btn-${id}`).disabled = false;
-        });
-    }
-
-    window.uploadAdditionalCert = async function(id) {
-        const slot   = additionalCertSlots.find(s=>s.id===id);
-        if (!slot || !slot.file) return;
-        const upBtn  = document.getElementById(`add-cert-upload-btn-${id}`);
-        const status = document.getElementById(`add-cert-status-${id}`);
-        const zone   = document.getElementById(`add-cert-zone-${id}`);
-        upBtn.disabled = true; upBtn.innerHTML = '<span class="spinner"></span>Uploading…';
-        status.textContent = 'Uploading…'; status.className = 'upload-status status-pending';
-        try {
-            const fileData = await readFileAsDataURL(slot.file);
-            const existing = currentEngineer.certs_additional || [];
-            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
-            if (slot.uploaded) {
-                const idx = additionalCertSlots.filter(s=>s.uploaded||s.id<=id).findIndex(s=>s.id===id);
-                if (idx >= 0 && idx < existing.length) existing[idx] = newEntry; else existing.push(newEntry);
-            } else { existing.push(newEntry); }
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), { certs_additional: existing, certs_additionalAt: serverTimestamp() });
-            currentEngineer.certs_additional = existing;
-            slot.uploaded = true; slot.file = null;
-            status.textContent = '✓ Uploaded'; status.className = 'upload-status status-saved';
-            zone.classList.add('has-file'); upBtn.textContent = 'Re-upload'; upBtn.disabled = false;
-            updateProgress();
-            const msgEl = document.getElementById('certsMsg');
-            msgEl.className = 'save-msg ok'; msgEl.textContent = '✓ Certificate uploaded';
-            setTimeout(()=>{ msgEl.textContent=''; }, 3000);
-        } catch (err) {
-            status.textContent = '✗ Failed'; status.className = 'upload-status status-none';
-            upBtn.textContent = 'Retry'; upBtn.disabled = false; alert('Upload failed: '+err.message);
-        }
-    };
-
-    // ── Save Certs Info (licence declaration, EUSR, Gas Safe) ──
-    async function saveCertsInfo() {
-        const btn   = document.getElementById('saveCertsInfoBtn');
-        const msgEl = document.getElementById('certsMsg');
-
-        const hasLicence    = document.querySelector('input[name="hasLicence"]:checked')?.value || null;
-        const licenceExpiry = document.getElementById('licenceExpiry').value || null;
-        const hasEUSR       = document.querySelector('input[name="hasEUSR"]:checked')?.value || null;
-        const eusrNumber    = document.getElementById('eusrNumber').value.trim() || null;
-        const gasSafeNumber = document.getElementById('gasSafeNumber').value.trim() || null;
-
-        if (!hasLicence) {
-            msgEl.className = 'save-msg err';
-            msgEl.textContent = 'Please confirm whether you have a valid Driving Licence.';
-            return;
-        }
-        if (hasLicence === 'yes' && !licenceExpiry) {
-            msgEl.className = 'save-msg err';
-            msgEl.textContent = 'Please enter your Driving Licence expiry date.';
-            return;
-        }
-
-        btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Saving…';
-
-        try {
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                certs_hasLicence:    hasLicence,
-                certs_licenceExpiry: licenceExpiry,
-                certs_hasEUSR:       hasEUSR,
-                certs_eusrNumber:    eusrNumber,
-                certs_gasSafeNumber: gasSafeNumber,
-                certs_infoSavedAt:   serverTimestamp()
-            });
-            Object.assign(currentEngineer, { certs_hasLicence: hasLicence, certs_licenceExpiry: licenceExpiry, certs_hasEUSR: hasEUSR, certs_eusrNumber: eusrNumber, certs_gasSafeNumber: gasSafeNumber });
-            msgEl.className   = 'save-msg ok';
-            msgEl.textContent = '✓ Information saved';
-            updateProgress();
-        } catch (err) {
-            msgEl.className   = 'save-msg err';
-            msgEl.textContent = 'Error saving: ' + err.message;
-        }
-        btn.disabled    = false;
-        btn.textContent = 'Save Certificate Information';
-    }
-
-    function loadExistingData() {
-        const d = currentEngineer;
-
-        // Named certs status
-        NAMED_CERT_KEYS.forEach(key => {
-            const fieldName = `cert_named_${key}`;
-            if (d[fieldName]) {
-                document.getElementById(`status-cert-${key}`).textContent = '✓ Uploaded';
-                document.getElementById(`status-cert-${key}`).className   = 'upload-status status-saved';
-                document.getElementById(`zone-cert-${key}`).classList.add('has-file');
-                document.getElementById(`fname-cert-${key}`).textContent  = 'Previously uploaded — click to replace';
-                document.getElementById(`upload-btn-cert-${key}`).disabled = false;
-            }
-        });
-
-        // Licence question
-        if (d.certs_hasLicence) {
-            const radio = document.querySelector(`input[name="hasLicence"][value="${d.certs_hasLicence}"]`);
-            if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
-        }
-        if (d.certs_licenceExpiry) document.getElementById('licenceExpiry').value = d.certs_licenceExpiry;
-
-        // EUSR
-        if (d.certs_hasEUSR) {
-            const radio = document.querySelector(`input[name="hasEUSR"][value="${d.certs_hasEUSR}"]`);
-            if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
-        }
-        if (d.certs_eusrNumber) document.getElementById('eusrNumber').value = d.certs_eusrNumber;
-
-        // Gas Safe
-        if (d.certs_gasSafeNumber) document.getElementById('gasSafeNumber').value = d.certs_gasSafeNumber;
-
-        // Documents
-        DOC_KEYS.forEach(key => setDocStatus(key, d[`docs_${key}`]));
-
-        // Bank
-        if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
-        if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
-        if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
-        if (d.bank_accountNo) document.getElementById('bankAccountNo').value = d.bank_accountNo;
-
         updateProgress();
     }
 
-    function setDocStatus(key, fileUrl) {
-        const statusEl = document.getElementById(`status-${key}`);
-        const zoneEl   = document.getElementById(`zone-${key}`);
-        if (fileUrl) {
-            statusEl.textContent = '✓ Uploaded';
-            statusEl.className   = 'upload-status status-saved';
-            zoneEl.classList.add('has-file');
-            document.getElementById(`fname-${key}`).textContent = 'Previously uploaded — click to replace';
-        } else {
-            statusEl.textContent = 'Not uploaded';
-            statusEl.className   = 'upload-status status-none';
+    function applyInterviewLock() {
+        const passed = currentEngineer.interviewPassed===true;
+        document.getElementById('docsCard').classList.toggle('section-locked',!passed);
+        document.getElementById('bankCard').classList.toggle('section-locked',!passed);
+        document.getElementById('lockBanner').style.display = passed ? 'none' : 'flex';
+    }
+
+    /* ── Structured cert file handling ── */
+    function handleCertFile(key, input) {
+        if (!input.files||!input.files[0]) return;
+        if (input.files[0].size>10*1024*1024) { alert('Max 10MB.'); input.value=''; return; }
+        document.getElementById(`sub-${key}`).textContent   = `📎 ${input.files[0].name}`;
+        document.getElementById(`badge-${key}`).textContent = 'Ready to upload';
+        document.getElementById(`badge-${key}`).className   = 'cert-badge ready';
+        document.getElementById(`upbtn-${key}`).disabled    = false;
+    }
+
+    async function uploadCertFile(key) {
+        const input = document.getElementById(`file-${key}`);
+        const upBtn = document.getElementById(`upbtn-${key}`);
+        const badge = document.getElementById(`badge-${key}`);
+        const row   = document.getElementById(`row-${key}`);
+        if (!input||!input.files||!input.files[0]) return;
+        upBtn.disabled=true; upBtn.innerHTML='<span class="spinner"></span>Uploading…';
+        badge.textContent='Uploading…'; badge.className='cert-badge ready';
+        try {
+            const fileData = await readFileAsDataURL(input.files[0]);
+            await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{
+                [`cert_${key}`]:            fileData,
+                [`cert_${key}_filename`]:   input.files[0].name,
+                [`cert_${key}_uploadedAt`]: serverTimestamp()
+            });
+            currentEngineer[`cert_${key}`] = fileData;
+            badge.textContent='✓ Uploaded'; badge.className='cert-badge done';
+            row.classList.add('uploaded');
+            upBtn.textContent='Re-upload'; upBtn.disabled=false;
+            document.getElementById(`sub-${key}`).textContent=`✓ ${input.files[0].name}`;
+            showCertsMsg('✓ Certificate uploaded successfully');
+            updateProgress();
+        } catch(err) {
+            badge.textContent='✗ Failed'; badge.className='cert-badge none';
+            upBtn.textContent='Retry'; upBtn.disabled=false;
+            alert('Upload failed: '+err.message);
         }
     }
 
+    /* ── Driving Licence ── */
+    async function setDrivingLicence(val) {
+        document.getElementById('yn-dl-yes').className = 'yn-btn'+(val?' selected-yes':'');
+        document.getElementById('yn-dl-no').className  = 'yn-btn'+(!val?' selected-no':'');
+        document.getElementById('dl-expiry-wrap').style.display = val?'block':'none';
+        const badge = document.getElementById('badge-drivinglicence');
+        if (val) { badge.textContent='Yes — add expiry'; badge.className='cert-badge ready'; }
+        else { badge.textContent='No'; badge.className='cert-badge none'; }
+        currentEngineer.cert_drivinglicence_confirmed = val;
+        try { await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ cert_drivinglicence_confirmed:val, cert_drivinglicence_updatedAt:serverTimestamp() }); } catch(e){console.warn(e);}
+        updateProgress();
+    }
+
+    async function saveDrivingLicenceData() {
+        const expiry = document.getElementById('dl-expiry').value;
+        const badge  = document.getElementById('badge-drivinglicence');
+        if (expiry) {
+            badge.textContent=`✓ Expires ${expiry}`; badge.className='cert-badge done';
+            document.getElementById('row-drivinglicence').classList.add('uploaded');
+        }
+        currentEngineer.cert_drivinglicence_expiry = expiry;
+        try { await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ cert_drivinglicence_expiry:expiry, cert_drivinglicence_updatedAt:serverTimestamp() }); } catch(e){console.warn(e);}
+        updateProgress();
+    }
+
+    /* ── EUSR ── */
+    async function setEUSR(val) {
+        document.getElementById('yn-eusr-yes').className = 'yn-btn'+(val?' selected-yes':'');
+        document.getElementById('yn-eusr-no').className  = 'yn-btn'+(!val?' selected-no':'');
+        document.getElementById('eusr-number-wrap').style.display = val?'block':'none';
+        const badge = document.getElementById('badge-eusr');
+        if (val) { badge.textContent='Yes — add number'; badge.className='cert-badge ready'; }
+        else { badge.textContent='N/A'; badge.className='cert-badge done'; document.getElementById('row-eusr').classList.add('uploaded'); }
+        currentEngineer.cert_eusr_has = val;
+        try { await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ cert_eusr_has:val, cert_eusr_updatedAt:serverTimestamp() }); } catch(e){console.warn(e);}
+        updateProgress();
+    }
+
+    async function saveEUSRData() {
+        const number = document.getElementById('eusr-number').value.trim();
+        const badge  = document.getElementById('badge-eusr');
+        if (number) { badge.textContent=`✓ ${number}`; badge.className='cert-badge done'; document.getElementById('row-eusr').classList.add('uploaded'); }
+        currentEngineer.cert_eusr_number = number;
+        try { await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ cert_eusr_number:number, cert_eusr_updatedAt:serverTimestamp() }); } catch(e){console.warn(e);}
+        updateProgress();
+    }
+
+    /* ── Gas Safe ── */
+    async function saveGasSafeData() {
+        const number = document.getElementById('gassafe-number').value.trim();
+        const badge  = document.getElementById('badge-gassafe');
+        if (number) { badge.textContent=`✓ ${number}`; badge.className='cert-badge done'; document.getElementById('row-gassafe').classList.add('uploaded'); }
+        else { badge.textContent='Not entered'; badge.className='cert-badge none'; document.getElementById('row-gassafe').classList.remove('uploaded'); }
+        currentEngineer.cert_gassafe_number = number;
+        try { await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ cert_gassafe_number:number, cert_gassafe_updatedAt:serverTimestamp() }); } catch(e){console.warn(e);}
+    }
+
+    /* ── Additional certs ── */
+    document.getElementById('addCertBtn').addEventListener('click',()=>addAdditionalCert(null));
+
+    function addAdditionalCert(existingData) {
+        additionalCertCounter++;
+        const id = additionalCertCounter;
+        const container = document.getElementById('additionalCertsContainer');
+        const div = document.createElement('div');
+        div.className='cert-upload-row'; div.id=`row-addcert-${id}`;
+        if (existingData) div.classList.add('uploaded');
+        div.innerHTML=`
+            <div class="cert-row-icon">📄</div>
+            <div class="cert-row-info" style="flex:1;min-width:0;">
+                <input type="text" class="cert-inline-input" id="addcert-name-${id}"
+                    placeholder="Certificate name / description"
+                    style="max-width:100%;margin-bottom:0.4rem;margin-top:0;"
+                    value="${existingData ? existingData.name : ''}">
+                <div id="sub-addcert-${id}" class="cert-row-sub">${existingData ? '✓ '+(existingData.filename||'Uploaded') : 'No file selected'}</div>
+            </div>
+            <div class="cert-row-actions">
+                <span class="cert-badge ${existingData?'done':'none'}" id="badge-addcert-${id}">${existingData?'✓ Uploaded':'Not uploaded'}</span>
+                <label class="cert-file-label">📎 Choose file<input type="file" id="file-addcert-${id}" accept=".jpg,.jpeg,.png,.pdf"></label>
+                <button class="cert-upload-action-btn" id="upbtn-addcert-${id}" disabled>Upload</button>
+                <button style="background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:8px;padding:0.4rem 0.7rem;cursor:pointer;font-size:0.8rem;font-family:inherit;" onclick="removeAdditionalCert(${id})">✕</button>
+            </div>`;
+        container.appendChild(div);
+        document.getElementById(`file-addcert-${id}`).addEventListener('change',function(){
+            if (!this.files[0]) return;
+            if (this.files[0].size>10*1024*1024) { alert('Max 10MB.'); this.value=''; return; }
+            document.getElementById(`sub-addcert-${id}`).textContent  =`📎 ${this.files[0].name}`;
+            document.getElementById(`badge-addcert-${id}`).textContent='Ready to upload';
+            document.getElementById(`badge-addcert-${id}`).className  ='cert-badge ready';
+            document.getElementById(`upbtn-addcert-${id}`).disabled   =false;
+        });
+        document.getElementById(`upbtn-addcert-${id}`).addEventListener('click',()=>uploadAdditionalCert(id));
+    }
+
+    function removeAdditionalCert(id) {
+        const el=document.getElementById(`row-addcert-${id}`); if(el) el.remove();
+    }
+
+    async function uploadAdditionalCert(id) {
+        const input  = document.getElementById(`file-addcert-${id}`);
+        const nameEl = document.getElementById(`addcert-name-${id}`);
+        const upBtn  = document.getElementById(`upbtn-addcert-${id}`);
+        const badge  = document.getElementById(`badge-addcert-${id}`);
+        const row    = document.getElementById(`row-addcert-${id}`);
+        if (!input||!input.files||!input.files[0]) return;
+        upBtn.disabled=true; upBtn.innerHTML='<span class="spinner"></span>';
+        badge.textContent='Uploading…';
+        try {
+            const fileData = await readFileAsDataURL(input.files[0]);
+            const certName = nameEl.value.trim()||`Additional Certificate ${id}`;
+            const existing = currentEngineer.certs_additional||[];
+            existing.push({ name:certName, filename:input.files[0].name, data:fileData, uploadedAt:new Date().toISOString() });
+            await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ certs_additional:existing, certs_additionalAt:serverTimestamp() });
+            currentEngineer.certs_additional = existing;
+            badge.textContent='✓ Uploaded'; badge.className='cert-badge done';
+            row.classList.add('uploaded');
+            upBtn.textContent='Re-upload'; upBtn.disabled=false;
+            document.getElementById(`sub-addcert-${id}`).textContent=`✓ ${input.files[0].name}`;
+            showCertsMsg('✓ Additional certificate uploaded');
+            updateProgress();
+        } catch(err) {
+            badge.textContent='✗ Failed'; badge.className='cert-badge none';
+            upBtn.textContent='Retry'; upBtn.disabled=false;
+            alert('Upload failed: '+err.message);
+        }
+    }
+
+    function showCertsMsg(text) {
+        const el=document.getElementById('certsMsg');
+        el.className='save-msg ok'; el.textContent=text;
+        setTimeout(()=>{ el.textContent=''; },3000);
+    }
+
+    /* ── Standard doc upload ── */
     function handleFileSelect(key, input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        if (file.size > 10 * 1024 * 1024) { alert('File is too large. Maximum size is 10MB.'); input.value = ''; return; }
-        document.getElementById(`fname-${key}`).textContent   = `📎 ${file.name}`;
+        if (!input.files||!input.files[0]) return;
+        if (input.files[0].size>10*1024*1024) { alert('File too large. Max 10MB.'); input.value=''; return; }
+        document.getElementById(`fname-${key}`).textContent  =`📎 ${input.files[0].name}`;
         document.getElementById(`zone-${key}`).classList.remove('has-file');
-        document.getElementById(`status-${key}`).textContent  = 'Ready to upload';
-        document.getElementById(`status-${key}`).className    = 'upload-status status-pending';
-        document.getElementById(`upload-btn-${key}`).disabled = false;
+        document.getElementById(`status-${key}`).textContent ='Ready to upload';
+        document.getElementById(`status-${key}`).className   ='upload-status status-pending';
+        document.getElementById(`upload-btn-${key}`).disabled=false;
     }
 
     async function uploadFile(key) {
@@ -890,173 +677,193 @@
         const upBtn  = document.getElementById(`upload-btn-${key}`);
         const status = document.getElementById(`status-${key}`);
         const zone   = document.getElementById(`zone-${key}`);
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-
-        upBtn.disabled     = true;
-        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
-        status.textContent = 'Uploading…';
-        status.className   = 'upload-status status-pending';
-
+        if (!input.files||!input.files[0]) return;
+        upBtn.disabled=true; upBtn.innerHTML='<span class="spinner"></span>Uploading…';
+        status.textContent='Uploading…'; status.className='upload-status status-pending';
         try {
-            const fileData = await readFileAsDataURL(file);
-            const fieldName = `docs_${key}`;
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                [fieldName]: fileData,
-                [`docs_${key}_filename`]:   file.name,
-                [`docs_${key}_uploadedAt`]: serverTimestamp()
+            const fileData = await readFileAsDataURL(input.files[0]);
+            await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{
+                [`docs_${key}`]:              fileData,
+                [`docs_${key}_filename`]:     input.files[0].name,
+                [`docs_${key}_uploadedAt`]:   serverTimestamp()
             });
-            currentEngineer[fieldName] = fileData;
-            status.textContent = '✓ Uploaded';
-            status.className   = 'upload-status status-saved';
+            currentEngineer[`docs_${key}`]=fileData;
+            status.textContent='✓ Uploaded'; status.className='upload-status status-saved';
             zone.classList.add('has-file');
-            upBtn.textContent  = 'Re-upload';
-            upBtn.disabled     = false;
+            upBtn.textContent='Re-upload'; upBtn.disabled=false;
             updateProgress();
-        } catch (err) {
-            status.textContent = '✗ Upload failed';
-            status.className   = 'upload-status status-none';
-            upBtn.textContent  = 'Retry';
-            upBtn.disabled     = false;
-            alert('Upload failed: ' + err.message);
+        } catch(err) {
+            status.textContent='✗ Upload failed'; status.className='upload-status status-none';
+            upBtn.textContent='Retry'; upBtn.disabled=false;
+            alert('Upload failed: '+err.message);
         }
     }
 
-    document.getElementById('saveBankBtn').addEventListener('click', async () => {
-        const btn   = document.getElementById('saveBankBtn');
-        const msgEl = document.getElementById('bankMsg');
-
-        const bank_name      = document.getElementById('bankName').value.trim();
-        const bank_bankName  = document.getElementById('bankBankName').value.trim();
-        const bank_sortCode  = document.getElementById('bankSortCode').value.trim();
-        const bank_accountNo = document.getElementById('bankAccountNo').value.trim();
-
-        msgEl.textContent = '';
-        if (!bank_name || !bank_bankName || !bank_sortCode || !bank_accountNo) {
-            msgEl.className   = 'save-msg err';
-            msgEl.textContent = 'Please fill in all bank detail fields.';
-            return;
-        }
-
-        btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span>Saving…';
-
-        try {
-            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                bank_name, bank_bankName, bank_sortCode, bank_accountNo,
-                bank_savedAt: serverTimestamp()
-            });
-            Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
-
-            try {
-                await emailjs.send(BANK_SERVICE_ID, BANK_TEMPLATE_ID, {
-                    engineer_name: currentEngineer.name,
-                    to_email:      'barryddixon@outlook.com',
-                    message:       `${currentEngineer.name} has uploaded their bank details to the onboarding platform.`
-                });
-            } catch (e) { console.warn('Bank email failed:', e); }
-
-            msgEl.className   = 'save-msg ok';
-            msgEl.textContent = '✓ Bank details saved securely';
-            updateProgress();
-
-        } catch (err) {
-            msgEl.className   = 'save-msg err';
-            msgEl.textContent = 'Error saving: ' + err.message;
-        }
-
-        btn.disabled    = false;
-        btn.textContent = 'Save Bank Details';
-    });
-
-    function updateProgress() {
+    /* ── Load existing data ── */
+    function loadExistingData() {
         const d = currentEngineer;
 
-        // Certs complete = mandatory named certs uploaded + licence confirmed
-        const certsMandatoryDone = !!(
-            d['cert_named_mocopa'] && d['cert_named_gas3'] && d['cert_named_cma'] && d.certs_hasLicence
-        );
-        const licenceDone  = !!(d['docs_licence-front'] && d['docs_licence-back']);
-        const passportDone = !!(d['docs_passport-cover'] && d['docs_passport-info']);
-        const addressDone  = !!(d['docs_address'] && d['docs_right-to-work']);
-        const bankDone     = !!(d.bank_name && d.bank_accountNo);
+        CERT_FILE_KEYS.forEach(key=>{
+            if (d[`cert_${key}`]) {
+                const fn = d[`cert_${key}_filename`]||'Previously uploaded';
+                document.getElementById(`sub-${key}`).textContent   =`✓ ${fn}`;
+                document.getElementById(`badge-${key}`).textContent ='✓ Uploaded';
+                document.getElementById(`badge-${key}`).className   ='cert-badge done';
+                document.getElementById(`row-${key}`).classList.add('uploaded');
+                document.getElementById(`upbtn-${key}`).textContent ='Re-upload';
+                document.getElementById(`upbtn-${key}`).disabled    =false;
+            }
+        });
 
-        toggleProg('prog-certs-upload', certsMandatoryDone);
-        toggleProg('prog-licence',      licenceDone);
-        toggleProg('prog-passport',     passportDone);
-        toggleProg('prog-address',      addressDone);
-        toggleProg('prog-bank',         bankDone);
-
-        const allDone = certsMandatoryDone && licenceDone && passportDone && addressDone && bankDone;
-        document.getElementById('completeBanner').style.display = allDone ? 'block' : 'none';
-
-        if (allDone && !allCompleteEmailSent) {
-            allCompleteEmailSent = true;
-            sendAllCompleteEmail();
+        if (d.cert_drivinglicence_confirmed!==undefined) {
+            const val=d.cert_drivinglicence_confirmed;
+            document.getElementById('yn-dl-yes').className='yn-btn'+(val?' selected-yes':'');
+            document.getElementById('yn-dl-no').className ='yn-btn'+(!val?' selected-no':'');
+            if (val) {
+                document.getElementById('dl-expiry-wrap').style.display='block';
+                if (d.cert_drivinglicence_expiry) {
+                    document.getElementById('dl-expiry').value=d.cert_drivinglicence_expiry;
+                    document.getElementById('badge-drivinglicence').textContent=`✓ Expires ${d.cert_drivinglicence_expiry}`;
+                    document.getElementById('badge-drivinglicence').className='cert-badge done';
+                    document.getElementById('row-drivinglicence').classList.add('uploaded');
+                } else {
+                    document.getElementById('badge-drivinglicence').textContent='Yes — add expiry';
+                    document.getElementById('badge-drivinglicence').className='cert-badge ready';
+                }
+            } else {
+                document.getElementById('badge-drivinglicence').textContent='No';
+                document.getElementById('badge-drivinglicence').className='cert-badge none';
+            }
         }
+
+        if (d.cert_eusr_has!==undefined) {
+            const val=d.cert_eusr_has;
+            document.getElementById('yn-eusr-yes').className='yn-btn'+(val?' selected-yes':'');
+            document.getElementById('yn-eusr-no').className ='yn-btn'+(!val?' selected-no':'');
+            if (val) {
+                document.getElementById('eusr-number-wrap').style.display='block';
+                if (d.cert_eusr_number) {
+                    document.getElementById('eusr-number').value=d.cert_eusr_number;
+                    document.getElementById('badge-eusr').textContent=`✓ ${d.cert_eusr_number}`;
+                    document.getElementById('badge-eusr').className='cert-badge done';
+                    document.getElementById('row-eusr').classList.add('uploaded');
+                }
+            } else {
+                document.getElementById('badge-eusr').textContent='N/A';
+                document.getElementById('badge-eusr').className='cert-badge done';
+                document.getElementById('row-eusr').classList.add('uploaded');
+            }
+        }
+
+        if (d.cert_gassafe_number) {
+            document.getElementById('gassafe-number').value=d.cert_gassafe_number;
+            document.getElementById('badge-gassafe').textContent=`✓ ${d.cert_gassafe_number}`;
+            document.getElementById('badge-gassafe').className='cert-badge done';
+            document.getElementById('row-gassafe').classList.add('uploaded');
+        }
+
+        if (d.certs_additional&&d.certs_additional.length>0) {
+            d.certs_additional.forEach(c=>addAdditionalCert(c));
+        }
+
+        DOC_KEYS.forEach(key=>{
+            if (d[`docs_${key}`]) {
+                document.getElementById(`status-${key}`).textContent='✓ Uploaded';
+                document.getElementById(`status-${key}`).className  ='upload-status status-saved';
+                document.getElementById(`zone-${key}`).classList.add('has-file');
+                document.getElementById(`fname-${key}`).textContent ='Previously uploaded — click to replace';
+            }
+        });
+
+        if (d.bank_name)      document.getElementById('bankName').value     =d.bank_name;
+        if (d.bank_bankName)  document.getElementById('bankBankName').value =d.bank_bankName;
+        if (d.bank_sortCode)  document.getElementById('bankSortCode').value =d.bank_sortCode;
+        if (d.bank_accountNo) document.getElementById('bankAccountNo').value=d.bank_accountNo;
+    }
+
+    /* ── Bank save ── */
+    document.getElementById('saveBankBtn').addEventListener('click',async()=>{
+        const btn=document.getElementById('saveBankBtn');
+        const msgEl=document.getElementById('bankMsg');
+        const bank_name     =document.getElementById('bankName').value.trim();
+        const bank_bankName =document.getElementById('bankBankName').value.trim();
+        const bank_sortCode =document.getElementById('bankSortCode').value.trim();
+        const bank_accountNo=document.getElementById('bankAccountNo').value.trim();
+        msgEl.textContent='';
+        if (!bank_name||!bank_bankName||!bank_sortCode||!bank_accountNo) { msgEl.className='save-msg err'; msgEl.textContent='Please fill in all bank detail fields.'; return; }
+        btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Saving…';
+        try {
+            await updateDoc(doc(db,"NGUO - Engineers",currentEngineer.docId),{ bank_name,bank_bankName,bank_sortCode,bank_accountNo,bank_savedAt:serverTimestamp() });
+            Object.assign(currentEngineer,{bank_name,bank_bankName,bank_sortCode,bank_accountNo});
+            try { await emailjs.send(BANK_SERVICE_ID,BANK_TEMPLATE_ID,{ engineer_name:currentEngineer.name,to_email:'barryddixon@outlook.com',message:`${currentEngineer.name} has uploaded their bank details to the onboarding platform.` }); } catch(e){console.warn('Bank email failed:',e);}
+            msgEl.className='save-msg ok'; msgEl.textContent='✓ Bank details saved securely';
+            updateProgress();
+        } catch(err) { msgEl.className='save-msg err'; msgEl.textContent='Error saving: '+err.message; }
+        btn.disabled=false; btn.textContent='Save Bank Details';
+    });
+
+    /* ── Progress ── */
+    function updateProgress() {
+        const d=currentEngineer;
+        const certsDone = CERT_FILE_KEYS.every(k=>d[`cert_${k}`]) &&
+            d.cert_drivinglicence_confirmed!==undefined &&
+            (d.cert_drivinglicence_confirmed===false||!!d.cert_drivinglicence_expiry);
+        const licenceDone  = !!(d['docs_licence-front']&&d['docs_licence-back']);
+        const passportDone = !!(d['docs_passport-cover']&&d['docs_passport-info']);
+        const addressDone  = !!(d['docs_address']&&d['docs_right-to-work']);
+        const bankDone     = !!(d.bank_name&&d.bank_accountNo);
+
+        toggleProg('prog-certs-upload',certsDone);
+        toggleProg('prog-licence',     licenceDone);
+        toggleProg('prog-passport',    passportDone);
+        toggleProg('prog-address',     addressDone);
+        toggleProg('prog-bank',        bankDone);
+
+        const allDone = certsDone&&licenceDone&&passportDone&&addressDone&&bankDone;
+        document.getElementById('completeBanner').style.display=allDone?'block':'none';
+        if (allDone&&!allCompleteEmailSent) { allCompleteEmailSent=true; sendAllCompleteEmail(); }
     }
 
     async function sendAllCompleteEmail() {
-        try {
-            await emailjs.send(COMPLETE_SERVICE_ID, COMPLETE_TEMPLATE_ID, {
-                to_email:       'barryddixon@outlook.com',
-                engineer_name:  currentEngineer.name,
-                engineer_email: currentEngineer.email,
-                contract_name:  currentEngineer.contract || '—',
-                message:        `${currentEngineer.name} has completed all onboarding document uploads.`
-            });
-        } catch (err) { console.warn('All-complete email failed:', err); }
+        try { await emailjs.send(COMPLETE_SERVICE_ID,COMPLETE_TEMPLATE_ID,{ to_email:'barryddixon@outlook.com',engineer_name:currentEngineer.name,engineer_email:currentEngineer.email,contract_name:currentEngineer.contract||'—',message:`${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Passport, Proof of Address, Right to Work, Certificates, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.` }); } catch(err){console.warn('All-complete email failed:',err);}
     }
 
-    function toggleProg(id, done) {
-        const el = document.getElementById(id);
-        el.classList.toggle('done',   done);
-        el.classList.toggle('active', !done);
+    function toggleProg(id,done) {
+        document.getElementById(id).classList.toggle('done',done);
+        document.getElementById(id).classList.toggle('active',!done);
     }
+
+    /* ── Drag & drop ── */
+    DOC_KEYS.forEach(key=>{
+        const zone=document.getElementById(`zone-${key}`); if(!zone) return;
+        zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+        zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+        zone.addEventListener('drop',e=>{
+            e.preventDefault(); zone.classList.remove('dragover');
+            const input=document.getElementById(`file-${key}`);
+            if (e.dataTransfer.files[0]) { const dt=new DataTransfer(); dt.items.add(e.dataTransfer.files[0]); input.files=dt.files; handleFileSelect(key,input); }
+        });
+    });
+
+    document.getElementById('bankSortCode').addEventListener('input',function(){
+        let v=this.value.replace(/\D/g,'').slice(0,6);
+        if(v.length>4) v=v.slice(0,2)+'-'+v.slice(2,4)+'-'+v.slice(4);
+        else if(v.length>2) v=v.slice(0,2)+'-'+v.slice(2);
+        this.value=v;
+    });
+
+    document.getElementById('signOutBtn').addEventListener('click',()=>{
+        currentEngineer=null; allCompleteEmailSent=false; additionalCertCounter=0;
+        document.getElementById('portalScreen').style.display='none';
+        document.getElementById('loginScreen').style.display='flex';
+        document.getElementById('loginEmail').value='';
+        document.getElementById('loginPassword').value='';
+        document.getElementById('loginError').textContent='';
+    });
 
     function readFileAsDataURL(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload  = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Could not read file'));
-            reader.readAsDataURL(file);
-        });
+        return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=()=>reject(new Error('Could not read file')); r.readAsDataURL(file); });
     }
-
-    DOC_KEYS.forEach(key => {
-        const zone = document.getElementById(`zone-${key}`);
-        if (!zone) return;
-        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-        zone.addEventListener('drop', e => {
-            e.preventDefault();
-            zone.classList.remove('dragover');
-            const input = document.getElementById(`file-${key}`);
-            if (e.dataTransfer.files[0]) {
-                const dt = new DataTransfer();
-                dt.items.add(e.dataTransfer.files[0]);
-                input.files = dt.files;
-                handleFileSelect(key, input);
-            }
-        });
-    });
-
-    document.getElementById('bankSortCode').addEventListener('input', function() {
-        let v = this.value.replace(/\D/g, '').slice(0,6);
-        if (v.length > 4) v = v.slice(0,2) + '-' + v.slice(2,4) + '-' + v.slice(4);
-        else if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-        this.value = v;
-    });
-
-    document.getElementById('signOutBtn').addEventListener('click', () => {
-        currentEngineer      = null;
-        allCompleteEmailSent = false;
-        document.getElementById('portalScreen').style.display  = 'none';
-        document.getElementById('loginScreen').style.display   = 'flex';
-        document.getElementById('loginEmail').value    = '';
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginError').textContent = '';
-    });
 </script>
 </body>
 </html>
