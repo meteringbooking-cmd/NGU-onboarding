@@ -46,7 +46,6 @@
         .logo-container { text-align: center; margin-bottom: 2.5rem; }
         .logo { max-height: 90px; width: auto; display: block; margin: 0 auto; }
 
-        /* ── Login card ── */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -87,7 +86,6 @@
         .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 1.3rem; }
         .hidden { display: none !important; }
 
-        /* ── Dashboard ── */
         #dashboard {
             text-align: center;
             padding: 3rem 1.5rem;
@@ -133,9 +131,7 @@
             filter: grayscale(1);
             pointer-events: none;
         }
-        .dash-btn.locked .lock-icon {
-            display: inline;
-        }
+        .dash-btn.locked .lock-icon { display: inline; }
         .lock-icon { display: none; font-size: 0.8rem; margin-left: 4px; }
 
         .dash-btn.signout {
@@ -147,6 +143,13 @@
             font-size: 0.9rem;
         }
         .dash-btn.signout:hover { border-color: var(--error); color: var(--error); transform: none; box-shadow: none; }
+
+        /* Driver Questionnaire button — slightly highlighted */
+        .dash-btn.dq {
+            border-color: rgba(0,163,224,0.35);
+            background: linear-gradient(135deg, rgba(0,94,184,0.12) 0%, rgba(0,163,224,0.08) 100%);
+        }
+        .dash-btn.dq:hover { border-color: var(--accent); color: var(--accent); }
 
         .section-label {
             text-align: left;
@@ -174,7 +177,7 @@
              alt="NGU Logo" class="logo">
     </div>
 
-    <!-- ── Login ── -->
+    <!-- Login -->
     <div class="card" id="loginCard">
         <h1>NGU Onboarding</h1>
         <p class="subtitle">Sign in to continue</p>
@@ -192,7 +195,7 @@
         <div class="error-msg" id="errorMsg"></div>
     </div>
 
-    <!-- ── Dashboard ── -->
+    <!-- Dashboard -->
     <div id="dashboard" class="hidden">
         <h1>NGU Recruitment/Onboarding</h1>
         <p class="subtitle">Welcome back — what would you like to do?</p>
@@ -219,6 +222,10 @@
             <button class="dash-btn" id="contractBtn">
                 <span class="btn-icon">📋</span>
                 <span class="btn-label">View / Amend Contracts<span class="lock-icon">🔒</span></span>
+            </button>
+            <button class="dash-btn dq" id="driverQuestionnaireBtn">
+                <span class="btn-icon">🚗</span>
+                <span class="btn-label">Driver Questionnaire</span>
             </button>
         </div>
 
@@ -260,11 +267,10 @@
         const errorMsg   = document.getElementById('errorMsg');
         const signInBtn  = document.getElementById('signInBtn');
 
-        // Buttons that are permission-gated: { buttonId: permissionKey }
         const GATED_BTNS = {
-            documentsBtn:      'documents',
+            documentsBtn:       'documents',
             personalDetailsBtn: 'personaldetails',
-            contractBtn:       'contract'
+            contractBtn:        'contract'
         };
 
         async function applyPermissions(user) {
@@ -324,18 +330,18 @@
             signInBtn.textContent = 'Sign In';
         });
 
-        // Allow pressing Enter to sign in
         document.getElementById('password').addEventListener('keydown', e => {
             if (e.key === 'Enter') signInBtn.click();
         });
 
-        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
-        document.getElementById('newApplicantBtn').addEventListener('click', () => window.location.href = 'newapplicant.html');
-        document.getElementById('addEngineerBtn').addEventListener('click', () => window.location.href = 'engineerdatabase.html');
-        document.getElementById('documentsBtn').addEventListener('click', () => window.location.href = 'documents.html');
-        document.getElementById('personalDetailsBtn').addEventListener('click', () => window.location.href = 'personaldetails.html');
-        document.getElementById('contractBtn').addEventListener('click', () => window.location.href = 'contract.html');
-        document.getElementById('manageUsersBtn').addEventListener('click', () => window.location.href = 'userdatabase.html');
+        document.getElementById('signOutBtn').addEventListener('click',          () => signOut(auth));
+        document.getElementById('newApplicantBtn').addEventListener('click',     () => window.location.href = 'newapplicant.html');
+        document.getElementById('addEngineerBtn').addEventListener('click',      () => window.location.href = 'engineerdatabase.html');
+        document.getElementById('documentsBtn').addEventListener('click',        () => window.location.href = 'documents.html');
+        document.getElementById('personalDetailsBtn').addEventListener('click',  () => window.location.href = 'personaldetails.html');
+        document.getElementById('contractBtn').addEventListener('click',         () => window.location.href = 'contract.html');
+        document.getElementById('manageUsersBtn').addEventListener('click',      () => window.location.href = 'userdatabase.html');
+        document.getElementById('driverQuestionnaireBtn').addEventListener('click', () => window.location.href = 'view-driver-questionnaire-submissions.html');
     </script>
 </body>
 </html>
