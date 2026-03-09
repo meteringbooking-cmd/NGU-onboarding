@@ -264,20 +264,22 @@
                 </div>
             </div>
             <hr class="divider">
-            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
-                Please complete the driver questionnaire below. This covers your driving history, licence details, and any relevant information required for your role. Click <strong style="color:var(--text-light);">Submit Application</strong> when you're done — this will return you here automatically.
+            <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin-bottom:1.2rem;">
+                Please complete the driver questionnaire below. Fill in all sections and click <strong style="color:var(--text-light);">Submit</strong> when done, then click Continue.
             </p>
-            <div style="background:rgba(0,163,224,0.07); border:1px solid rgba(0,163,224,0.2); border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:1.5rem;">
-                <div style="display:flex; align-items:center; gap:0.7rem; margin-bottom:0.5rem;">
-                    <span style="font-size:1.3rem;">📋</span>
-                    <strong style="font-size:0.95rem;">Driver Questionnaire</strong>
-                </div>
-                <p style="font-size:0.83rem; color:var(--text-muted);">You'll be taken to the questionnaire form. After submitting, click the button below to continue your profile.</p>
+
+            <!-- Embedded iframe -->
+            <div style="position:relative; width:100%; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:white;">
+                <iframe
+                    id="driverIframe"
+                    src="https://ngu-onboarding.vercel.app/driverquestionnaire.html"
+                    style="width:100%; height:680px; border:none; display:block;"
+                    title="Driver Questionnaire"
+                    allow="fullscreen"
+                ></iframe>
             </div>
-            <a href="https://ngu-onboarding.vercel.app/driverquestionnaire.html" target="_blank" class="btn btn-primary btn-full" style="text-decoration:none; margin-bottom:1rem;">
-                Open Driver Questionnaire ↗
-            </a>
-            <button class="btn btn-success-outline btn-full" id="driverDoneBtn">
+
+            <button class="btn btn-success-outline btn-full" id="driverDoneBtn" style="margin-top:1rem;">
                 ✓ I've Submitted the Questionnaire — Continue
             </button>
         </div>
