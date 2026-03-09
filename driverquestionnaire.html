@@ -204,8 +204,8 @@
             <div class="dvla-link-box">
                 <span class="dvla-icon">🌐</span>
                 <div>
-                    <a href="#" id="dvlaLink">https://www.gov.uk/view-driving-licence</a>
-                    <p>Click to open the DVLA website and generate your licence check code</p>
+                    <a href="https://www.gov.uk/view-driving-licence" target="_blank" rel="noopener noreferrer" id="dvlaLink">https://www.gov.uk/view-driving-licence</a>
+                    <p>Click to open the DVLA website in a new tab and generate your licence check code</p>
                 </div>
             </div>
 
@@ -403,6 +403,10 @@
             </div>
             <hr class="divider">
             <div class="warning-box">⚠️ IMPORTANT — If the answer to any question is 'YES', full details must be supplied in writing.</div>
+            <div class="form-group" style="margin-bottom:1.4rem;">
+                <label for="yesDetails">Full details for any YES answers</label>
+                <textarea id="yesDetails" rows="5" placeholder="If you answered YES to any question above, please provide full details here…" style="width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.92rem;font-family:inherit;transition:all 0.2s;resize:vertical;line-height:1.55;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(0,163,224,0.15)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'"></textarea>
+            </div>
             <div class="declaration-box">
                 <p><strong>I hereby declare and warrant that the above statements and particulars are true and that there are no other material facts, which should be disclosed.</strong></p>
                 <p>I understand that if this is not the case, the insurance will be invalid and in the event of an accident I could be liable for the all costs arising.</p>
@@ -436,17 +440,6 @@
         <div class="success-icon">✅</div>
         <h2>Questionnaire Submitted</h2>
         <p>Thank you — your driver questionnaire has been received and stored securely.<br>The NGU team will review your submission shortly.</p>
-    </div>
-</div>
-
-<!-- DVLA Modal -->
-<div class="modal-overlay" id="dvlaModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3>🌐 DVLA — View Driving Licence</h3>
-            <button class="modal-close" id="dvlaClose">✕</button>
-        </div>
-        <iframe class="modal-iframe" id="dvlaFrame" src="" title="DVLA View Driving Licence"></iframe>
     </div>
 </div>
 
@@ -507,23 +500,6 @@ uploadZones.forEach(({ zoneId, fileId, fnameId }) => {
             input.dispatchEvent(new Event('change'));
         }
     });
-});
-
-// ── DVLA Modal ────────────────────────────────────────────────────────────────
-document.getElementById('dvlaLink').addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('dvlaFrame').src = 'https://www.gov.uk/view-driving-licence';
-    document.getElementById('dvlaModal').classList.add('open');
-});
-document.getElementById('dvlaClose').addEventListener('click', () => {
-    document.getElementById('dvlaModal').classList.remove('open');
-    document.getElementById('dvlaFrame').src = '';
-});
-document.getElementById('dvlaModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('dvlaModal')) {
-        document.getElementById('dvlaModal').classList.remove('open');
-        document.getElementById('dvlaFrame').src = '';
-    }
 });
 
 // ── Signature Canvas ──────────────────────────────────────────────────────────
@@ -624,6 +600,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             licBackFilename:  licBackFile  ? licBackFile.name  : null,
             dvlaShotFilename: dvlaFile     ? dvlaFile.name     : null,
             licFront, licBack, dvlaShot,
+            yesDetails:       document.getElementById('yesDetails').value.trim(),
             fleetPolicy:      radioVal('fleetPolicy'),
             licencePermission:radioVal('licencePermission'),
             accidents:        radioVal('accidents'),
