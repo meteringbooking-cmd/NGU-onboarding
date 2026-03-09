@@ -101,13 +101,18 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         #permissionsPanel h3 { font-size: 1.1rem; margin-bottom: 0.3rem; color: var(--accent); }
-        .panel-subtitle { color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1.5rem; font-family: 'DM Mono', monospace; }
+        .panel-subtitle { color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1rem; font-family: 'DM Mono', monospace; }
 
+        .perm-section-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+            color: var(--text-muted); margin: 1rem 0 0.6rem;
+            font-family: 'DM Mono', monospace;
+        }
         .perm-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
             gap: 0.85rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
         }
         .perm-toggle {
             display: flex; align-items: center; gap: 0.85rem;
@@ -132,7 +137,7 @@
         .perm-label { font-size: 0.92rem; font-weight: 600; }
         .perm-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.1rem; font-family: 'DM Mono', monospace; }
 
-        .panel-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: center; }
+        .panel-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
         #savePermMsg { font-size: 0.9rem; }
 
         @media (max-width: 768px) {
@@ -204,6 +209,7 @@
             <h3 id="permUserName">Permissions</h3>
             <p class="panel-subtitle" id="permUserEmail"></p>
 
+            <p class="perm-section-label">Engineer Management</p>
             <div class="perm-grid">
                 <label class="perm-toggle" id="toggle-documents">
                     <input type="checkbox" id="perm-documents">
@@ -227,6 +233,26 @@
                     <div>
                         <div class="perm-label">Contract</div>
                         <div class="perm-sub">contract.html</div>
+                    </div>
+                </label>
+                <label class="perm-toggle" id="toggle-driverquestionnaire">
+                    <input type="checkbox" id="perm-driverquestionnaire">
+                    <div class="perm-check">✓</div>
+                    <div>
+                        <div class="perm-label">Driver Questionnaire</div>
+                        <div class="perm-sub">view-driver-questionnaire-submissions.html</div>
+                    </div>
+                </label>
+            </div>
+
+            <p class="perm-section-label">Administration</p>
+            <div class="perm-grid">
+                <label class="perm-toggle" id="toggle-manageusers">
+                    <input type="checkbox" id="perm-manageusers">
+                    <div class="perm-check">✓</div>
+                    <div>
+                        <div class="perm-label">Manage Admin Users</div>
+                        <div class="perm-sub">userdatabase.html</div>
                     </div>
                 </label>
             </div>
@@ -269,9 +295,17 @@
     const createBtn = document.getElementById('createUserBtn');
     const msgEl     = document.getElementById('createMsg');
     const tableEl   = document.getElementById('usersTable');
-    const PAGES     = ['documents', 'personaldetails', 'contract'];
 
-    let selectedDocId   = null;
+    const PAGES = ['documents', 'personaldetails', 'contract', 'driverquestionnaire', 'manageusers'];
+    const PERM_LABELS = {
+        documents:           'Documents',
+        personaldetails:     'Personal Details',
+        contract:            'Contract',
+        driverquestionnaire: 'Driver Q',
+        manageusers:         'Manage Users'
+    };
+
+    let selectedDocId    = null;
     let selectedUserName = '';
     let allDocs = [];
 
@@ -288,8 +322,6 @@
                 return;
             }
 
-            const permLabels = { documents: 'Documents', personaldetails: 'Personal Details', contract: 'Contract' };
-
             let rows = '';
             allDocs.forEach(d => {
                 const date = d.createdAt
@@ -301,8 +333,8 @@
                 const perms = d.permissions || {};
                 const permBadges = PAGES.map(p =>
                     perms[p]
-                        ? `<span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;margin-right:3px;">${permLabels[p]}</span>`
-                        : `<span class="badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);margin-right:3px;opacity:0.5;">${permLabels[p]}</span>`
+                        ? `<span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;margin-right:3px;">${PERM_LABELS[p]}</span>`
+                        : `<span class="badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);margin-right:3px;opacity:0.5;">${PERM_LABELS[p]}</span>`
                 ).join('');
 
                 rows += `<tr data-id="${d.id}" data-name="${d.name || ''}" data-email="${d.email || ''}">
@@ -391,17 +423,15 @@
             msgSpan.className   = 'success-msg';
             msgSpan.textContent = `✓ Saved for ${selectedUserName}`;
 
-            // Update local cache & refresh badges in the row
             const idx = allDocs.findIndex(d => d.id === selectedDocId);
             if (idx !== -1) allDocs[idx].permissions = permissions;
 
-            const permLabels = { documents: 'Documents', personaldetails: 'Personal Details', contract: 'Contract' };
             const row = tableEl.querySelector(`tr[data-id="${selectedDocId}"]`);
             if (row) {
                 row.cells[3].innerHTML = PAGES.map(p =>
                     permissions[p]
-                        ? `<span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;margin-right:3px;">${permLabels[p]}</span>`
-                        : `<span class="badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);margin-right:3px;opacity:0.5;">${permLabels[p]}</span>`
+                        ? `<span class="badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;margin-right:3px;">${PERM_LABELS[p]}</span>`
+                        : `<span class="badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);margin-right:3px;opacity:0.5;">${PERM_LABELS[p]}</span>`
                 ).join('');
             }
         } catch (err) {
@@ -462,7 +492,13 @@
                 await addDoc(colRef, {
                     name, email,
                     authUid: userCred.user.uid,
-                    permissions: { documents: false, personaldetails: false, contract: false },
+                    permissions: {
+                        documents: false,
+                        personaldetails: false,
+                        contract: false,
+                        driverquestionnaire: false,
+                        manageusers: false
+                    },
                     createdAt: serverTimestamp()
                 });
             }
