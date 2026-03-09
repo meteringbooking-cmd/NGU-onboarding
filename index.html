@@ -75,28 +75,22 @@
         @keyframes spin{to{transform:rotate(360deg);}}
         .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
         @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
-        .section-locked {
-            position: relative; pointer-events: none;
-        }
-        .section-locked::after {
-            content: '';
-            position: absolute; inset: 0; border-radius: 16px;
-            background: rgba(10,22,40,0.65);
-            z-index: 10;
-        }
-        .lock-banner {
-            background: rgba(139,154,174,0.1); border: 1.5px solid rgba(139,154,174,0.3);
-            border-radius: 12px; padding: 1rem 1.4rem; margin-bottom: 1rem;
-            display: flex; align-items: center; gap: 0.8rem;
-            font-size: 0.9rem; color: var(--text-muted);
-        }
-        .lock-banner .lock-icon { font-size: 1.3rem; flex-shrink: 0; }
-        .lock-banner strong { color: var(--text-light); }
-        .certs-upload-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .cert-item { display: flex; flex-direction: column; gap: 0.5rem; }
+        .section-locked{position:relative;pointer-events:none;}
+        .section-locked::after{content:'';position:absolute;inset:0;border-radius:16px;background:rgba(10,22,40,0.65);z-index:10;}
+        .lock-banner{background:rgba(139,154,174,0.1);border:1.5px solid rgba(139,154,174,0.3);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;font-size:0.9rem;color:var(--text-muted);}
+        .lock-banner .lock-icon{font-size:1.3rem;flex-shrink:0;}
+        .lock-banner strong{color:var(--text-light);}
+        .certs-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+        .cert-item{display:flex;flex-direction:column;gap:0.5rem;}
+
+        /* Driver Questionnaire banner card */
+        .dq-card{background:linear-gradient(135deg,rgba(0,94,184,0.15) 0%,rgba(0,163,224,0.1) 100%);border:1.5px solid rgba(0,163,224,0.35);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;box-shadow:0 8px 25px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap;}
+        .dq-card-left{display:flex;align-items:center;gap:1rem;}
+        .dq-card-icon{width:46px;height:46px;border-radius:11px;background:rgba(0,163,224,0.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+        .dq-card h2{font-size:1.1rem;font-weight:700;margin-bottom:0.2rem;}
+        .dq-card p{font-size:0.82rem;color:var(--text-muted);}
+        .dq-btn{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;border:none;border-radius:11px;padding:0.75rem 1.6rem;font-size:0.92rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.22s;white-space:nowrap;text-decoration:none;display:inline-block;}
+        .dq-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,163,224,0.4);}
     </style>
 </head>
 <body>
@@ -136,14 +130,13 @@
         <div class="prog-step" id="prog-bank">Bank Details</div>
     </div>
 
-    <!-- All complete banner -->
     <div id="completeBanner">
         <div class="banner-icon">🎉</div>
         <h3>All documents submitted!</h3>
         <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
     </div>
 
-    <!-- ── Certificates upload (always unlocked) ── -->
+    <!-- Certificates (always unlocked) -->
     <div class="card" id="certsCard">
         <div class="card-header">
             <div class="card-icon icon-blue">📜</div>
@@ -152,17 +145,16 @@
         <hr class="divider">
         <div class="certs-upload-grid" id="certsGrid"></div>
         <button class="btn-add-cert" id="addCertBtn" style="margin-top:1rem;width:100%;padding:0.65rem;border-radius:10px;background:rgba(0,163,224,0.1);border:2px dashed rgba(0,163,224,0.4);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Another Certificate</button>
-        <div class="save-row" style="margin-top:1rem;">
-            <span class="save-msg" id="certsMsg"></span>
-        </div>
+        <div class="save-row" style="margin-top:1rem;"><span class="save-msg" id="certsMsg"></span></div>
     </div>
 
-    <!-- Lock banner shown when interview not yet passed -->
+    <!-- Lock banner -->
     <div id="lockBanner" class="lock-banner">
         <span class="lock-icon">🔒</span>
         <div><strong>Documents &amp; Bank Details are locked</strong><br>These sections will unlock once you have successfully passed your interview.</div>
     </div>
 
+    <!-- Your Documents -->
     <div class="card" id="docsCard">
         <div class="card-header">
             <div class="card-icon icon-blue">📎</div>
@@ -170,7 +162,6 @@
         </div>
         <hr class="divider">
         <div class="upload-grid">
-            <!-- Driving Licence Front -->
             <div>
                 <div class="upload-zone" id="zone-licence-front">
                     <input type="file" id="file-licence-front" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-front', this)">
@@ -182,7 +173,6 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-front">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-front" onclick="uploadFile('licence-front')" disabled>Upload</button>
             </div>
-            <!-- Driving Licence Back -->
             <div>
                 <div class="upload-zone" id="zone-licence-back">
                     <input type="file" id="file-licence-back" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-back', this)">
@@ -194,7 +184,6 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-back">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-back" onclick="uploadFile('licence-back')" disabled>Upload</button>
             </div>
-            <!-- Passport Cover -->
             <div>
                 <div class="upload-zone" id="zone-passport-cover">
                     <input type="file" id="file-passport-cover" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-cover', this)">
@@ -206,7 +195,6 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-cover">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-cover" onclick="uploadFile('passport-cover')" disabled>Upload</button>
             </div>
-            <!-- Passport Information -->
             <div>
                 <div class="upload-zone" id="zone-passport-info">
                     <input type="file" id="file-passport-info" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-info', this)">
@@ -218,7 +206,6 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-info">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-info" onclick="uploadFile('passport-info')" disabled>Upload</button>
             </div>
-            <!-- Proof of Address -->
             <div>
                 <div class="upload-zone" id="zone-address">
                     <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address', this)">
@@ -230,7 +217,6 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
             </div>
-            <!-- Proof of NI Number -->
             <div>
                 <div class="upload-zone" id="zone-ni-number">
                     <input type="file" id="file-ni-number" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('ni-number', this)">
@@ -245,6 +231,19 @@
         </div>
     </div>
 
+    <!-- ── Driver Questionnaire — sits right after Your Documents ── -->
+    <div class="dq-card">
+        <div class="dq-card-left">
+            <div class="dq-card-icon">🚗</div>
+            <div>
+                <h2>Driver Questionnaire</h2>
+                <p>Complete your driver questionnaire as part of the onboarding process</p>
+            </div>
+        </div>
+        <a href="driver-questionnaire.html" target="_blank" class="dq-btn">Open Questionnaire →</a>
+    </div>
+
+    <!-- Bank Details -->
     <div class="card" id="bankCard">
         <div class="card-header">
             <div class="card-icon icon-green">🏦</div>
@@ -260,22 +259,6 @@
         <div class="save-row">
             <button class="btn btn-save" id="saveBankBtn" style="padding:0.75rem 1.8rem;">Save Bank Details</button>
             <span class="save-msg" id="bankMsg"></span>
-        </div>
-    </div>
-
-    <!-- Driver Questionnaire link -->
-    <div class="card" style="border-color:rgba(0,163,224,0.3);background:linear-gradient(135deg,rgba(0,94,184,0.12) 0%,rgba(0,163,224,0.08) 100%);">
-        <div class="card-header" style="margin-bottom:0;">
-            <div class="card-icon icon-blue">🚗</div>
-            <div style="flex:1;">
-                <h2>Driver Questionnaire</h2>
-                <p>Complete your driver questionnaire as part of the onboarding process</p>
-            </div>
-            <a href="driver-questionnaire.html" target="_blank" style="text-decoration:none;">
-                <button class="btn" style="background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;padding:0.7rem 1.5rem;font-size:0.9rem;white-space:nowrap;">
-                    Open Questionnaire →
-                </button>
-            </a>
         </div>
     </div>
 </div>
@@ -304,7 +287,6 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // All document keys in the "Your Documents" section
     const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'ni-number'];
 
     let currentEngineer      = null;
@@ -392,9 +374,7 @@
         const grid = document.getElementById('certsGrid');
         grid.innerHTML = '';
         const existing = currentEngineer.certs_uploaded || [];
-        if (existing.length > 0) {
-            existing.forEach(c => addCertSlotUploaded(c));
-        }
+        if (existing.length > 0) { existing.forEach(c => addCertSlotUploaded(c)); }
         addCertSlot();
     }
 
