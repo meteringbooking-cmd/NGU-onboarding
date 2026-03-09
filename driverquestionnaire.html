@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Driver Questionnaire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary:#005EB8; --accent:#00A3E0; --bg-dark:#0A1628; --bg-card:#1a2942;
+            --bg-input:#0d1f3a; --text-light:#E8EDF2; --text-muted:#8B9AAE;
+            --border:#2a3f5f; --success:#10B981; --error:#EF4444; --warning:#F59E0B;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Work Sans',sans-serif;background:linear-gradient(135deg,var(--bg-dark) 0%,#0d1f3a 100%);color:var(--text-light);min-height:100vh;padding:2rem 1.5rem;}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(0,163,224,0.09) 0%,transparent 60%),radial-gradient(circle at 85% 75%,rgba(0,94,184,0.07) 0%,transparent 60%);pointer-events:none;z-index:-1;}
+
+        .page-wrap{max-width:780px;margin:0 auto;}
+        .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+        .logo{max-height:60px;}
+        .page-title{font-size:1.6rem;font-weight:700;background:linear-gradient(90deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .page-subtitle{font-size:0.85rem;color:var(--text-muted);font-family:'DM Mono',monospace;margin-top:0.2rem;}
+
+        .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+        .section-title{display:flex;align-items:center;gap:0.7rem;margin-bottom:1.4rem;}
+        .section-title .icon{width:38px;height:38px;border-radius:9px;background:rgba(0,163,224,0.15);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+        .section-title h2{font-size:1.1rem;font-weight:700;}
+        .section-title p{font-size:0.8rem;color:var(--text-muted);margin-top:0.1rem;}
+        .divider{border:none;border-top:1px solid var(--border);margin:0 0 1.4rem;}
+
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;}
+        .form-group{display:flex;flex-direction:column;gap:0.45rem;}
+        .form-group label{font-weight:600;font-size:0.88rem;color:var(--text-light);}
+        .form-group .hint{font-size:0.75rem;color:var(--text-muted);}
+        input[type="text"],input[type="date"],input[type="email"]{
+            width:100%;padding:0.8rem 1rem;background:var(--bg-input);border:2px solid var(--border);
+            border-radius:10px;color:white;font-size:0.95rem;font-family:inherit;transition:all 0.2s;
+            color-scheme:dark;
+        }
+        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
+        .age-badge{display:inline-block;background:rgba(0,163,224,0.12);border:1px solid rgba(0,163,224,0.3);color:var(--accent);font-size:0.8rem;font-weight:600;font-family:'DM Mono',monospace;padding:0.25rem 0.75rem;border-radius:20px;margin-top:0.3rem;}
+
+        /* Yes/No toggle */
+        .yn-group{display:flex;flex-direction:column;gap:0.5rem;}
+        .yn-group label.q-label{font-weight:600;font-size:0.9rem;line-height:1.4;}
+        .yn-toggle{display:flex;gap:0.6rem;margin-top:0.2rem;}
+        .yn-toggle input[type="radio"]{display:none;}
+        .yn-toggle label{padding:0.45rem 1.4rem;border-radius:8px;border:2px solid var(--border);background:var(--bg-input);font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.18s;user-select:none;}
+        .yn-toggle input[type="radio"]:checked + label.yes-lbl{border-color:var(--success);background:rgba(16,185,129,0.15);color:#6ee7b7;}
+        .yn-toggle input[type="radio"]:checked + label.no-lbl{border-color:rgba(0,163,224,0.6);background:rgba(0,163,224,0.12);color:var(--accent);}
+        .yn-toggle label:hover{border-color:var(--accent);}
+
+        /* Upload zone */
+        .upload-zone{border:2px dashed var(--border);border-radius:11px;padding:1.4rem 1rem;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:var(--bg-input);}
+        .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,163,224,0.05);}
+        .upload-zone.has-file{border-color:var(--success);border-style:solid;background:rgba(16,185,129,0.05);}
+        .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+        .upload-zone .uz-icon{font-size:1.6rem;margin-bottom:0.3rem;}
+        .upload-zone .uz-label{font-size:0.85rem;font-weight:600;margin-bottom:0.15rem;}
+        .upload-zone .uz-hint{font-size:0.72rem;color:var(--text-muted);}
+        .upload-zone .uz-fname{font-size:0.78rem;color:#6ee7b7;margin-top:0.4rem;font-family:'DM Mono',monospace;word-break:break-all;}
+        .upload-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+
+        /* DVLA link */
+        .dvla-link-box{background:rgba(0,163,224,0.08);border:1.5px solid rgba(0,163,224,0.25);border-radius:11px;padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;}
+        .dvla-link-box .dvla-icon{font-size:1.3rem;flex-shrink:0;}
+        .dvla-link-box a{color:var(--accent);font-weight:600;font-size:0.9rem;text-decoration:none;border-bottom:1px solid rgba(0,163,224,0.4);}
+        .dvla-link-box a:hover{color:#60a5fa;}
+        .dvla-link-box p{font-size:0.82rem;color:var(--text-muted);margin-top:0.15rem;}
+
+        /* Modal for DVLA */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+        .modal-overlay.open{display:flex;}
+        .modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.6);}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.4rem;border-bottom:1px solid var(--border);}
+        .modal-header h3{font-size:1rem;font-weight:700;}
+        .modal-close{background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;line-height:1;}
+        .modal-close:hover{color:var(--text-light);}
+        .modal-iframe{flex:1;border:none;border-radius:0 0 16px 16px;min-height:500px;}
+
+        /* Signature */
+        .sig-box{position:relative;}
+        canvas#sigCanvas{width:100%;height:160px;background:var(--bg-input);border:2px solid var(--border);border-radius:11px;cursor:crosshair;display:block;touch-action:none;}
+        canvas#sigCanvas:focus{outline:none;border-color:var(--accent);}
+        .sig-controls{display:flex;gap:0.7rem;margin-top:0.6rem;align-items:center;}
+        .sig-clear{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:8px;padding:0.4rem 1rem;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+        .sig-clear:hover{background:rgba(239,68,68,0.22);}
+        .sig-hint{font-size:0.75rem;color:var(--text-muted);}
+
+        /* Declaration */
+        .declaration-box{background:rgba(0,94,184,0.08);border:1.5px solid rgba(0,94,184,0.3);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.4rem;}
+        .declaration-box p{font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem;line-height:1.6;}
+        .declaration-box p:last-child{margin-bottom:0;}
+        .declaration-box strong{color:var(--text-light);}
+        .warning-box{background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.3);border-radius:10px;padding:0.9rem 1.2rem;margin-bottom:1.2rem;font-size:0.84rem;color:#fcd34d;font-weight:600;}
+
+        /* Buttons */
+        .btn{padding:0.9rem 2rem;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.22s;font-family:inherit;}
+        .btn-primary{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;width:100%;}
+        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,163,224,0.35);}
+        .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+        .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+
+        .submit-msg{margin-top:1rem;text-align:center;font-size:0.9rem;min-height:1.2rem;}
+        .submit-msg.ok{color:var(--success);}
+        .submit-msg.err{color:var(--error);}
+
+        /* Success screen */
+        #successScreen{display:none;text-align:center;padding:4rem 2rem;}
+        #successScreen .success-icon{font-size:4rem;margin-bottom:1rem;}
+        #successScreen h2{font-size:1.8rem;font-weight:700;color:#6ee7b7;margin-bottom:0.5rem;}
+        #successScreen p{color:var(--text-muted);font-size:0.95rem;}
+
+        @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.upload-grid-2{grid-template-columns:1fr;}}
+
+        /* Section with sub-questions indented */
+        .sub-questions{display:flex;flex-direction:column;gap:1.1rem;padding-left:0;}
+        .info-note{font-size:0.8rem;color:var(--text-muted);line-height:1.5;margin-bottom:1rem;font-style:italic;}
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <div class="page-header">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
+        <div>
+            <div class="page-title">Driver Questionnaire</div>
+            <div class="page-subtitle">Please complete all sections accurately</div>
+        </div>
+    </div>
+
+    <div id="formWrap">
+
+        <!-- 1. Personal Details -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">👤</div>
+                <div><h2>Personal Details</h2><p>Basic information about you</p></div>
+            </div>
+            <hr class="divider">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" id="firstName" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" id="lastName" placeholder="Smith" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" id="dob" required>
+                    <div id="ageDisplay"></div>
+                </div>
+                <div class="form-group">
+                    <label>Date Test Passed *</label>
+                    <input type="date" id="testPassed" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Driving Licence Details -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">🪪</div>
+                <div><h2>Driving Licence Details</h2></div>
+            </div>
+            <hr class="divider">
+            <p class="info-note">A licence check will be carried out and if necessary, a copy will be supplied to our insurers along with the results of this questionnaire. Please upload a copy of the front and back of your driving licence below.</p>
+            <div class="upload-grid-2">
+                <div class="form-group">
+                    <label>Licence — Front *</label>
+                    <div class="upload-zone" id="zone-lic-front">
+                        <input type="file" id="file-lic-front" accept=".jpg,.jpeg,.png,.pdf">
+                        <div class="uz-icon">🪪</div>
+                        <div class="uz-label">Front of Licence</div>
+                        <div class="uz-hint">JPG, PNG or PDF · max 10MB</div>
+                        <div class="uz-fname" id="fname-lic-front"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Licence — Back *</label>
+                    <div class="upload-zone" id="zone-lic-back">
+                        <input type="file" id="file-lic-back" accept=".jpg,.jpeg,.png,.pdf">
+                        <div class="uz-icon">🪪</div>
+                        <div class="uz-label">Back of Licence</div>
+                        <div class="uz-hint">JPG, PNG or PDF · max 10MB</div>
+                        <div class="uz-fname" id="fname-lic-back"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. DVLA Licence Check -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">🔍</div>
+                <div><h2>DVLA Licence Check Code</h2></div>
+            </div>
+            <hr class="divider">
+            <p class="info-note">Visit the website below to obtain a licence check code and upload the check code screenshot.</p>
+            <div class="dvla-link-box">
+                <span class="dvla-icon">🌐</span>
+                <div>
+                    <a href="#" id="dvlaLink">https://www.gov.uk/view-driving-licence</a>
+                    <p>Click to open the DVLA website and generate your licence check code</p>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:1.1rem;">
+                <div class="yn-group">
+                    <label class="q-label">I have read and understood the company's Fleet Policy &amp; Handbook</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="fleetPolicy" id="fleetPolicy-yes" value="yes">
+                        <label for="fleetPolicy-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="fleetPolicy" id="fleetPolicy-no" value="no">
+                        <label for="fleetPolicy-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">I give permission for a licence check to be conducted</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="licencePermission" id="licPerm-yes" value="yes">
+                        <label for="licPerm-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="licencePermission" id="licPerm-no" value="no">
+                        <label for="licPerm-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:1.3rem;">
+                <label>DVLA Licence Check Code Screenshot *</label>
+                <div class="upload-zone" id="zone-dvla">
+                    <input type="file" id="file-dvla" accept=".jpg,.jpeg,.png,.pdf">
+                    <div class="uz-icon">📸</div>
+                    <div class="uz-label">Upload Screenshot</div>
+                    <div class="uz-hint">JPG or PNG · max 10MB</div>
+                    <div class="uz-fname" id="fname-dvla"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Motoring History -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">🚗</div>
+                <div><h2>Motoring History</h2></div>
+            </div>
+            <hr class="divider">
+            <div class="sub-questions">
+                <div class="yn-group">
+                    <label class="q-label">Have you been involved in any motoring accident during the last 3 years?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="accidents" id="acc-yes" value="yes">
+                        <label for="acc-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="accidents" id="acc-no" value="no">
+                        <label for="acc-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Have you ever been convicted of any motoring offences or is any prosecution or Police enquiry pending?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="convictions" id="conv-yes" value="yes">
+                        <label for="conv-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="convictions" id="conv-no" value="no">
+                        <label for="conv-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Health -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">🏥</div>
+                <div><h2>Health &amp; Medical</h2></div>
+            </div>
+            <hr class="divider">
+            <div class="sub-questions">
+                <div class="yn-group">
+                    <label class="q-label">Do you suffer from (or have any recent history of) defective vision or hearing or from Epilepsy, Diabetes, Asthma, Heart Complaint or other physical or mental infirmity?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="healthConditions" id="health-yes" value="yes">
+                        <label for="health-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="healthConditions" id="health-no" value="no">
+                        <label for="health-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Do you suffer from any disease or infirmity necessitating the use of mechanical aids or the prolonged use of drugs?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="mechanical" id="mech-yes" value="yes">
+                        <label for="mech-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="mechanical" id="mech-no" value="no">
+                        <label for="mech-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Do you suffer from any medical condition that your doctor advised you to refer to the DVLA?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="dvlaCondition" id="dvlac-yes" value="yes">
+                        <label for="dvlac-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="dvlaCondition" id="dvlac-no" value="no">
+                        <label for="dvlac-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Has the DVLA restricted your licence in any way?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="dvlaRestricted" id="dvlar-yes" value="yes">
+                        <label for="dvlar-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="dvlaRestricted" id="dvlar-no" value="no">
+                        <label for="dvlar-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Insurance History -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">🛡️</div>
+                <div><h2>Insurance History</h2></div>
+            </div>
+            <hr class="divider">
+            <p class="info-note">If you hold or have held motor insurance in your own name, or have driven a vehicle whilst employed elsewhere, has any insurance company or underwriter:</p>
+            <div class="sub-questions">
+                <div class="yn-group">
+                    <label class="q-label">Declined your proposal?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="insDeclined" id="insdec-yes" value="yes">
+                        <label for="insdec-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="insDeclined" id="insdec-no" value="no">
+                        <label for="insdec-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Cancelled your policy?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="insCancelled" id="inscan-yes" value="yes">
+                        <label for="inscan-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="insCancelled" id="inscan-no" value="no">
+                        <label for="inscan-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Refused to renew?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="insRenew" id="insren-yes" value="yes">
+                        <label for="insren-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="insRenew" id="insren-no" value="no">
+                        <label for="insren-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Required increased premium?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="insPremium" id="insprem-yes" value="yes">
+                        <label for="insprem-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="insPremium" id="insprem-no" value="no">
+                        <label for="insprem-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+                <div class="yn-group">
+                    <label class="q-label">Imposed special terms or excesses?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="insTerms" id="insterms-yes" value="yes">
+                        <label for="insterms-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="insTerms" id="insterms-no" value="no">
+                        <label for="insterms-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Other -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">📋</div>
+                <div><h2>Additional Questions</h2></div>
+            </div>
+            <hr class="divider">
+            <div class="sub-questions">
+                <div class="yn-group">
+                    <label class="q-label">Might you ever use a vehicle for any business purposes other than the business of this company?</label>
+                    <div class="yn-toggle">
+                        <input type="radio" name="otherBusiness" id="othbiz-yes" value="yes">
+                        <label for="othbiz-yes" class="yes-lbl">Yes</label>
+                        <input type="radio" name="otherBusiness" id="othbiz-no" value="no">
+                        <label for="othbiz-no" class="no-lbl">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Declaration & Signature -->
+        <div class="card">
+            <div class="section-title">
+                <div class="icon">✍️</div>
+                <div><h2>Declaration &amp; Signature</h2></div>
+            </div>
+            <hr class="divider">
+            <div class="warning-box">⚠️ IMPORTANT — If the answer to any question is 'YES', full details must be supplied in writing.</div>
+            <div class="declaration-box">
+                <p><strong>I hereby declare and warrant that the above statements and particulars are true and that there are no other material facts, which should be disclosed.</strong></p>
+                <p>I understand that if this is not the case, the insurance will be invalid and in the event of an accident I could be liable for the all costs arising.</p>
+                <p>I understand that I must take all reasonable steps to avoid loss or damage to any vehicle that I drive.</p>
+                <p>I understand that this information will be treated in confidence and only disclosed, where necessary, to the insurers.</p>
+                <p><strong>I agree to advise immediately any changes in particulars.</strong></p>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label>Signature *</label>
+                <div class="sig-box">
+                    <canvas id="sigCanvas" width="700" height="160" tabindex="0"></canvas>
+                    <div class="sig-controls">
+                        <button type="button" class="sig-clear" id="sigClearBtn">Clear</button>
+                        <span class="sig-hint">Sign above using your mouse or finger</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Date *</label>
+                <input type="date" id="signDate" style="max-width:220px;">
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn btn-primary" id="submitBtn">Submit Questionnaire</button>
+        <div class="submit-msg" id="submitMsg"></div>
+        <div style="height:3rem;"></div>
+    </div><!-- /formWrap -->
+
+    <div id="successScreen">
+        <div class="success-icon">✅</div>
+        <h2>Questionnaire Submitted</h2>
+        <p>Thank you — your driver questionnaire has been received and stored securely.<br>The NGU team will review your submission shortly.</p>
+    </div>
+</div>
+
+<!-- DVLA Modal -->
+<div class="modal-overlay" id="dvlaModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>🌐 DVLA — View Driving Licence</h3>
+            <button class="modal-close" id="dvlaClose">✕</button>
+        </div>
+        <iframe class="modal-iframe" id="dvlaFrame" src="" title="DVLA View Driving Licence"></iframe>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+    authDomain: "oesperformance-a54c0.firebaseapp.com",
+    projectId: "oesperformance-a54c0",
+    storageBucket: "oesperformance-a54c0.firebasestorage.app",
+    messagingSenderId: "484894102454",
+    appId: "1:484894102454:web:17535ee497eac2d90d6717"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Age from DOB ─────────────────────────────────────────────────────────────
+document.getElementById('dob').addEventListener('change', function() {
+    const dobVal = this.value;
+    if (!dobVal) { document.getElementById('ageDisplay').innerHTML = ''; return; }
+    const dob  = new Date(dobVal);
+    const now  = new Date();
+    let age = now.getFullYear() - dob.getFullYear();
+    const m = now.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
+    document.getElementById('ageDisplay').innerHTML = `<span class="age-badge">Age: ${age}</span>`;
+});
+
+// Default sign date to today
+document.getElementById('signDate').value = new Date().toISOString().split('T')[0];
+
+// ── Upload zones ─────────────────────────────────────────────────────────────
+const uploadZones = [
+    { zoneId: 'zone-lic-front', fileId: 'file-lic-front', fnameId: 'fname-lic-front' },
+    { zoneId: 'zone-lic-back',  fileId: 'file-lic-back',  fnameId: 'fname-lic-back'  },
+    { zoneId: 'zone-dvla',      fileId: 'file-dvla',      fnameId: 'fname-dvla'      }
+];
+uploadZones.forEach(({ zoneId, fileId, fnameId }) => {
+    const input = document.getElementById(fileId);
+    const zone  = document.getElementById(zoneId);
+    const fname = document.getElementById(fnameId);
+    input.addEventListener('change', () => {
+        if (!input.files[0]) return;
+        if (input.files[0].size > 10 * 1024 * 1024) { alert('Max 10MB'); input.value=''; return; }
+        fname.textContent = `📎 ${input.files[0].name}`;
+        zone.classList.add('has-file');
+    });
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) {
+            const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]);
+            input.files = dt.files;
+            input.dispatchEvent(new Event('change'));
+        }
+    });
+});
+
+// ── DVLA Modal ────────────────────────────────────────────────────────────────
+document.getElementById('dvlaLink').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('dvlaFrame').src = 'https://www.gov.uk/view-driving-licence';
+    document.getElementById('dvlaModal').classList.add('open');
+});
+document.getElementById('dvlaClose').addEventListener('click', () => {
+    document.getElementById('dvlaModal').classList.remove('open');
+    document.getElementById('dvlaFrame').src = '';
+});
+document.getElementById('dvlaModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('dvlaModal')) {
+        document.getElementById('dvlaModal').classList.remove('open');
+        document.getElementById('dvlaFrame').src = '';
+    }
+});
+
+// ── Signature Canvas ──────────────────────────────────────────────────────────
+const canvas = document.getElementById('sigCanvas');
+const ctx    = canvas.getContext('2d');
+let drawing  = false;
+let sigEmpty = true;
+
+function resizeCanvas() {
+    const data = canvas.toDataURL();
+    canvas.width = canvas.offsetWidth;
+    const img = new Image(); img.src = data;
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    ctx.strokeStyle = '#00A3E0'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+canvas.addEventListener('mousedown',  e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
+canvas.addEventListener('mousemove',  e => { if (!drawing) return; sigEmpty = false; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+canvas.addEventListener('mouseup',    () => drawing = false);
+canvas.addEventListener('mouseleave', () => drawing = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); }, { passive: false });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; sigEmpty = false; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, { passive: false });
+canvas.addEventListener('touchend',   () => drawing = false);
+
+document.getElementById('sigClearBtn').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    sigEmpty = true;
+});
+
+// ── File to base64 ────────────────────────────────────────────────────────────
+function fileToBase64(file) {
+    return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload  = () => res(r.result);
+        r.onerror = () => rej(new Error('Could not read file'));
+        r.readAsDataURL(file);
+    });
+}
+
+function radioVal(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn   = document.getElementById('submitBtn');
+    const msgEl = document.getElementById('submitMsg');
+    msgEl.textContent = ''; msgEl.className = 'submit-msg';
+
+    // Basic validation
+    const firstName  = document.getElementById('firstName').value.trim();
+    const lastName   = document.getElementById('lastName').value.trim();
+    const dob        = document.getElementById('dob').value;
+    const testPassed = document.getElementById('testPassed').value;
+    const signDate   = document.getElementById('signDate').value;
+
+    if (!firstName || !lastName || !dob || !testPassed || !signDate) {
+        msgEl.className = 'submit-msg err'; msgEl.textContent = '⚠ Please fill in all required personal detail fields.'; return;
+    }
+    if (sigEmpty) {
+        msgEl.className = 'submit-msg err'; msgEl.textContent = '⚠ Please provide your signature before submitting.'; return;
+    }
+
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+    try {
+        // Read files
+        const licFrontFile = document.getElementById('file-lic-front').files[0];
+        const licBackFile  = document.getElementById('file-lic-back').files[0];
+        const dvlaFile     = document.getElementById('file-dvla').files[0];
+
+        const licFront = licFrontFile ? await fileToBase64(licFrontFile) : null;
+        const licBack  = licBackFile  ? await fileToBase64(licBackFile)  : null;
+        const dvlaShot = dvlaFile     ? await fileToBase64(dvlaFile)     : null;
+
+        // Calc age
+        const dobDate = new Date(dob);
+        const now = new Date();
+        let age = now.getFullYear() - dobDate.getFullYear();
+        const m = now.getMonth() - dobDate.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < dobDate.getDate())) age--;
+
+        const signature = canvas.toDataURL('image/png');
+
+        const payload = {
+            firstName, lastName, dob, age,
+            testPassed, signDate, signature,
+            licFrontFilename: licFrontFile ? licFrontFile.name : null,
+            licBackFilename:  licBackFile  ? licBackFile.name  : null,
+            dvlaShotFilename: dvlaFile     ? dvlaFile.name     : null,
+            licFront, licBack, dvlaShot,
+            fleetPolicy:      radioVal('fleetPolicy'),
+            licencePermission:radioVal('licencePermission'),
+            accidents:        radioVal('accidents'),
+            convictions:      radioVal('convictions'),
+            healthConditions: radioVal('healthConditions'),
+            mechanical:       radioVal('mechanical'),
+            dvlaCondition:    radioVal('dvlaCondition'),
+            dvlaRestricted:   radioVal('dvlaRestricted'),
+            insDeclined:      radioVal('insDeclined'),
+            insCancelled:     radioVal('insCancelled'),
+            insRenew:         radioVal('insRenew'),
+            insPremium:       radioVal('insPremium'),
+            insTerms:         radioVal('insTerms'),
+            otherBusiness:    radioVal('otherBusiness'),
+            submittedAt: serverTimestamp()
+        };
+
+        await addDoc(collection(db, "Driver Questionnaire"), payload);
+
+        document.getElementById('formWrap').style.display    = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+
+    } catch (err) {
+        msgEl.className   = 'submit-msg err';
+        msgEl.textContent = '✗ Submission failed: ' + err.message;
+        btn.disabled    = false;
+        btn.textContent = 'Submit Questionnaire';
+    }
+});
+</script>
+</body>
+</html>
