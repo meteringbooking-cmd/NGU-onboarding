@@ -273,7 +273,7 @@
         updateProfile, onAuthStateChanged, signOut
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {
-        getFirestore, collection, addDoc, getDocs, doc, updateDoc, serverTimestamp
+        getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, where, serverTimestamp
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -289,7 +289,18 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
+    onAuthStateChanged(auth, async user => {
+        if (!user) { window.location.href = 'index.html'; return; }
+        try {
+            const q    = query(collection(db, "NGUO Database"), where("authUid", "==", user.uid));
+            const snap = await getDocs(q);
+            const perms = snap.empty ? {} : (snap.docs[0].data().permissions || {});
+            if (!perms.manageusers) { window.location.href = 'index.html'; return; }
+        } catch (err) {
+            console.warn('Permission check failed:', err);
+            window.location.href = 'index.html';
+        }
+    });
 
     const colRef    = collection(db, "NGUO Database");
     const createBtn = document.getElementById('createUserBtn');
