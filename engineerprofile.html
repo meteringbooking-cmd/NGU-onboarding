@@ -578,12 +578,40 @@
                 </select>
             </div>
             <div class="msg" id="ecMsg"></div>
-            <button class="btn btn-primary btn-full" id="ecSubmitBtn" style="margin-top:1rem;">Submit &amp; Finish</button>
+            <button class="btn btn-primary btn-full" id="ecSubmitBtn" style="margin-top:1rem;">Next &rarr;</button>
         </div>
     </div>
 
-    <!-- ── STEP 9: Thank You ── -->
+    <!-- ── STEP 9: Personal Details ── -->
     <div class="page" id="step-9">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon" style="background:rgba(16,185,129,0.15);">🪪</div>
+                    <div>
+                        <div class="card-title">Personal Details</div>
+                        <div class="card-subtitle">Your date of birth and National Insurance number</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="personal-dob">
+                </div>
+                <div class="form-group">
+                    <label>National Insurance Number</label>
+                    <input type="text" id="personal-ni" placeholder="e.g. AB 12 34 56 C" maxlength="13">
+                </div>
+            </div>
+            <div class="msg" id="personalMsg"></div>
+            <button class="btn btn-primary btn-full" id="personalSubmitBtn" style="margin-top:1rem;">Submit &amp; Finish</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 10: Thank You ── -->
+    <div class="page" id="step-10">
         <div class="card">
             <div class="thankyou-box">
                 <div class="ty-icon">🎉</div>
@@ -625,9 +653,9 @@
 
     let currentEngineer = null;
     let currentStep     = 1;
-    const TOTAL_STEPS   = 9;
+    const TOTAL_STEPS   = 10;
 
-    const STEP_LABELS = ['Driver Q', 'Pension', 'P45', 'HMRC', 'Uniform', 'Address', 'Holidays', 'Emergency', 'Complete'];
+    const STEP_LABELS = ['Driver Q', 'Pension', 'P45', 'HMRC', 'Uniform', 'Address', 'Holidays', 'Emergency', 'Personal', 'Complete'];
 
     // ── P45 file state ──
     let p45File     = null;
@@ -1225,9 +1253,42 @@
         try {
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
                 emergency_contact: { name, number, relationship },
-                profile_completedAt: serverTimestamp()
+                emergency_savedAt: serverTimestamp()
             });
             showStep(9);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Next \u2192';
+        }
+    });
+
+    // \u2550\u2550\u2550\u2550 STEP 9 \u2014 PERSONAL DETAILS (DOB & NI) \u2550\u2550\u2550\u2550
+    document.getElementById('personalSubmitBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('personalSubmitBtn');
+        const msgEl = document.getElementById('personalMsg');
+        msgEl.textContent = '';
+
+        const dob = document.getElementById('personal-dob').value;
+        const ni  = document.getElementById('personal-ni').value.trim().toUpperCase();
+
+        if (!dob || !ni) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Please enter both your date of birth and NI number.';
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span> Submitting\u2026';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                personal_dob: dob,
+                personal_ni:  ni,
+                profile_completedAt: serverTimestamp()
+            });
+            showStep(10);
         } catch (err) {
             msgEl.className   = 'msg err';
             msgEl.textContent = 'Error saving: ' + err.message;
