@@ -23,7 +23,6 @@
             --error: #EF4444;
             --warning: #F59E0B;
 
-            /* Campaign colours */
             --ss-oes: #00A3E0;
             --ss-sp:  #818CF8;
             --cal-sp: #10B981;
@@ -55,7 +54,6 @@
         }
         .subtitle { text-align: center; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 3rem; }
 
-        /* Nav bar */
         .protected-bar {
             background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.3);
             border-radius: 12px; padding: 1rem 1.4rem; margin: 0 0 2.5rem;
@@ -63,7 +61,6 @@
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
         }
 
-        /* Cards */
         .card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 16px; padding: 2rem 2.2rem;
@@ -78,8 +75,8 @@
             display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
             background: rgba(0,163,224,0.15); flex-shrink: 0;
         }
+        .card-title-icon.orange { background: rgba(245,158,11,0.15); }
 
-        /* Campaign tabs */
         .campaign-tabs {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 0.8rem; margin-bottom: 2rem;
@@ -97,12 +94,10 @@
             color: var(--text-muted); font-weight: 400;
         }
         .campaign-tab:hover { border-color: var(--accent); color: var(--text-light); }
-
         .campaign-tab.active-ss-oes { border-color: var(--ss-oes); background: rgba(0,163,224,0.1); color: #7dd3fc; }
         .campaign-tab.active-ss-sp  { border-color: var(--ss-sp);  background: rgba(129,140,248,0.1); color: #c4b5fd; }
         .campaign-tab.active-cal-sp { border-color: var(--cal-sp); background: rgba(16,185,129,0.1); color: #6ee7b7; }
 
-        /* Upload zone */
         .upload-section { margin-bottom: 1.5rem; }
         .upload-zone {
             border: 2px dashed var(--border); border-radius: 12px;
@@ -122,7 +117,6 @@
         .upload-msg.ok  { color: var(--success); }
         .upload-msg.err { color: var(--error); }
 
-        /* Buttons */
         .btn {
             padding: 0.8rem 1.8rem; border: none; border-radius: 10px;
             font-size: 0.95rem; font-weight: 600; cursor: pointer;
@@ -134,14 +128,48 @@
         .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
         .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
 
-        /* Spinner */
         .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 5px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Divider */
         .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
-        /* Documents list */
+        /* ── HR Documents grid ── */
+        .hr-docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+        .hr-doc-slot { display: flex; flex-direction: column; gap: 0.5rem; }
+        .hr-doc-slot label {
+            font-weight: 700; font-size: 0.88rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .hr-doc-slot label .slot-icon { font-size: 1.1rem; }
+        .hr-upload-zone {
+            border: 2px dashed var(--border); border-radius: 11px;
+            padding: 1.4rem 0.8rem; text-align: center; cursor: pointer;
+            transition: all 0.22s; position: relative; background: var(--bg-input);
+            display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+        }
+        .hr-upload-zone:hover, .hr-upload-zone.dragover { border-color: var(--warning); background: rgba(245,158,11,0.04); }
+        .hr-upload-zone.has-file { border-style: solid; border-color: var(--success); background: rgba(16,185,129,0.05); }
+        .hr-upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+        .hr-zone-icon { font-size: 1.6rem; }
+        .hr-zone-hint { font-size: 0.75rem; color: var(--text-muted); }
+        .hr-zone-filename { font-size: 0.78rem; color: #6ee7b7; font-family: 'DM Mono', monospace; word-break: break-all; margin-top: 0.2rem; }
+        .upload-status { display: inline-block; font-size: 0.75rem; font-weight: 600; padding: 0.18rem 0.6rem; border-radius: 20px; }
+        .status-saved   { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
+        .status-pending { background: rgba(245,158,11,0.2);  color: #fcd34d; }
+        .status-none    { background: rgba(139,154,174,0.1); color: var(--text-muted); }
+        .btn-hr-upload {
+            padding: 0.5rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s; border: 2px solid rgba(16,185,129,0.4);
+            background: rgba(16,185,129,0.12); color: #6ee7b7;
+        }
+        .btn-hr-upload:hover:not(:disabled) { background: rgba(16,185,129,0.22); }
+        .btn-hr-upload:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        /* ── Docs list ── */
         .docs-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
@@ -159,10 +187,7 @@
         .doc-item:hover { border-color: rgba(0,163,224,0.35); }
         .doc-item-icon { font-size: 1.5rem; flex-shrink: 0; }
         .doc-item-info { flex: 1; min-width: 0; }
-        .doc-item-name {
-            font-weight: 600; font-size: 0.9rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
+        .doc-item-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .doc-item-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; font-family: 'DM Mono', monospace; }
         .doc-item-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
 
@@ -179,19 +204,16 @@
         }
         .btn-delete-doc:hover { background: rgba(239,68,68,0.2); border-color: var(--error); }
 
-        .campaign-badge {
-            display: inline-block; padding: 0.18rem 0.65rem;
-            border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap;
-        }
+        .campaign-badge { display: inline-block; padding: 0.18rem 0.65rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
         .badge-ss-oes  { background: rgba(0,163,224,0.18);   color: #7dd3fc; }
         .badge-ss-sp   { background: rgba(129,140,248,0.18); color: #c4b5fd; }
         .badge-cal-sp  { background: rgba(16,185,129,0.18);  color: #6ee7b7; }
+        .badge-hr      { background: rgba(245,158,11,0.18);  color: #fcd34d; }
 
         .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
         .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
         .empty-state p { font-size: 0.9rem; }
 
-        /* Confirm overlay */
         .overlay {
             display: none; position: fixed; inset: 0; z-index: 100;
             background: rgba(0,0,0,0.75);
@@ -222,7 +244,6 @@
         }
         .btn-confirm-cancel:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* Filter pills */
         .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
         .filter-pill {
             padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
@@ -235,6 +256,7 @@
         @media (max-width: 600px) {
             .campaign-tabs { grid-template-columns: 1fr; }
             .doc-item-actions { flex-direction: column; }
+            .hr-docs-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -255,14 +277,13 @@
         </div>
     </div>
 
-    <!-- ── Upload Card ── -->
+    <!-- ── Upload Contract Card ── -->
     <div class="card">
         <div class="card-title">
             <div class="card-title-icon">📤</div>
             Upload Contract Document
         </div>
 
-        <!-- Campaign selector -->
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.9rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">1. Select Campaign</p>
         <div class="campaign-tabs">
             <button class="campaign-tab" data-campaign="Sureserve - OES" data-key="ss-oes">
@@ -282,7 +303,6 @@
             </button>
         </div>
 
-        <!-- Upload zone -->
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.9rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">2. Choose File</p>
         <div class="upload-section">
             <div class="upload-zone" id="uploadZone">
@@ -300,6 +320,71 @@
         </div>
     </div>
 
+    <!-- ── HR Documents Card ── -->
+    <div class="card">
+        <div class="card-title">
+            <div class="card-title-icon orange">📋</div>
+            HR Documents
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.4rem;">Upload the engineer's HR-related documents. Each document type is stored separately.</p>
+
+        <div class="hr-docs-grid">
+
+            <!-- Pension Letter -->
+            <div class="hr-doc-slot">
+                <label><span class="slot-icon">🏦</span> Pension Letter</label>
+                <div class="hr-upload-zone" id="hr-zone-pension">
+                    <input type="file" id="hr-file-pension" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <div class="hr-zone-icon">📩</div>
+                    <div style="font-size:0.8rem; font-weight:600;">Drop or click to upload</div>
+                    <div class="hr-zone-hint">PDF, Word or image · max 20MB</div>
+                    <div class="hr-zone-filename" id="hr-fname-pension"></div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
+                    <span class="upload-status status-none" id="hr-status-pension">Not uploaded</span>
+                    <button class="btn-hr-upload" id="hr-upload-btn-pension" onclick="uploadHRDoc('pension','Pension Letter')" disabled>Upload</button>
+                </div>
+            </div>
+
+            <!-- P45 Form -->
+            <div class="hr-doc-slot">
+                <label><span class="slot-icon">📝</span> P45 Form</label>
+                <div class="hr-upload-zone" id="hr-zone-p45">
+                    <input type="file" id="hr-file-p45" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <div class="hr-zone-icon">📄</div>
+                    <div style="font-size:0.8rem; font-weight:600;">Drop or click to upload</div>
+                    <div class="hr-zone-hint">PDF, Word or image · max 20MB</div>
+                    <div class="hr-zone-filename" id="hr-fname-p45"></div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
+                    <span class="upload-status status-none" id="hr-status-p45">Not uploaded</span>
+                    <button class="btn-hr-upload" id="hr-upload-btn-p45" onclick="uploadHRDoc('p45','P45 Form')" disabled>Upload</button>
+                </div>
+            </div>
+
+            <!-- HMRC Document -->
+            <div class="hr-doc-slot">
+                <label><span class="slot-icon">🏛️</span> HMRC Document</label>
+                <div class="hr-upload-zone" id="hr-zone-hmrc">
+                    <input type="file" id="hr-file-hmrc" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <div class="hr-zone-icon">📃</div>
+                    <div style="font-size:0.8rem; font-weight:600;">Drop or click to upload</div>
+                    <div class="hr-zone-hint">PDF, Word or image · max 20MB</div>
+                    <div class="hr-zone-filename" id="hr-fname-hmrc"></div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
+                    <span class="upload-status status-none" id="hr-status-hmrc">Not uploaded</span>
+                    <button class="btn-hr-upload" id="hr-upload-btn-hmrc" onclick="uploadHRDoc('hmrc','HMRC Document')" disabled>Upload</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="margin-top:1rem; min-height:1.4rem;">
+            <span class="upload-msg" id="hrMsg"></span>
+        </div>
+    </div>
+
     <!-- ── Documents Card ── -->
     <div class="card">
         <div class="card-title">
@@ -307,12 +392,12 @@
             Contract Documents
         </div>
 
-        <!-- Filter pills -->
         <div class="filter-row">
-            <button class="filter-pill active" data-filter="all">All Campaigns</button>
+            <button class="filter-pill active" data-filter="all">All</button>
             <button class="filter-pill" data-filter="Sureserve - OES">Sureserve - OES</button>
             <button class="filter-pill" data-filter="Sureserve - SP">Sureserve - SP</button>
             <button class="filter-pill" data-filter="Calisen - SP">Calisen - SP</button>
+            <button class="filter-pill" data-filter="HR">HR Documents</button>
         </div>
 
         <div id="docList">
@@ -362,7 +447,6 @@
 
     const colRef  = collection(db, "NGUO contract");
 
-    // ── Auth gate ─────────────────────────────────────────────────────────────
     onAuthStateChanged(auth, user => { if (!user) window.location.href = 'index.html'; });
 
     let selectedCampaign = null;
@@ -373,12 +457,82 @@
     let pendingDeleteStoragePath = null;
     let pendingDeleteName = '';
 
+    // ── HR doc file staging ───────────────────────────────────────────────────
+    const HR_KEYS = ['pension', 'p45', 'hmrc'];
+    const hrFiles = {};
+
+    HR_KEYS.forEach(key => {
+        document.getElementById(`hr-file-${key}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            if (this.files[0].size > 20 * 1024 * 1024) { alert('Max 20MB.'); this.value=''; return; }
+            hrFiles[key] = this.files[0];
+            document.getElementById(`hr-fname-${key}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`hr-status-${key}`).textContent  = 'Ready to upload';
+            document.getElementById(`hr-status-${key}`).className    = 'upload-status status-pending';
+            document.getElementById(`hr-upload-btn-${key}`).disabled = false;
+            document.getElementById(`hr-zone-${key}`).classList.remove('has-file');
+        });
+    });
+
+    window.uploadHRDoc = async function(key, label) {
+        const file = hrFiles[key];
+        if (!file) return;
+
+        const upBtn  = document.getElementById(`hr-upload-btn-${key}`);
+        const status = document.getElementById(`hr-status-${key}`);
+        const zone   = document.getElementById(`hr-zone-${key}`);
+        const msgEl  = document.getElementById('hrMsg');
+
+        upBtn.disabled     = true;
+        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
+        status.textContent = 'Uploading…';
+        status.className   = 'upload-status status-pending';
+        msgEl.textContent  = '';
+
+        try {
+            const safeName    = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+            const storagePath = `hr_documents/${key}/${safeName}`;
+            const storageRef  = ref(storage, storagePath);
+            const snapshot    = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            await addDoc(colRef, {
+                campaign:    'HR',
+                hrDocType:   label,
+                fileName:    file.name,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                fileSize:    file.size,
+                uploadedAt:  serverTimestamp()
+            });
+
+            delete hrFiles[key];
+            status.textContent = '✓ Uploaded';
+            status.className   = 'upload-status status-saved';
+            zone.classList.add('has-file');
+            upBtn.textContent  = 'Re-upload';
+            upBtn.disabled     = false;
+
+            msgEl.className   = 'upload-msg ok';
+            msgEl.textContent = `✓ ${label} uploaded successfully`;
+            setTimeout(() => { msgEl.textContent = ''; }, 3000);
+
+            await loadDocs();
+
+        } catch (err) {
+            status.textContent = '✗ Failed';
+            status.className   = 'upload-status status-none';
+            upBtn.textContent  = 'Retry';
+            upBtn.disabled     = false;
+            msgEl.className    = 'upload-msg err';
+            msgEl.textContent  = 'Upload failed: ' + err.message;
+        }
+    };
+
     // ── Campaign tab selection ────────────────────────────────────────────────
     document.querySelectorAll('.campaign-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            document.querySelectorAll('.campaign-tab').forEach(t => {
-                t.className = 'campaign-tab';
-            });
+            document.querySelectorAll('.campaign-tab').forEach(t => { t.className = 'campaign-tab'; });
             const key = tab.dataset.key;
             tab.classList.add(`active-${key}`);
             selectedCampaign = tab.dataset.campaign;
@@ -386,10 +540,10 @@
         });
     });
 
-    // ── File input ────────────────────────────────────────────────────────────
-    const fileInput       = document.getElementById('fileInput');
-    const selectedFileEl  = document.getElementById('selectedFileName');
-    const uploadZone      = document.getElementById('uploadZone');
+    // ── Contract file input ───────────────────────────────────────────────────
+    const fileInput      = document.getElementById('fileInput');
+    const selectedFileEl = document.getElementById('selectedFileName');
+    const uploadZone     = document.getElementById('uploadZone');
 
     fileInput.addEventListener('change', () => {
         if (fileInput.files[0]) {
@@ -406,7 +560,6 @@
         checkUploadReady();
     });
 
-    // Drag and drop
     uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
     uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
     uploadZone.addEventListener('drop', e => {
@@ -424,7 +577,7 @@
         document.getElementById('uploadBtn').disabled = !(selectedCampaign && selectedFile);
     }
 
-    // ── Upload ────────────────────────────────────────────────────────────────
+    // ── Upload contract ───────────────────────────────────────────────────────
     document.getElementById('uploadBtn').addEventListener('click', async () => {
         if (!selectedCampaign || !selectedFile) return;
 
@@ -454,9 +607,7 @@
             msgEl.className   = 'upload-msg ok';
             msgEl.textContent = `✓ "${selectedFile.name}" uploaded to ${selectedCampaign}`;
 
-            // Reset file
-            fileInput.value = '';
-            selectedFile    = null;
+            fileInput.value = ''; selectedFile = null;
             selectedFileEl.textContent = '';
             uploadZone.style.borderStyle = '';
             uploadZone.style.borderColor = '';
@@ -496,8 +647,11 @@
     }
 
     function renderDocs() {
-        const filtered = activeFilter === 'all' ? allDocs : allDocs.filter(d => d.campaign === activeFilter);
-        const listEl   = document.getElementById('docList');
+        const filtered = activeFilter === 'all'
+            ? allDocs
+            : allDocs.filter(d => d.campaign === activeFilter);
+
+        const listEl = document.getElementById('docList');
 
         if (filtered.length === 0) {
             listEl.innerHTML = `
@@ -511,33 +665,43 @@
         const badgeMap = {
             'Sureserve - OES': 'badge-ss-oes',
             'Sureserve - SP':  'badge-ss-sp',
-            'Calisen - SP':    'badge-cal-sp'
+            'Calisen - SP':    'badge-cal-sp',
+            'HR':              'badge-hr'
+        };
+        const badgeLabel = {
+            'Sureserve - OES': 'Sureserve - OES',
+            'Sureserve - SP':  'Sureserve - SP',
+            'Calisen - SP':    'Calisen - SP',
+            'HR':              'HR'
         };
 
-        const iconMap = (name) => {
-            const ext = name.split('.').pop().toLowerCase();
-            if (['pdf'].includes(ext))                   return '📄';
-            if (['doc','docx'].includes(ext))            return '📝';
-            if (['xls','xlsx'].includes(ext))            return '📊';
+        const iconMap = name => {
+            const ext = (name || '').split('.').pop().toLowerCase();
+            if (ext === 'pdf') return '📄';
+            if (['doc','docx'].includes(ext)) return '📝';
+            if (['xls','xlsx'].includes(ext)) return '📊';
             if (['jpg','jpeg','png','gif'].includes(ext)) return '🖼️';
             return '📎';
         };
 
         listEl.innerHTML = `<div class="doc-list">${filtered.map(d => {
-            const date     = d.uploadedAt ? new Date(d.uploadedAt.toMillis()).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
-            const sizeKB   = d.fileSize ? (d.fileSize / 1024).toFixed(0) + ' KB' : '';
+            const date   = d.uploadedAt
+                ? new Date(d.uploadedAt.toMillis()).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
+                : '—';
+            const sizeKB = d.fileSize ? (d.fileSize / 1024).toFixed(0) + ' KB' : '';
+            const subLabel = d.hrDocType ? ` · ${d.hrDocType}` : '';
             return `<div class="doc-item" data-id="${d.id}">
-                <div class="doc-item-icon">${iconMap(d.fileName || '')}</div>
+                <div class="doc-item-icon">${iconMap(d.fileName)}</div>
                 <div class="doc-item-info">
                     <div class="doc-item-name">${d.fileName || 'Unknown file'}</div>
                     <div class="doc-item-meta">
-                        <span class="campaign-badge ${badgeMap[d.campaign] || ''}">${d.campaign}</span>
+                        <span class="campaign-badge ${badgeMap[d.campaign] || ''}">${badgeLabel[d.campaign] || d.campaign}</span>${subLabel}
                         &nbsp;·&nbsp;${date}${sizeKB ? '&nbsp;·&nbsp;' + sizeKB : ''}
                     </div>
                 </div>
                 <div class="doc-item-actions">
-                    <button class="btn-download" onclick="downloadDoc('${d.downloadURL}', '${(d.fileName || 'document').replace(/'/g, "\\'")}')">⬇ Download</button>
-                    <button class="btn-delete-doc" onclick="promptDelete('${d.id}', '${(d.storagePath || '').replace(/'/g,"\\'")}', '${(d.fileName || '').replace(/'/g,"\\'")}')">🗑 Delete</button>
+                    <button class="btn-download" onclick="downloadDoc('${d.downloadURL}', '${(d.fileName||'document').replace(/'/g,"\\'")}')">⬇ Download</button>
+                    <button class="btn-delete-doc" onclick="promptDelete('${d.id}','${(d.storagePath||'').replace(/'/g,"\\'")}','${(d.fileName||'').replace(/'/g,"\\'")}')">🗑 Delete</button>
                 </div>
             </div>`;
         }).join('')}</div>`;
@@ -556,13 +720,8 @@
     // ── Download ──────────────────────────────────────────────────────────────
     window.downloadDoc = function(url, filename) {
         const a = document.createElement('a');
-        a.href     = url;
-        a.download = filename;
-        a.target   = '_blank';
-        a.rel      = 'noopener';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        a.href = url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
     };
 
     // ── Delete flow ───────────────────────────────────────────────────────────
@@ -578,37 +737,25 @@
     document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
         if (!pendingDeleteId) return;
         const btn = document.getElementById('confirmDeleteBtn');
-        btn.disabled    = true;
-        btn.textContent = 'Deleting…';
-
+        btn.disabled = true; btn.textContent = 'Deleting…';
         try {
-            // Delete from Firestore
             await deleteDoc(doc(db, "NGUO contract", pendingDeleteId));
-
-            // Delete from Storage (best effort — may fail if path is missing)
             if (pendingDeleteStoragePath) {
                 try { await deleteObject(ref(storage, pendingDeleteStoragePath)); } catch (_) {}
             }
-
             document.getElementById('deleteOverlay').classList.remove('active');
-            pendingDeleteId          = null;
-            pendingDeleteStoragePath = null;
-            pendingDeleteName        = '';
+            pendingDeleteId = null; pendingDeleteStoragePath = null; pendingDeleteName = '';
             await loadDocs();
-
         } catch (err) {
             alert('Error deleting: ' + err.message);
         }
-
-        btn.disabled    = false;
-        btn.textContent = 'Yes, Delete';
+        btn.disabled = false; btn.textContent = 'Yes, Delete';
     });
 
     document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
         document.getElementById('deleteOverlay').classList.remove('active');
         pendingDeleteId = null;
     });
-
     document.getElementById('deleteOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) {
             document.getElementById('deleteOverlay').classList.remove('active');
