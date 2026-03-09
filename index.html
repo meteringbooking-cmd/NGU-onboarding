@@ -275,7 +275,16 @@
             manageUsersBtn:         'manageusers'
         };
 
+        const MASTER_EMAIL = 'barry.dixon@next-gen.uk';
+
         async function applyPermissions(user) {
+            // Master admin — unlock everything
+            if (user.email === MASTER_EMAIL) {
+                Object.keys(GATED_BTNS).forEach(btnId => {
+                    document.getElementById(btnId)?.classList.remove('locked');
+                });
+                return;
+            }
             try {
                 const q    = query(collection(db, "NGUO Database"), where("authUid", "==", user.uid));
                 const snap = await getDocs(q);
@@ -343,7 +352,7 @@
         document.getElementById('personalDetailsBtn').addEventListener('click',  () => window.location.href = 'personaldetails.html');
         document.getElementById('contractBtn').addEventListener('click',         () => window.location.href = 'contract.html');
         document.getElementById('manageUsersBtn').addEventListener('click',      () => window.location.href = 'userdatabase.html');
-        document.getElementById('driverQuestionnaireBtn').addEventListener('click', () => window.location.href = 'view-driver-questionnaire-submissions.html');
+        document.getElementById('driverQuestionnaireBtn').addEventListener('click', () => window.location.href = 'driverquestionnaireview.html');
     </script>
 </body>
 </html>
