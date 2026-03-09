@@ -42,8 +42,9 @@
         .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;}
         .form-group{display:flex;flex-direction:column;gap:0.5rem;}
         .form-group label{font-weight:600;font-size:0.9rem;}
-        input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.97rem;font-family:inherit;transition:all 0.2s;}
+        input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="date"]{width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.97rem;font-family:inherit;transition:all 0.2s;}
         input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
+        input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.6;cursor:pointer;}
         .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.8rem 1rem;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;background:var(--bg-input);}
         .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,163,224,0.05);}
         .upload-zone.has-file{border-color:var(--success);border-style:solid;background:rgba(16,185,129,0.05);}
@@ -75,28 +76,28 @@
         @keyframes spin{to{transform:rotate(360deg);}}
         .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
         @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
-        .section-locked {
-            position: relative; pointer-events: none;
-        }
-        .section-locked::after {
-            content: '';
-            position: absolute; inset: 0; border-radius: 16px;
-            background: rgba(10,22,40,0.65);
-            z-index: 10;
-        }
-        .lock-banner {
-            background: rgba(139,154,174,0.1); border: 1.5px solid rgba(139,154,174,0.3);
-            border-radius: 12px; padding: 1rem 1.4rem; margin-bottom: 1rem;
-            display: flex; align-items: center; gap: 0.8rem;
-            font-size: 0.9rem; color: var(--text-muted);
-        }
-        .lock-banner .lock-icon { font-size: 1.3rem; flex-shrink: 0; }
-        .lock-banner strong { color: var(--text-light); }
-        .certs-upload-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .cert-item { display: flex; flex-direction: column; gap: 0.5rem; }
+        .section-locked{position:relative;pointer-events:none;}
+        .section-locked::after{content:'';position:absolute;inset:0;border-radius:16px;background:rgba(10,22,40,0.65);z-index:10;}
+        .lock-banner{background:rgba(139,154,174,0.1);border:1.5px solid rgba(139,154,174,0.3);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;font-size:0.9rem;color:var(--text-muted);}
+        .lock-banner .lock-icon{font-size:1.3rem;flex-shrink:0;}
+        .lock-banner strong{color:var(--text-light);}
+
+        /* ── Certificates section styles ── */
+        .cert-section-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:1.4rem 0 0.8rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);}
+        .cert-section-label:first-child{margin-top:0;}
+        .cert-question-row{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;}
+        .cert-question-row label{font-weight:600;font-size:0.9rem;}
+        .radio-group{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;}
+        .radio-option{display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.92rem;}
+        .radio-option input[type="radio"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
+        .cert-upload-item{display:flex;flex-direction:column;gap:0.5rem;}
+        .certs-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+        .inline-field{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;margin-top:0.4rem;}
+        .inline-field label{font-size:0.88rem;color:var(--text-muted);white-space:nowrap;}
+        .inline-field input{max-width:200px;padding:0.6rem 0.8rem;font-size:0.88rem;}
+        .sub-field{margin-top:0.6rem;padding:0.8rem 1rem;background:rgba(0,163,224,0.06);border:1px solid rgba(0,163,224,0.2);border-radius:8px;}
+        .badge-mandatory{display:inline-block;font-size:0.7rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:20px;background:rgba(239,68,68,0.15);color:#fca5a5;margin-left:0.4rem;vertical-align:middle;}
+        .badge-desirable{display:inline-block;font-size:0.7rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:20px;background:rgba(0,163,224,0.15);color:var(--accent);margin-left:0.4rem;vertical-align:middle;}
     </style>
 </head>
 <body>
@@ -143,16 +144,119 @@
         <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
     </div>
 
-    <!-- ── Certificates upload (always unlocked) ── -->
+    <!-- ── Certificates / Qualifications Card ── -->
     <div class="card" id="certsCard">
         <div class="card-header">
             <div class="card-icon icon-blue">📜</div>
-            <div><h2>Your Certificates</h2><p>Please upload all relevant certificates for your role — you can upload multiple files</p></div>
+            <div><h2>Your Certificates &amp; Qualifications</h2><p>Please complete all mandatory sections and upload supporting documents where required</p></div>
         </div>
         <hr class="divider">
-        <div class="certs-upload-grid" id="certsGrid"></div>
-        <button class="btn-add-cert" id="addCertBtn" style="margin-top:1rem;width:100%;padding:0.65rem;border-radius:10px;background:rgba(0,163,224,0.1);border:2px dashed rgba(0,163,224,0.4);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Another Certificate</button>
-        <div class="save-row" style="margin-top:1rem;">
+
+        <!-- ── MANDATORY ── -->
+        <div class="cert-section-label">Mandatory Certificates <span class="badge-mandatory">Required</span></div>
+
+        <!-- Level 3 Power/Smart Meter/Electric MOCOPA -->
+        <div class="cert-question-row">
+            <label>Level 3 Power / Smart Meter / Electric MOCOPA</label>
+            <div class="upload-zone" id="zone-cert-mocopa" style="padding:1.2rem 0.8rem;">
+                <input type="file" id="file-cert-mocopa" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('mocopa',this)">
+                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
+                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
+                <div class="upload-filename" id="fname-cert-mocopa"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
+                <span class="upload-status status-none" id="status-cert-mocopa">Not uploaded</span>
+                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-mocopa" onclick="uploadNamedCert('mocopa','Level 3 Power/Smart Meter/Electric MOCOPA')" disabled>Upload</button>
+            </div>
+        </div>
+
+        <!-- Level 3 Gas/City & Guilds/CMA/CCN -->
+        <div class="cert-question-row" style="margin-top:1rem;">
+            <label>Level 3 Gas / City &amp; Guilds Qualification / CMA / CCN</label>
+            <div class="upload-zone" id="zone-cert-gas3" style="padding:1.2rem 0.8rem;">
+                <input type="file" id="file-cert-gas3" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('gas3',this)">
+                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
+                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
+                <div class="upload-filename" id="fname-cert-gas3"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
+                <span class="upload-status status-none" id="status-cert-gas3">Not uploaded</span>
+                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-gas3" onclick="uploadNamedCert('gas3','Level 3 Gas/City & Guilds/CMA/CCN')" disabled>Upload</button>
+            </div>
+        </div>
+
+        <!-- CMA Gas Cert -->
+        <div class="cert-question-row" style="margin-top:1rem;">
+            <label>CMA Gas Certificate</label>
+            <div class="upload-zone" id="zone-cert-cma" style="padding:1.2rem 0.8rem;">
+                <input type="file" id="file-cert-cma" accept=".jpg,.jpeg,.png,.pdf" onchange="handleCertFileSelect('cma',this)">
+                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📄</div>
+                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Upload Certificate</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF · max 10MB</div>
+                <div class="upload-filename" id="fname-cert-cma"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
+                <span class="upload-status status-none" id="status-cert-cma">Not uploaded</span>
+                <button class="btn btn-save" style="padding:0.45rem 1rem;font-size:0.8rem;" id="upload-btn-cert-cma" onclick="uploadNamedCert('cma','CMA Gas Certificate')" disabled>Upload</button>
+            </div>
+        </div>
+
+        <!-- Driving Licence question -->
+        <div class="cert-question-row" style="margin-top:1.2rem;padding:1rem;background:rgba(0,163,224,0.05);border:1px solid rgba(0,163,224,0.18);border-radius:10px;">
+            <label>I confirm I have a current and valid Driving Licence <span class="badge-mandatory">Required</span></label>
+            <div class="radio-group" style="margin-top:0.5rem;">
+                <label class="radio-option"><input type="radio" name="hasLicence" value="yes" id="licence-yes"> Yes</label>
+                <label class="radio-option"><input type="radio" name="hasLicence" value="no" id="licence-no"> No</label>
+            </div>
+            <div id="licenceExpiryField" style="display:none;" class="sub-field">
+                <div class="form-group">
+                    <label style="font-size:0.88rem;">Licence Expiry Date</label>
+                    <input type="date" id="licenceExpiry" style="max-width:220px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── DESIRABLE ── -->
+        <div class="cert-section-label" style="margin-top:1.6rem;">Desirable <span class="badge-desirable">Optional</span></div>
+
+        <!-- EUSR -->
+        <div class="cert-question-row" style="padding:1rem;background:rgba(0,94,184,0.05);border:1px solid rgba(0,94,184,0.18);border-radius:10px;">
+            <label>EUSR Card</label>
+            <div class="radio-group" style="margin-top:0.5rem;">
+                <label class="radio-option"><input type="radio" name="hasEUSR" value="yes" id="eusr-yes"> Yes</label>
+                <label class="radio-option"><input type="radio" name="hasEUSR" value="no" id="eusr-no"> No</label>
+            </div>
+            <div id="eusrNumberField" style="display:none;" class="sub-field">
+                <div class="form-group">
+                    <label style="font-size:0.88rem;">EUSR Number</label>
+                    <input type="text" id="eusrNumber" placeholder="Enter your EUSR number" style="max-width:280px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Gas Safe Number -->
+        <div class="cert-question-row" style="margin-top:1rem;">
+            <label>Current Gas Safe Registration Number <span class="badge-desirable">Optional</span></label>
+            <input type="text" id="gasSafeNumber" placeholder="Enter your Gas Safe number (if applicable)" style="max-width:320px;">
+        </div>
+
+        <!-- Higher Skills Set Certs -->
+        <div class="cert-question-row" style="margin-top:1rem;">
+            <label>Higher Skills Set Certificates <span class="badge-desirable">Optional</span> <span style="font-size:0.8rem;color:var(--text-muted);font-weight:400;">e.g. 3 Phase, Medium Pressure</span></label>
+            <div class="certs-upload-grid" id="higherSkillsGrid"></div>
+            <button id="addHigherSkillBtn" style="margin-top:0.8rem;width:100%;padding:0.6rem;border-radius:10px;background:rgba(0,94,184,0.1);border:2px dashed rgba(0,94,184,0.35);color:#60a5fa;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Higher Skills Certificate</button>
+        </div>
+
+        <!-- ── ADDITIONAL (free-form) ── -->
+        <div class="cert-section-label" style="margin-top:1.6rem;">Additional Certificates</div>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:0.8rem;">Upload any other certificates relevant to your role</p>
+        <div class="certs-upload-grid" id="additionalCertsGrid"></div>
+        <button id="addCertBtn" style="margin-top:0.8rem;width:100%;padding:0.65rem;border-radius:10px;background:rgba(0,163,224,0.1);border:2px dashed rgba(0,163,224,0.4);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Additional Certificate</button>
+
+        <div class="save-row" style="margin-top:1.2rem;">
+            <button class="btn btn-save" id="saveCertsInfoBtn" style="padding:0.7rem 1.6rem;">Save Certificate Information</button>
             <span class="save-msg" id="certsMsg"></span>
         </div>
     </div>
@@ -230,17 +334,17 @@
                 <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
                 <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
             </div>
-            <!-- Proof of NI Number -->
+            <!-- Right to Work -->
             <div>
-                <div class="upload-zone" id="zone-ni-number">
-                    <input type="file" id="file-ni-number" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('ni-number', this)">
-                    <div class="upload-icon">🔢</div>
-                    <div class="upload-label">Proof of NI Number</div>
+                <div class="upload-zone" id="zone-right-to-work">
+                    <input type="file" id="file-right-to-work" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('right-to-work', this)">
+                    <div class="upload-icon">✅</div>
+                    <div class="upload-label">Right to Work</div>
                     <div class="upload-hint">JPG, PNG or PDF</div>
-                    <div class="upload-filename" id="fname-ni-number"></div>
+                    <div class="upload-filename" id="fname-right-to-work"></div>
                 </div>
-                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-ni-number">Not uploaded</span></div>
-                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-ni-number" onclick="uploadFile('ni-number')" disabled>Upload</button>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-right-to-work">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-right-to-work" onclick="uploadFile('right-to-work')" disabled>Upload</button>
             </div>
         </div>
     </div>
@@ -288,19 +392,58 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // All document keys in the "Your Documents" section
-    const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'ni-number'];
+    // Updated DOC_KEYS — removed ni-number, added right-to-work
+    const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'right-to-work'];
+
+    // Named mandatory cert slots
+    const NAMED_CERT_KEYS = ['mocopa', 'gas3', 'cma'];
 
     let currentEngineer      = null;
     let allCompleteEmailSent = false;
-    let certSlots            = [];
-    let certSlotCounter      = 0;
 
-    window.handleFileSelect = handleFileSelect;
-    window.uploadFile       = uploadFile;
+    // Additional certs (free-form)
+    let additionalCertSlots  = [];
+    let additionalCertCounter = 0;
+
+    // Higher skills certs
+    let higherSkillSlots  = [];
+    let higherSkillCounter = 0;
+
+    // Named cert file staging
+    const namedCertFiles = {};
+
+    window.handleFileSelect       = handleFileSelect;
+    window.uploadFile             = uploadFile;
+    window.handleCertFileSelect   = handleCertFileSelect;
+    window.uploadNamedCert        = uploadNamedCert;
 
     document.getElementById('loginBtn').addEventListener('click', doLogin);
     document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+    // Driving Licence radio toggle
+    document.querySelectorAll('input[name="hasLicence"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.getElementById('licenceExpiryField').style.display =
+                document.getElementById('licence-yes').checked ? 'block' : 'none';
+        });
+    });
+
+    // EUSR radio toggle
+    document.querySelectorAll('input[name="hasEUSR"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.getElementById('eusrNumberField').style.display =
+                document.getElementById('eusr-yes').checked ? 'block' : 'none';
+        });
+    });
+
+    // Add Higher Skills Certificate button
+    document.getElementById('addHigherSkillBtn').addEventListener('click', () => addHigherSkillSlot());
+
+    // Add Additional Certificate button
+    document.getElementById('addCertBtn').addEventListener('click', () => addAdditionalCertSlot());
+
+    // Save Cert Info button
+    document.getElementById('saveCertsInfoBtn').addEventListener('click', saveCertsInfo);
 
     async function doLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -329,7 +472,7 @@
             currentEngineer = { docId: engineerDoc.id, ...engineerData };
 
             allCompleteEmailSent = !!(
-                currentEngineer.certs_uploaded && currentEngineer.certs_uploaded.length > 0 &&
+                currentEngineer.certs_mandatoryComplete &&
                 DOC_KEYS.every(k => currentEngineer[`docs_${k}`]) &&
                 currentEngineer.bank_name && currentEngineer.bank_accountNo
             );
@@ -349,8 +492,9 @@
         document.getElementById('portalScreen').style.display = 'block';
         document.getElementById('welcomeName').textContent    = `👋 ${currentEngineer.name}`;
         applyInterviewLock();
-        setupCertsGrid();
         loadExistingData();
+        setupHigherSkillsGrid();
+        setupAdditionalCertsGrid();
     }
 
     function applyInterviewLock() {
@@ -370,99 +514,25 @@
         }
     }
 
-    function setupCertsGrid() {
-        certSlots = [];
-        certSlotCounter = 0;
-        const grid = document.getElementById('certsGrid');
-        grid.innerHTML = '';
-        const existing = currentEngineer.certs_uploaded || [];
-        if (existing.length > 0) {
-            existing.forEach(c => addCertSlotUploaded(c));
-        }
-        addCertSlot();
+    // ── Named Cert Upload ──
+    function handleCertFileSelect(key, input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        if (file.size > 10 * 1024 * 1024) { alert('Max 10MB.'); input.value = ''; return; }
+        namedCertFiles[key] = file;
+        document.getElementById(`fname-cert-${key}`).textContent  = `📎 ${file.name}`;
+        document.getElementById(`status-cert-${key}`).textContent = 'Ready to upload';
+        document.getElementById(`status-cert-${key}`).className   = 'upload-status status-pending';
+        document.getElementById(`upload-btn-cert-${key}`).disabled = false;
+        document.getElementById(`zone-cert-${key}`).classList.remove('has-file');
     }
 
-    function addCertSlot() {
-        certSlotCounter++;
-        const id   = certSlotCounter;
-        const slot = { id, file: null, uploaded: false };
-        certSlots.push(slot);
-
-        const grid = document.getElementById('certsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-item';
-        div.id = `cert-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone" id="cert-zone-${id}" style="padding:1.2rem 0.8rem;">
-                <input type="file" id="cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📜</div>
-                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Certificate ${id}</div>
-                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF</div>
-                <div class="upload-filename" id="cert-fname-${id}"></div>
-            </div>
-            <div style="text-align:center;">
-                <span class="upload-status status-none" id="cert-status-${id}">Not uploaded</span>
-            </div>
-            <button class="btn btn-save" style="padding:0.5rem;font-size:0.8rem;" id="cert-upload-btn-${id}" onclick="uploadCert(${id})" disabled>Upload</button>
-        `;
-        grid.appendChild(div);
-
-        document.getElementById(`cert-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            if (this.files[0].size > 10 * 1024 * 1024) { alert('Max 10MB.'); this.value=''; return; }
-            const s = certSlots.find(s => s.id === id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`cert-status-${id}`).textContent  = 'Ready to upload';
-            document.getElementById(`cert-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`cert-upload-btn-${id}`).disabled = false;
-            document.getElementById(`cert-zone-${id}`).classList.remove('has-file');
-        });
-    }
-
-    function addCertSlotUploaded(certData) {
-        certSlotCounter++;
-        const id = certSlotCounter;
-        certSlots.push({ id, file: null, uploaded: true });
-
-        const grid = document.getElementById('certsGrid');
-        const div  = document.createElement('div');
-        div.className = 'cert-item';
-        div.id = `cert-slot-${id}`;
-        div.innerHTML = `
-            <div class="upload-zone has-file" id="cert-zone-${id}" style="padding:1.2rem 0.8rem;">
-                <input type="file" id="cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
-                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📜</div>
-                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">${certData.name || 'Certificate'}</div>
-                <div class="upload-filename">✓ Uploaded</div>
-            </div>
-            <div style="text-align:center;">
-                <span class="upload-status status-saved" id="cert-status-${id}">✓ Uploaded</span>
-            </div>
-            <button class="btn btn-save" style="padding:0.5rem;font-size:0.8rem;" id="cert-upload-btn-${id}" onclick="uploadCert(${id})" disabled>Re-upload</button>
-        `;
-        grid.appendChild(div);
-
-        document.getElementById(`cert-file-${id}`).addEventListener('change', function() {
-            if (!this.files[0]) return;
-            if (this.files[0].size > 10 * 1024 * 1024) { alert('Max 10MB.'); this.value=''; return; }
-            const s = certSlots.find(s => s.id === id);
-            if (s) s.file = this.files[0];
-            document.getElementById(`cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
-            document.getElementById(`cert-status-${id}`).textContent  = 'Ready to upload';
-            document.getElementById(`cert-status-${id}`).className    = 'upload-status status-pending';
-            document.getElementById(`cert-upload-btn-${id}`).disabled = false;
-        });
-    }
-
-    document.getElementById('addCertBtn').addEventListener('click', addCertSlot);
-
-    window.uploadCert = async function(id) {
-        const slot   = certSlots.find(s => s.id === id);
-        if (!slot || !slot.file) return;
-        const upBtn  = document.getElementById(`cert-upload-btn-${id}`);
-        const status = document.getElementById(`cert-status-${id}`);
-        const zone   = document.getElementById(`cert-zone-${id}`);
+    window.uploadNamedCert = async function(key, label) {
+        const file   = namedCertFiles[key];
+        if (!file) return;
+        const upBtn  = document.getElementById(`upload-btn-cert-${key}`);
+        const status = document.getElementById(`status-cert-${key}`);
+        const zone   = document.getElementById(`zone-cert-${key}`);
 
         upBtn.disabled     = true;
         upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
@@ -470,41 +540,20 @@
         status.className   = 'upload-status status-pending';
 
         try {
-            const fileData = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload  = () => resolve(reader.result);
-                reader.onerror = () => reject(new Error('Could not read file'));
-                reader.readAsDataURL(slot.file);
-            });
-
-            const existing  = currentEngineer.certs_uploaded || [];
-            const newEntry  = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
-            const slotIndex = certSlots.filter(s => s.uploaded || s.id <= id).findIndex(s => s.id === id);
-            if (slot.uploaded && slotIndex >= 0 && slotIndex < existing.length) {
-                existing[slotIndex] = newEntry;
-            } else {
-                existing.push(newEntry);
-            }
-
+            const fileData = await readFileAsDataURL(file);
+            const fieldName = `cert_named_${key}`;
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                certs_uploaded:  existing,
-                certs_updatedAt: serverTimestamp()
+                [fieldName]: fileData,
+                [`${fieldName}_filename`]:   file.name,
+                [`${fieldName}_uploadedAt`]: serverTimestamp()
             });
-
-            currentEngineer.certs_uploaded = existing;
-            slot.uploaded      = true;
-            slot.file          = null;
+            currentEngineer[fieldName] = fileData;
+            delete namedCertFiles[key];
             status.textContent = '✓ Uploaded';
             status.className   = 'upload-status status-saved';
             zone.classList.add('has-file');
             upBtn.textContent  = 'Re-upload';
             upBtn.disabled     = false;
-
-            const msgEl = document.getElementById('certsMsg');
-            msgEl.className   = 'save-msg ok';
-            msgEl.textContent = `✓ Certificate uploaded successfully`;
-            setTimeout(() => { msgEl.textContent = ''; }, 3000);
-
             updateProgress();
         } catch (err) {
             status.textContent = '✗ Failed';
@@ -515,13 +564,299 @@
         }
     };
 
+    // ── Higher Skills Certs ──
+    function setupHigherSkillsGrid() {
+        higherSkillSlots  = [];
+        higherSkillCounter = 0;
+        const grid = document.getElementById('higherSkillsGrid');
+        grid.innerHTML = '';
+        const existing = currentEngineer.certs_higherSkills || [];
+        existing.forEach(c => addHigherSkillSlotUploaded(c));
+        if (existing.length === 0) addHigherSkillSlot();
+    }
+
+    function addHigherSkillSlot() {
+        higherSkillCounter++;
+        const id   = higherSkillCounter;
+        const slot = { id, file: null, uploaded: false };
+        higherSkillSlots.push(slot);
+        const grid = document.getElementById('higherSkillsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-upload-item';
+        div.id = `higher-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone" id="higher-zone-${id}" style="padding:1rem 0.7rem;">
+                <input type="file" id="higher-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.3rem;margin-bottom:0.3rem;">🎓</div>
+                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">Higher Skills Cert ${id}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">JPG, PNG or PDF</div>
+                <div class="upload-filename" id="higher-fname-${id}"></div>
+            </div>
+            <div style="text-align:center;"><span class="upload-status status-none" id="higher-status-${id}">Not uploaded</span></div>
+            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="higher-upload-btn-${id}" onclick="uploadHigherSkillCert(${id})" disabled>Upload</button>
+        `;
+        grid.appendChild(div);
+        document.getElementById(`higher-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            if (this.files[0].size > 10*1024*1024) { alert('Max 10MB.'); this.value=''; return; }
+            const s = higherSkillSlots.find(s=>s.id===id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`higher-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`higher-status-${id}`).textContent  = 'Ready';
+            document.getElementById(`higher-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`higher-upload-btn-${id}`).disabled = false;
+        });
+    }
+
+    function addHigherSkillSlotUploaded(certData) {
+        higherSkillCounter++;
+        const id = higherSkillCounter;
+        higherSkillSlots.push({ id, file: null, uploaded: true });
+        const grid = document.getElementById('higherSkillsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-upload-item';
+        div.id = `higher-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone has-file" id="higher-zone-${id}" style="padding:1rem 0.7rem;">
+                <input type="file" id="higher-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.3rem;margin-bottom:0.3rem;">🎓</div>
+                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">${certData.name||'Higher Skills Cert'}</div>
+                <div class="upload-filename">✓ Uploaded</div>
+            </div>
+            <div style="text-align:center;"><span class="upload-status status-saved" id="higher-status-${id}">✓ Uploaded</span></div>
+            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="higher-upload-btn-${id}" onclick="uploadHigherSkillCert(${id})" disabled>Re-upload</button>
+        `;
+        grid.appendChild(div);
+        document.getElementById(`higher-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            const s = higherSkillSlots.find(s=>s.id===id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`higher-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`higher-status-${id}`).textContent  = 'Ready';
+            document.getElementById(`higher-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`higher-upload-btn-${id}`).disabled = false;
+        });
+    }
+
+    window.uploadHigherSkillCert = async function(id) {
+        const slot   = higherSkillSlots.find(s=>s.id===id);
+        if (!slot || !slot.file) return;
+        const upBtn  = document.getElementById(`higher-upload-btn-${id}`);
+        const status = document.getElementById(`higher-status-${id}`);
+        const zone   = document.getElementById(`higher-zone-${id}`);
+        upBtn.disabled = true; upBtn.innerHTML = '<span class="spinner"></span>Uploading…';
+        status.textContent = 'Uploading…'; status.className = 'upload-status status-pending';
+        try {
+            const fileData = await readFileAsDataURL(slot.file);
+            const existing = currentEngineer.certs_higherSkills || [];
+            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
+            if (slot.uploaded) {
+                const idx = higherSkillSlots.filter(s=>s.uploaded||s.id<=id).findIndex(s=>s.id===id);
+                if (idx >= 0 && idx < existing.length) existing[idx] = newEntry; else existing.push(newEntry);
+            } else { existing.push(newEntry); }
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), { certs_higherSkills: existing, certs_higherSkillsAt: serverTimestamp() });
+            currentEngineer.certs_higherSkills = existing;
+            slot.uploaded = true; slot.file = null;
+            status.textContent = '✓ Uploaded'; status.className = 'upload-status status-saved';
+            zone.classList.add('has-file'); upBtn.textContent = 'Re-upload'; upBtn.disabled = false;
+        } catch (err) {
+            status.textContent = '✗ Failed'; status.className = 'upload-status status-none';
+            upBtn.textContent = 'Retry'; upBtn.disabled = false; alert('Upload failed: '+err.message);
+        }
+    };
+
+    // ── Additional Certs (free-form) ──
+    function setupAdditionalCertsGrid() {
+        additionalCertSlots  = [];
+        additionalCertCounter = 0;
+        const grid = document.getElementById('additionalCertsGrid');
+        grid.innerHTML = '';
+        const existing = currentEngineer.certs_additional || [];
+        if (existing.length > 0) existing.forEach(c => addAdditionalCertSlotUploaded(c));
+        else addAdditionalCertSlot();
+    }
+
+    function addAdditionalCertSlot() {
+        additionalCertCounter++;
+        const id   = additionalCertCounter;
+        const slot = { id, file: null, uploaded: false };
+        additionalCertSlots.push(slot);
+        const grid = document.getElementById('additionalCertsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-upload-item';
+        div.id = `add-cert-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone" id="add-cert-zone-${id}" style="padding:1.1rem 0.7rem;">
+                <input type="file" id="add-cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.3rem;margin-bottom:0.3rem;">📜</div>
+                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">Additional Cert ${id}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">JPG, PNG or PDF</div>
+                <div class="upload-filename" id="add-cert-fname-${id}"></div>
+            </div>
+            <div style="text-align:center;"><span class="upload-status status-none" id="add-cert-status-${id}">Not uploaded</span></div>
+            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="add-cert-upload-btn-${id}" onclick="uploadAdditionalCert(${id})" disabled>Upload</button>
+        `;
+        grid.appendChild(div);
+        document.getElementById(`add-cert-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            if (this.files[0].size > 10*1024*1024) { alert('Max 10MB.'); this.value=''; return; }
+            const s = additionalCertSlots.find(s=>s.id===id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`add-cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`add-cert-status-${id}`).textContent  = 'Ready';
+            document.getElementById(`add-cert-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`add-cert-upload-btn-${id}`).disabled = false;
+        });
+    }
+
+    function addAdditionalCertSlotUploaded(certData) {
+        additionalCertCounter++;
+        const id = additionalCertCounter;
+        additionalCertSlots.push({ id, file: null, uploaded: true });
+        const grid = document.getElementById('additionalCertsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-upload-item';
+        div.id = `add-cert-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone has-file" id="add-cert-zone-${id}" style="padding:1.1rem 0.7rem;">
+                <input type="file" id="add-cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.3rem;margin-bottom:0.3rem;">📜</div>
+                <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.2rem;">${certData.name||'Additional Cert'}</div>
+                <div class="upload-filename">✓ Uploaded</div>
+            </div>
+            <div style="text-align:center;"><span class="upload-status status-saved" id="add-cert-status-${id}">✓ Uploaded</span></div>
+            <button class="btn btn-save" style="padding:0.45rem;font-size:0.78rem;" id="add-cert-upload-btn-${id}" onclick="uploadAdditionalCert(${id})" disabled>Re-upload</button>
+        `;
+        grid.appendChild(div);
+        document.getElementById(`add-cert-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            const s = additionalCertSlots.find(s=>s.id===id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`add-cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`add-cert-status-${id}`).textContent  = 'Ready';
+            document.getElementById(`add-cert-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`add-cert-upload-btn-${id}`).disabled = false;
+        });
+    }
+
+    window.uploadAdditionalCert = async function(id) {
+        const slot   = additionalCertSlots.find(s=>s.id===id);
+        if (!slot || !slot.file) return;
+        const upBtn  = document.getElementById(`add-cert-upload-btn-${id}`);
+        const status = document.getElementById(`add-cert-status-${id}`);
+        const zone   = document.getElementById(`add-cert-zone-${id}`);
+        upBtn.disabled = true; upBtn.innerHTML = '<span class="spinner"></span>Uploading…';
+        status.textContent = 'Uploading…'; status.className = 'upload-status status-pending';
+        try {
+            const fileData = await readFileAsDataURL(slot.file);
+            const existing = currentEngineer.certs_additional || [];
+            const newEntry = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
+            if (slot.uploaded) {
+                const idx = additionalCertSlots.filter(s=>s.uploaded||s.id<=id).findIndex(s=>s.id===id);
+                if (idx >= 0 && idx < existing.length) existing[idx] = newEntry; else existing.push(newEntry);
+            } else { existing.push(newEntry); }
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), { certs_additional: existing, certs_additionalAt: serverTimestamp() });
+            currentEngineer.certs_additional = existing;
+            slot.uploaded = true; slot.file = null;
+            status.textContent = '✓ Uploaded'; status.className = 'upload-status status-saved';
+            zone.classList.add('has-file'); upBtn.textContent = 'Re-upload'; upBtn.disabled = false;
+            updateProgress();
+            const msgEl = document.getElementById('certsMsg');
+            msgEl.className = 'save-msg ok'; msgEl.textContent = '✓ Certificate uploaded';
+            setTimeout(()=>{ msgEl.textContent=''; }, 3000);
+        } catch (err) {
+            status.textContent = '✗ Failed'; status.className = 'upload-status status-none';
+            upBtn.textContent = 'Retry'; upBtn.disabled = false; alert('Upload failed: '+err.message);
+        }
+    };
+
+    // ── Save Certs Info (licence declaration, EUSR, Gas Safe) ──
+    async function saveCertsInfo() {
+        const btn   = document.getElementById('saveCertsInfoBtn');
+        const msgEl = document.getElementById('certsMsg');
+
+        const hasLicence    = document.querySelector('input[name="hasLicence"]:checked')?.value || null;
+        const licenceExpiry = document.getElementById('licenceExpiry').value || null;
+        const hasEUSR       = document.querySelector('input[name="hasEUSR"]:checked')?.value || null;
+        const eusrNumber    = document.getElementById('eusrNumber').value.trim() || null;
+        const gasSafeNumber = document.getElementById('gasSafeNumber').value.trim() || null;
+
+        if (!hasLicence) {
+            msgEl.className = 'save-msg err';
+            msgEl.textContent = 'Please confirm whether you have a valid Driving Licence.';
+            return;
+        }
+        if (hasLicence === 'yes' && !licenceExpiry) {
+            msgEl.className = 'save-msg err';
+            msgEl.textContent = 'Please enter your Driving Licence expiry date.';
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span>Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                certs_hasLicence:    hasLicence,
+                certs_licenceExpiry: licenceExpiry,
+                certs_hasEUSR:       hasEUSR,
+                certs_eusrNumber:    eusrNumber,
+                certs_gasSafeNumber: gasSafeNumber,
+                certs_infoSavedAt:   serverTimestamp()
+            });
+            Object.assign(currentEngineer, { certs_hasLicence: hasLicence, certs_licenceExpiry: licenceExpiry, certs_hasEUSR: hasEUSR, certs_eusrNumber: eusrNumber, certs_gasSafeNumber: gasSafeNumber });
+            msgEl.className   = 'save-msg ok';
+            msgEl.textContent = '✓ Information saved';
+            updateProgress();
+        } catch (err) {
+            msgEl.className   = 'save-msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+        }
+        btn.disabled    = false;
+        btn.textContent = 'Save Certificate Information';
+    }
+
     function loadExistingData() {
         const d = currentEngineer;
+
+        // Named certs status
+        NAMED_CERT_KEYS.forEach(key => {
+            const fieldName = `cert_named_${key}`;
+            if (d[fieldName]) {
+                document.getElementById(`status-cert-${key}`).textContent = '✓ Uploaded';
+                document.getElementById(`status-cert-${key}`).className   = 'upload-status status-saved';
+                document.getElementById(`zone-cert-${key}`).classList.add('has-file');
+                document.getElementById(`fname-cert-${key}`).textContent  = 'Previously uploaded — click to replace';
+                document.getElementById(`upload-btn-cert-${key}`).disabled = false;
+            }
+        });
+
+        // Licence question
+        if (d.certs_hasLicence) {
+            const radio = document.querySelector(`input[name="hasLicence"][value="${d.certs_hasLicence}"]`);
+            if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+        }
+        if (d.certs_licenceExpiry) document.getElementById('licenceExpiry').value = d.certs_licenceExpiry;
+
+        // EUSR
+        if (d.certs_hasEUSR) {
+            const radio = document.querySelector(`input[name="hasEUSR"][value="${d.certs_hasEUSR}"]`);
+            if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+        }
+        if (d.certs_eusrNumber) document.getElementById('eusrNumber').value = d.certs_eusrNumber;
+
+        // Gas Safe
+        if (d.certs_gasSafeNumber) document.getElementById('gasSafeNumber').value = d.certs_gasSafeNumber;
+
+        // Documents
         DOC_KEYS.forEach(key => setDocStatus(key, d[`docs_${key}`]));
+
+        // Bank
         if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
         if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
         if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
         if (d.bank_accountNo) document.getElementById('bankAccountNo').value = d.bank_accountNo;
+
         updateProgress();
     }
 
@@ -564,20 +899,13 @@
         status.className   = 'upload-status status-pending';
 
         try {
-            const fileData = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload  = () => resolve(reader.result);
-                reader.onerror = () => reject(new Error('Could not read file'));
-                reader.readAsDataURL(file);
-            });
-
+            const fileData = await readFileAsDataURL(file);
             const fieldName = `docs_${key}`;
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
                 [fieldName]: fileData,
                 [`docs_${key}_filename`]:   file.name,
                 [`docs_${key}_uploadedAt`]: serverTimestamp()
             });
-
             currentEngineer[fieldName] = fileData;
             status.textContent = '✓ Uploaded';
             status.className   = 'upload-status status-saved';
@@ -585,7 +913,6 @@
             upBtn.textContent  = 'Re-upload';
             upBtn.disabled     = false;
             updateProgress();
-
         } catch (err) {
             status.textContent = '✗ Upload failed';
             status.className   = 'upload-status status-none';
@@ -619,7 +946,6 @@
                 bank_name, bank_bankName, bank_sortCode, bank_accountNo,
                 bank_savedAt: serverTimestamp()
             });
-
             Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
 
             try {
@@ -645,19 +971,23 @@
 
     function updateProgress() {
         const d = currentEngineer;
-        const certsUploadDone = !!(d.certs_uploaded && d.certs_uploaded.length > 0);
-        const licenceDone     = !!(d['docs_licence-front'] && d['docs_licence-back']);
-        const passportDone    = !!(d['docs_passport-cover'] && d['docs_passport-info']);
-        const addressDone     = !!(d['docs_address'] && d['docs_ni-number']);
-        const bankDone        = !!(d.bank_name && d.bank_accountNo);
 
-        toggleProg('prog-certs-upload', certsUploadDone);
+        // Certs complete = mandatory named certs uploaded + licence confirmed
+        const certsMandatoryDone = !!(
+            d['cert_named_mocopa'] && d['cert_named_gas3'] && d['cert_named_cma'] && d.certs_hasLicence
+        );
+        const licenceDone  = !!(d['docs_licence-front'] && d['docs_licence-back']);
+        const passportDone = !!(d['docs_passport-cover'] && d['docs_passport-info']);
+        const addressDone  = !!(d['docs_address'] && d['docs_right-to-work']);
+        const bankDone     = !!(d.bank_name && d.bank_accountNo);
+
+        toggleProg('prog-certs-upload', certsMandatoryDone);
         toggleProg('prog-licence',      licenceDone);
         toggleProg('prog-passport',     passportDone);
         toggleProg('prog-address',      addressDone);
         toggleProg('prog-bank',         bankDone);
 
-        const allDone = certsUploadDone && licenceDone && passportDone && addressDone && bankDone;
+        const allDone = certsMandatoryDone && licenceDone && passportDone && addressDone && bankDone;
         document.getElementById('completeBanner').style.display = allDone ? 'block' : 'none';
 
         if (allDone && !allCompleteEmailSent) {
@@ -673,12 +1003,9 @@
                 engineer_name:  currentEngineer.name,
                 engineer_email: currentEngineer.email,
                 contract_name:  currentEngineer.contract || '—',
-                message:        `${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Passport, Proof of Address, NI Number, Certificates, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.`
+                message:        `${currentEngineer.name} has completed all onboarding document uploads.`
             });
-            console.log('All-complete email sent for', currentEngineer.name);
-        } catch (err) {
-            console.warn('All-complete email failed:', err);
-        }
+        } catch (err) { console.warn('All-complete email failed:', err); }
     }
 
     function toggleProg(id, done) {
@@ -687,8 +1014,18 @@
         el.classList.toggle('active', !done);
     }
 
+    function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload  = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Could not read file'));
+            reader.readAsDataURL(file);
+        });
+    }
+
     DOC_KEYS.forEach(key => {
         const zone = document.getElementById(`zone-${key}`);
+        if (!zone) return;
         zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
         zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
         zone.addEventListener('drop', e => {
