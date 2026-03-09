@@ -3,339 +3,739 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NGU Onboarding</title>
-
+    <title>NGU — Engineer Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
-        :root {
-            --primary: #005EB8;
-            --primary-dark: #003d7a;
-            --accent: #00A3E0;
-            --bg-dark: #0A1628;
-            --bg-card: #1a2942;
-            --text-light: #E8EDF2;
-            --text-muted: #8B9AAE;
-            --border: #2a3f5f;
-            --success: #10B981;
-            --error: #EF4444;
+        :root { --primary:#005EB8;--accent:#00A3E0;--bg-dark:#0A1628;--bg-card:#1a2942;--bg-input:#0d1f3a;--text-light:#E8EDF2;--text-muted:#8B9AAE;--border:#2a3f5f;--success:#10B981;--error:#EF4444;--warning:#F59E0B; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Work Sans',sans-serif;background:linear-gradient(135deg,var(--bg-dark) 0%,#0d1f3a 100%);color:var(--text-light);min-height:100vh;padding:2rem 1.5rem;}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(0,163,224,0.09) 0%,transparent 60%),radial-gradient(circle at 85% 75%,rgba(0,94,184,0.07) 0%,transparent 60%);pointer-events:none;z-index:-1;}
+        #loginScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;}
+        .logo{max-height:80px;display:block;margin:0 auto 2.5rem;}
+        .login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2.8rem 2.2rem;width:100%;max-width:420px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+        .login-card h1{font-size:1.9rem;font-weight:700;text-align:center;margin-bottom:0.4rem;background:linear-gradient(90deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .login-card .tagline{text-align:center;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:0.85rem;margin-bottom:2rem;}
+        #portalScreen{display:none;max-width:860px;margin:0 auto;}
+        .portal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
+        .portal-header .logo-sm{max-height:50px;}
+        .welcome-name{font-size:1.1rem;font-weight:600;color:var(--accent);font-family:'DM Mono',monospace;}
+        .progress-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:2.5rem;}
+        .prog-step{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:0.7rem 0.5rem;text-align:center;font-size:0.8rem;font-weight:600;color:var(--text-muted);transition:all 0.3s;}
+        .prog-step.done{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
+        .prog-step.done::after{content:' ✓';}
+        .prog-step.active{background:rgba(0,163,224,0.12);border-color:rgba(0,163,224,0.5);color:var(--accent);}
+        #completeBanner{display:none;background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.4);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;text-align:center;animation:fadeIn 0.4s ease;}
+        #completeBanner .banner-icon{font-size:2rem;margin-bottom:0.4rem;}
+        #completeBanner h3{color:#6ee7b7;font-size:1.1rem;margin-bottom:0.3rem;}
+        #completeBanner p{color:var(--text-muted);font-size:0.88rem;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+        .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem 2rem 2.2rem;margin-bottom:1.5rem;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+        .card-header{display:flex;align-items:center;gap:0.9rem;margin-bottom:1.6rem;}
+        .card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+        .icon-blue{background:rgba(0,163,224,0.15);}
+        .icon-green{background:rgba(16,185,129,0.15);}
+        .card-header h2{font-size:1.2rem;font-weight:700;}
+        .card-header p{font-size:0.83rem;color:var(--text-muted);margin-top:0.1rem;}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;}
+        .form-group{display:flex;flex-direction:column;gap:0.5rem;}
+        .form-group label{font-weight:600;font-size:0.9rem;}
+        input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{width:100%;padding:0.85rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.97rem;font-family:inherit;transition:all 0.2s;}
+        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
+        .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.8rem 1rem;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;background:var(--bg-input);}
+        .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,163,224,0.05);}
+        .upload-zone.has-file{border-color:var(--success);border-style:solid;background:rgba(16,185,129,0.05);}
+        .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+        .upload-icon{font-size:2rem;margin-bottom:0.5rem;}
+        .upload-label{font-weight:600;font-size:0.92rem;margin-bottom:0.3rem;}
+        .upload-hint{font-size:0.78rem;color:var(--text-muted);}
+        .upload-filename{font-size:0.82rem;color:#6ee7b7;margin-top:0.5rem;font-family:'DM Mono',monospace;word-break:break-all;}
+        .upload-status{display:inline-block;margin-top:0.5rem;font-size:0.78rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:20px;}
+        .status-saved{background:rgba(16,185,129,0.2);color:#6ee7b7;}
+        .status-pending{background:rgba(245,158,11,0.2);color:#fcd34d;}
+        .status-none{background:rgba(139,154,174,0.1);color:var(--text-muted);}
+        .btn{padding:0.9rem 2rem;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.22s;font-family:inherit;}
+        .btn-primary{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;width:100%;}
+        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,163,224,0.35);}
+        .btn-secondary{background:var(--bg-input);border:2px solid var(--border);color:var(--text-light);}
+        .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+        .btn-save{background:rgba(16,185,129,0.15);border:2px solid rgba(16,185,129,0.4);color:#6ee7b7;}
+        .btn-save:hover{background:rgba(16,185,129,0.25);}
+        .btn:disabled{opacity:0.5;cursor:not-allowed;}
+        .save-row{display:flex;gap:1rem;align-items:center;margin-top:1.5rem;flex-wrap:wrap;}
+        .save-msg{font-size:0.9rem;}
+        .save-msg.ok{color:var(--success);}
+        .save-msg.err{color:var(--error);}
+        .error-msg{color:var(--error);font-size:0.88rem;margin-top:0.6rem;text-align:center;min-height:1.2rem;}
+        .divider{border:none;border-top:1px solid var(--border);margin:0.5rem 0 1.5rem;}
+        .upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;}
+        .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        .signout-bar{background:rgba(0,163,224,0.08);border:1px solid rgba(0,163,224,0.2);border-radius:10px;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-size:0.88rem;color:var(--text-muted);flex-wrap:wrap;gap:0.5rem;}
+        @media(max-width:600px){.upload-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}.progress-bar{grid-template-columns:repeat(2,1fr);}}
+        .section-locked {
+            position: relative; pointer-events: none;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Work Sans', sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        body::before {
+        .section-locked::after {
             content: '';
-            position: fixed; inset: 0;
-            background:
-                radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
-                radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: -1;
+            position: absolute; inset: 0; border-radius: 16px;
+            background: rgba(10,22,40,0.65);
+            z-index: 10;
         }
-        .logo-container { text-align: center; margin-bottom: 2.5rem; }
-        .logo { max-height: 90px; width: auto; display: block; margin: 0 auto; }
-
-        /* ── Login card ── */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        .lock-banner {
+            background: rgba(139,154,174,0.1); border: 1.5px solid rgba(139,154,174,0.3);
+            border-radius: 12px; padding: 1rem 1.4rem; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.8rem;
+            font-size: 0.9rem; color: var(--text-muted);
         }
-        h1 {
-            font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.6rem;
-            background: linear-gradient(90deg, var(--accent), #60a5fa);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .subtitle {
-            text-align: center; color: var(--text-muted);
-            font-family: 'DM Mono', monospace; font-size: 0.95rem; margin-bottom: 2.2rem;
-        }
-        .form-group { margin-bottom: 1.6rem; }
-        label { display: block; margin-bottom: 0.55rem; font-weight: 600; font-size: 0.95rem; color: var(--text-light); }
-        input {
-            width: 100%; padding: 0.95rem 1.1rem; background: var(--bg-dark);
-            border: 2px solid var(--border); border-radius: 10px; color: white;
-            font-size: 1rem; font-family: inherit; transition: all 0.2s;
-        }
-        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,163,224,0.15); }
-        .btn {
-            padding: 1.05rem; border: none; border-radius: 12px;
-            font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit;
-        }
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-        }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,163,224,0.35); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 1.3rem; }
-        .hidden { display: none !important; }
-
-        /* ── Dashboard ── */
-        #dashboard {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            width: 100%;
-            max-width: 700px;
-        }
-        #dashboard h1 { margin-bottom: 0.5rem; }
-        #dashboard .subtitle { margin-bottom: 2.5rem; }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        .lock-banner .lock-icon { font-size: 1.3rem; flex-shrink: 0; }
+        .lock-banner strong { color: var(--text-light); }
+        .certs-upload-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1rem;
-            margin-bottom: 1rem;
         }
-        .dash-btn {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            color: var(--text-light);
-            border-radius: 14px;
-            padding: 1.2rem 1rem;
-            font-size: 0.97rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.22s;
-            font-family: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-        .dash-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,163,224,0.2); }
-        .dash-btn .btn-icon { font-size: 1.6rem; }
-        .dash-btn .btn-label { font-size: 0.9rem; }
-
-        .dash-btn.admin { border-color: rgba(0,94,184,0.4); }
-        .dash-btn.admin:hover { border-color: #60a5fa; color: #60a5fa; }
-
-        .dash-btn.locked {
-            opacity: 0.32;
-            cursor: not-allowed;
-            filter: grayscale(1);
-            pointer-events: none;
-        }
-        .dash-btn.locked .lock-icon {
-            display: inline;
-        }
-        .lock-icon { display: none; font-size: 0.8rem; margin-left: 4px; }
-
-        .dash-btn.signout {
-            background: transparent;
-            border-color: rgba(239,68,68,0.3);
-            color: #fca5a5;
-            grid-column: 1 / -1;
-            padding: 0.8rem;
-            font-size: 0.9rem;
-        }
-        .dash-btn.signout:hover { border-color: var(--error); color: var(--error); transform: none; box-shadow: none; }
-
-        .section-label {
-            text-align: left;
-            color: var(--text-muted);
-            font-family: 'DM Mono', monospace;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 1.8rem 0 0.75rem;
-        }
-
-        @media (max-width: 480px) {
-            .logo { max-height: 70px; }
-            h1 { font-size: 1.8rem; }
-            .card { padding: 2rem 1.5rem; }
-            .btn-group { grid-template-columns: 1fr; }
-            .dash-btn.signout { grid-column: 1; }
-        }
+        .cert-item { display: flex; flex-direction: column; gap: 0.5rem; }
     </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1"
-             alt="NGU Logo" class="logo">
+<div id="loginScreen">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
+    <div class="login-card">
+        <h1>Engineer Portal</h1>
+        <p class="tagline">Upload your documents to get started</p>
+        <div class="form-group" style="margin-bottom:1.2rem;">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="form-group" style="margin-bottom:1.6rem;">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" id="loginBtn">Sign In</button>
+        <div class="error-msg" id="loginError"></div>
+    </div>
+</div>
+
+<div id="portalScreen">
+    <div class="portal-header">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo-sm">
+        <span class="welcome-name" id="welcomeName"></span>
+    </div>
+    <div class="signout-bar">
+        <span>🔒 You are securely signed in to your onboarding portal</span>
+        <button class="btn btn-secondary" style="padding:0.4rem 1rem;font-size:0.85rem;" id="signOutBtn">Sign Out</button>
+    </div>
+    <div class="progress-bar" style="grid-template-columns:repeat(5,1fr);">
+        <div class="prog-step" id="prog-certs-upload">Certificates</div>
+        <div class="prog-step" id="prog-licence">Driving Licence</div>
+        <div class="prog-step" id="prog-passport">Passport</div>
+        <div class="prog-step" id="prog-address">Proof of Address</div>
+        <div class="prog-step" id="prog-bank">Bank Details</div>
     </div>
 
-    <!-- ── Login ── -->
-    <div class="card" id="loginCard">
-        <h1>NGU Onboarding</h1>
-        <p class="subtitle">Sign in to continue</p>
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="name@company.com" autocomplete="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
-        </div>
-
-        <button class="btn btn-primary" id="signInBtn">Sign In</button>
-        <div class="error-msg" id="errorMsg"></div>
+    <!-- All complete banner -->
+    <div id="completeBanner">
+        <div class="banner-icon">🎉</div>
+        <h3>All documents submitted!</h3>
+        <p>Thank you — your onboarding documents have all been received. The NGU team will be in touch shortly.</p>
     </div>
 
-    <!-- ── Dashboard ── -->
-    <div id="dashboard" class="hidden">
-        <h1>NGU Recruitment/Onboarding</h1>
-        <p class="subtitle">Welcome back — what would you like to do?</p>
-
-        <!-- Engineer section -->
-        <p class="section-label">Engineer Management</p>
-        <div class="btn-group">
-            <button class="dash-btn" id="newApplicantBtn">
-                <span class="btn-icon">📝</span>
-                <span class="btn-label">New Applicants</span>
-            </button>
-            <button class="dash-btn" id="addEngineerBtn">
-                <span class="btn-icon">👷</span>
-                <span class="btn-label">Onboarding</span>
-            </button>
-            <button class="dash-btn" id="documentsBtn">
-                <span class="btn-icon">📄</span>
-                <span class="btn-label">Engineer Documents<span class="lock-icon">🔒</span></span>
-            </button>
-            <button class="dash-btn" id="personalDetailsBtn">
-                <span class="btn-icon">👤</span>
-                <span class="btn-label">Engineer Personal Details<span class="lock-icon">🔒</span></span>
-            </button>
-            <button class="dash-btn" id="contractBtn">
-                <span class="btn-icon">📋</span>
-                <span class="btn-label">View / Amend Contracts<span class="lock-icon">🔒</span></span>
-            </button>
+    <!-- ── Certificates upload (always unlocked) ── -->
+    <div class="card" id="certsCard">
+        <div class="card-header">
+            <div class="card-icon icon-blue">📜</div>
+            <div><h2>Your Certificates</h2><p>Please upload all relevant certificates for your role — you can upload multiple files</p></div>
         </div>
-
-        <!-- Admin section -->
-        <p class="section-label">Administration</p>
-        <div class="btn-group">
-            <button class="dash-btn admin" id="manageUsersBtn">
-                <span class="btn-icon">🔧</span>
-                <span class="btn-label">Manage Admin Users</span>
-            </button>
-            <button class="dash-btn signout" id="signOutBtn">Sign Out</button>
+        <hr class="divider">
+        <div class="certs-upload-grid" id="certsGrid"></div>
+        <button class="btn-add-cert" id="addCertBtn" style="margin-top:1rem;width:100%;padding:0.65rem;border-radius:10px;background:rgba(0,163,224,0.1);border:2px dashed rgba(0,163,224,0.4);color:var(--accent);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;">+ Add Another Certificate</button>
+        <div class="save-row" style="margin-top:1rem;">
+            <span class="save-msg" id="certsMsg"></span>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import {
-            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-        import {
-            getFirestore, collection, query, where, getDocs
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    <!-- Lock banner shown when interview not yet passed -->
+    <div id="lockBanner" class="lock-banner">
+        <span class="lock-icon">🔒</span>
+        <div><strong>Documents &amp; Bank Details are locked</strong><br>These sections will unlock once you have successfully passed your interview.</div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
-            authDomain: "oesperformance-a54c0.firebaseapp.com",
-            projectId: "oesperformance-a54c0",
-            storageBucket: "oesperformance-a54c0.firebasestorage.app",
-            messagingSenderId: "484894102454",
-            appId: "1:484894102454:web:17535ee497eac2d90d6717"
-        };
+    <div class="card" id="docsCard">
+        <div class="card-header">
+            <div class="card-icon icon-blue">📎</div>
+            <div><h2>Your Documents</h2><p>Upload clear photos or scans. Accepted: JPG, PNG, PDF (max 10MB each)</p></div>
+        </div>
+        <hr class="divider">
+        <div class="upload-grid">
+            <!-- Driving Licence Front -->
+            <div>
+                <div class="upload-zone" id="zone-licence-front">
+                    <input type="file" id="file-licence-front" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-front', this)">
+                    <div class="upload-icon">🪪</div>
+                    <div class="upload-label">Driving Licence Front</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-licence-front"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-front">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-front" onclick="uploadFile('licence-front')" disabled>Upload</button>
+            </div>
+            <!-- Driving Licence Back -->
+            <div>
+                <div class="upload-zone" id="zone-licence-back">
+                    <input type="file" id="file-licence-back" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('licence-back', this)">
+                    <div class="upload-icon">🪪</div>
+                    <div class="upload-label">Driving Licence Back</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-licence-back"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-licence-back">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-licence-back" onclick="uploadFile('licence-back')" disabled>Upload</button>
+            </div>
+            <!-- Passport Cover -->
+            <div>
+                <div class="upload-zone" id="zone-passport-cover">
+                    <input type="file" id="file-passport-cover" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-cover', this)">
+                    <div class="upload-icon">📔</div>
+                    <div class="upload-label">Passport Cover</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-passport-cover"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-cover">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-cover" onclick="uploadFile('passport-cover')" disabled>Upload</button>
+            </div>
+            <!-- Passport Information -->
+            <div>
+                <div class="upload-zone" id="zone-passport-info">
+                    <input type="file" id="file-passport-info" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('passport-info', this)">
+                    <div class="upload-icon">🛂</div>
+                    <div class="upload-label">Passport Information</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-passport-info"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-passport-info">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-passport-info" onclick="uploadFile('passport-info')" disabled>Upload</button>
+            </div>
+            <!-- Proof of Address -->
+            <div>
+                <div class="upload-zone" id="zone-address">
+                    <input type="file" id="file-address" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('address', this)">
+                    <div class="upload-icon">🏠</div>
+                    <div class="upload-label">Proof of Address</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-address"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-address">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-address" onclick="uploadFile('address')" disabled>Upload</button>
+            </div>
+            <!-- Proof of NI Number -->
+            <div>
+                <div class="upload-zone" id="zone-ni-number">
+                    <input type="file" id="file-ni-number" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileSelect('ni-number', this)">
+                    <div class="upload-icon">🔢</div>
+                    <div class="upload-label">Proof of NI Number</div>
+                    <div class="upload-hint">JPG, PNG or PDF</div>
+                    <div class="upload-filename" id="fname-ni-number"></div>
+                </div>
+                <div style="text-align:center;margin-top:0.5rem;"><span class="upload-status status-none" id="status-ni-number">Not uploaded</span></div>
+                <button class="btn btn-save" style="width:100%;margin-top:0.6rem;padding:0.6rem;" id="upload-btn-ni-number" onclick="uploadFile('ni-number')" disabled>Upload</button>
+            </div>
+        </div>
+    </div>
 
-        const app  = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db   = getFirestore(app);
+    <div class="card" id="bankCard">
+        <div class="card-header">
+            <div class="card-icon icon-green">🏦</div>
+            <div><h2>Bank Details</h2><p>Your details are stored securely and only accessible to the payroll team</p></div>
+        </div>
+        <hr class="divider">
+        <div class="form-grid">
+            <div class="form-group"><label>Name on Account</label><input type="text" id="bankName" placeholder="Full name as it appears on account"></div>
+            <div class="form-group"><label>Bank Name</label><input type="text" id="bankBankName" placeholder="e.g. Barclays, HSBC, Lloyds"></div>
+            <div class="form-group"><label>Sort Code</label><input type="text" id="bankSortCode" placeholder="00-00-00" maxlength="8"></div>
+            <div class="form-group"><label>Account Number</label><input type="text" id="bankAccountNo" placeholder="8-digit account number" maxlength="8"></div>
+        </div>
+        <div class="save-row">
+            <button class="btn btn-save" id="saveBankBtn" style="padding:0.75rem 1.8rem;">Save Bank Details</button>
+            <span class="save-msg" id="bankMsg"></span>
+        </div>
+    </div>
 
-        const loginCard  = document.getElementById('loginCard');
-        const dashboard  = document.getElementById('dashboard');
-        const errorMsg   = document.getElementById('errorMsg');
-        const signInBtn  = document.getElementById('signInBtn');
+    <!-- Driver Questionnaire link -->
+    <div class="card" style="border-color:rgba(0,163,224,0.3);background:linear-gradient(135deg,rgba(0,94,184,0.12) 0%,rgba(0,163,224,0.08) 100%);">
+        <div class="card-header" style="margin-bottom:0;">
+            <div class="card-icon icon-blue">🚗</div>
+            <div style="flex:1;">
+                <h2>Driver Questionnaire</h2>
+                <p>Complete your driver questionnaire as part of the onboarding process</p>
+            </div>
+            <a href="driver-questionnaire.html" target="_blank" style="text-decoration:none;">
+                <button class="btn" style="background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;padding:0.7rem 1.5rem;font-size:0.9rem;white-space:nowrap;">
+                    Open Questionnaire →
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
 
-        // Buttons that are permission-gated: { buttonId: permissionKey }
-        const GATED_BTNS = {
-            documentsBtn:      'documents',
-            personalDetailsBtn: 'personaldetails',
-            contractBtn:       'contract'
-        };
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-        async function applyPermissions(user) {
-            try {
-                const q    = query(collection(db, "NGUO Database"), where("authUid", "==", user.uid));
-                const snap = await getDocs(q);
-                const perms = snap.empty ? {} : (snap.docs[0].data().permissions || {});
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
 
-                Object.entries(GATED_BTNS).forEach(([btnId, permKey]) => {
-                    const btn = document.getElementById(btnId);
-                    if (!btn) return;
-                    if (!perms[permKey]) {
-                        btn.classList.add('locked');
-                    } else {
-                        btn.classList.remove('locked');
-                    }
-                });
-            } catch (err) {
-                console.warn('Could not load permissions:', err);
-            }
+    emailjs.init('ziLnha91scpGjFABh');
+
+    const BANK_SERVICE_ID      = 'service_gmlx02k';
+    const BANK_TEMPLATE_ID     = 'template_xkortjd';
+    const COMPLETE_SERVICE_ID  = 'service_xyxy4ea';
+    const COMPLETE_TEMPLATE_ID = 'template_owcpuso';
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // All document keys in the "Your Documents" section
+    const DOC_KEYS = ['licence-front', 'licence-back', 'passport-cover', 'passport-info', 'address', 'ni-number'];
+
+    let currentEngineer      = null;
+    let allCompleteEmailSent = false;
+    let certSlots            = [];
+    let certSlotCounter      = 0;
+
+    window.handleFileSelect = handleFileSelect;
+    window.uploadFile       = uploadFile;
+
+    document.getElementById('loginBtn').addEventListener('click', doLogin);
+    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+    async function doLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const pass  = document.getElementById('loginPassword').value;
+        const errEl = document.getElementById('loginError');
+        const btn   = document.getElementById('loginBtn');
+
+        errEl.textContent = '';
+        if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; return; }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span>Signing in…';
+
+        try {
+            const q    = query(collection(db, "NGUO - Engineers"), where("email", "==", email));
+            const snap = await getDocs(q);
+
+            if (snap.empty) { errEl.textContent = 'No engineer account found for this email.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
+
+            const engineerDoc  = snap.docs[0];
+            const engineerData = engineerDoc.data();
+
+            if (engineerData.password !== pass) { errEl.textContent = 'Incorrect password. Please try again.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
+            if (engineerData.status === 'deleted') { errEl.textContent = 'This account is no longer active.'; btn.disabled = false; btn.textContent = 'Sign In'; return; }
+
+            currentEngineer = { docId: engineerDoc.id, ...engineerData };
+
+            allCompleteEmailSent = !!(
+                currentEngineer.certs_uploaded && currentEngineer.certs_uploaded.length > 0 &&
+                DOC_KEYS.every(k => currentEngineer[`docs_${k}`]) &&
+                currentEngineer.bank_name && currentEngineer.bank_accountNo
+            );
+
+            showPortal();
+
+        } catch (err) {
+            errEl.textContent = 'Login error: ' + err.message;
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                loginCard.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                errorMsg.textContent = '';
-                await applyPermissions(user);
-            } else {
-                loginCard.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-            }
+        btn.disabled    = false;
+        btn.textContent = 'Sign In';
+    }
+
+    function showPortal() {
+        document.getElementById('loginScreen').style.display  = 'none';
+        document.getElementById('portalScreen').style.display = 'block';
+        document.getElementById('welcomeName').textContent    = `👋 ${currentEngineer.name}`;
+        applyInterviewLock();
+        setupCertsGrid();
+        loadExistingData();
+    }
+
+    function applyInterviewLock() {
+        const passed     = currentEngineer.interviewPassed === true;
+        const docsCard   = document.getElementById('docsCard');
+        const bankCard   = document.getElementById('bankCard');
+        const lockBanner = document.getElementById('lockBanner');
+
+        if (passed) {
+            docsCard.classList.remove('section-locked');
+            bankCard.classList.remove('section-locked');
+            lockBanner.style.display = 'none';
+        } else {
+            docsCard.classList.add('section-locked');
+            bankCard.classList.add('section-locked');
+            lockBanner.style.display = 'flex';
+        }
+    }
+
+    function setupCertsGrid() {
+        certSlots = [];
+        certSlotCounter = 0;
+        const grid = document.getElementById('certsGrid');
+        grid.innerHTML = '';
+        const existing = currentEngineer.certs_uploaded || [];
+        if (existing.length > 0) {
+            existing.forEach(c => addCertSlotUploaded(c));
+        }
+        addCertSlot();
+    }
+
+    function addCertSlot() {
+        certSlotCounter++;
+        const id   = certSlotCounter;
+        const slot = { id, file: null, uploaded: false };
+        certSlots.push(slot);
+
+        const grid = document.getElementById('certsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-item';
+        div.id = `cert-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone" id="cert-zone-${id}" style="padding:1.2rem 0.8rem;">
+                <input type="file" id="cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📜</div>
+                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">Certificate ${id}</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">JPG, PNG or PDF</div>
+                <div class="upload-filename" id="cert-fname-${id}"></div>
+            </div>
+            <div style="text-align:center;">
+                <span class="upload-status status-none" id="cert-status-${id}">Not uploaded</span>
+            </div>
+            <button class="btn btn-save" style="padding:0.5rem;font-size:0.8rem;" id="cert-upload-btn-${id}" onclick="uploadCert(${id})" disabled>Upload</button>
+        `;
+        grid.appendChild(div);
+
+        document.getElementById(`cert-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            if (this.files[0].size > 10 * 1024 * 1024) { alert('Max 10MB.'); this.value=''; return; }
+            const s = certSlots.find(s => s.id === id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`cert-status-${id}`).textContent  = 'Ready to upload';
+            document.getElementById(`cert-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`cert-upload-btn-${id}`).disabled = false;
+            document.getElementById(`cert-zone-${id}`).classList.remove('has-file');
         });
+    }
 
-        signInBtn.addEventListener('click', async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass  = document.getElementById('password').value;
+    function addCertSlotUploaded(certData) {
+        certSlotCounter++;
+        const id = certSlotCounter;
+        certSlots.push({ id, file: null, uploaded: true });
 
-            if (!email || !pass) { errorMsg.textContent = 'Please enter email and password'; return; }
+        const grid = document.getElementById('certsGrid');
+        const div  = document.createElement('div');
+        div.className = 'cert-item';
+        div.id = `cert-slot-${id}`;
+        div.innerHTML = `
+            <div class="upload-zone has-file" id="cert-zone-${id}" style="padding:1.2rem 0.8rem;">
+                <input type="file" id="cert-file-${id}" accept=".jpg,.jpeg,.png,.pdf">
+                <div style="font-size:1.4rem;margin-bottom:0.3rem;">📜</div>
+                <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;">${certData.name || 'Certificate'}</div>
+                <div class="upload-filename">✓ Uploaded</div>
+            </div>
+            <div style="text-align:center;">
+                <span class="upload-status status-saved" id="cert-status-${id}">✓ Uploaded</span>
+            </div>
+            <button class="btn btn-save" style="padding:0.5rem;font-size:0.8rem;" id="cert-upload-btn-${id}" onclick="uploadCert(${id})" disabled>Re-upload</button>
+        `;
+        grid.appendChild(div);
 
-            signInBtn.disabled = true;
-            signInBtn.textContent = 'Signing in...';
-            errorMsg.textContent = '';
+        document.getElementById(`cert-file-${id}`).addEventListener('change', function() {
+            if (!this.files[0]) return;
+            if (this.files[0].size > 10 * 1024 * 1024) { alert('Max 10MB.'); this.value=''; return; }
+            const s = certSlots.find(s => s.id === id);
+            if (s) s.file = this.files[0];
+            document.getElementById(`cert-fname-${id}`).textContent   = `📎 ${this.files[0].name}`;
+            document.getElementById(`cert-status-${id}`).textContent  = 'Ready to upload';
+            document.getElementById(`cert-status-${id}`).className    = 'upload-status status-pending';
+            document.getElementById(`cert-upload-btn-${id}`).disabled = false;
+        });
+    }
+
+    document.getElementById('addCertBtn').addEventListener('click', addCertSlot);
+
+    window.uploadCert = async function(id) {
+        const slot   = certSlots.find(s => s.id === id);
+        if (!slot || !slot.file) return;
+        const upBtn  = document.getElementById(`cert-upload-btn-${id}`);
+        const status = document.getElementById(`cert-status-${id}`);
+        const zone   = document.getElementById(`cert-zone-${id}`);
+
+        upBtn.disabled     = true;
+        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
+        status.textContent = 'Uploading…';
+        status.className   = 'upload-status status-pending';
+
+        try {
+            const fileData = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload  = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Could not read file'));
+                reader.readAsDataURL(slot.file);
+            });
+
+            const existing  = currentEngineer.certs_uploaded || [];
+            const newEntry  = { name: slot.file.name, data: fileData, uploadedAt: new Date().toISOString() };
+            const slotIndex = certSlots.filter(s => s.uploaded || s.id <= id).findIndex(s => s.id === id);
+            if (slot.uploaded && slotIndex >= 0 && slotIndex < existing.length) {
+                existing[slotIndex] = newEntry;
+            } else {
+                existing.push(newEntry);
+            }
+
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                certs_uploaded:  existing,
+                certs_updatedAt: serverTimestamp()
+            });
+
+            currentEngineer.certs_uploaded = existing;
+            slot.uploaded      = true;
+            slot.file          = null;
+            status.textContent = '✓ Uploaded';
+            status.className   = 'upload-status status-saved';
+            zone.classList.add('has-file');
+            upBtn.textContent  = 'Re-upload';
+            upBtn.disabled     = false;
+
+            const msgEl = document.getElementById('certsMsg');
+            msgEl.className   = 'save-msg ok';
+            msgEl.textContent = `✓ Certificate uploaded successfully`;
+            setTimeout(() => { msgEl.textContent = ''; }, 3000);
+
+            updateProgress();
+        } catch (err) {
+            status.textContent = '✗ Failed';
+            status.className   = 'upload-status status-none';
+            upBtn.textContent  = 'Retry';
+            upBtn.disabled     = false;
+            alert('Upload failed: ' + err.message);
+        }
+    };
+
+    function loadExistingData() {
+        const d = currentEngineer;
+        DOC_KEYS.forEach(key => setDocStatus(key, d[`docs_${key}`]));
+        if (d.bank_name)      document.getElementById('bankName').value      = d.bank_name;
+        if (d.bank_bankName)  document.getElementById('bankBankName').value  = d.bank_bankName;
+        if (d.bank_sortCode)  document.getElementById('bankSortCode').value  = d.bank_sortCode;
+        if (d.bank_accountNo) document.getElementById('bankAccountNo').value = d.bank_accountNo;
+        updateProgress();
+    }
+
+    function setDocStatus(key, fileUrl) {
+        const statusEl = document.getElementById(`status-${key}`);
+        const zoneEl   = document.getElementById(`zone-${key}`);
+        if (fileUrl) {
+            statusEl.textContent = '✓ Uploaded';
+            statusEl.className   = 'upload-status status-saved';
+            zoneEl.classList.add('has-file');
+            document.getElementById(`fname-${key}`).textContent = 'Previously uploaded — click to replace';
+        } else {
+            statusEl.textContent = 'Not uploaded';
+            statusEl.className   = 'upload-status status-none';
+        }
+    }
+
+    function handleFileSelect(key, input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        if (file.size > 10 * 1024 * 1024) { alert('File is too large. Maximum size is 10MB.'); input.value = ''; return; }
+        document.getElementById(`fname-${key}`).textContent   = `📎 ${file.name}`;
+        document.getElementById(`zone-${key}`).classList.remove('has-file');
+        document.getElementById(`status-${key}`).textContent  = 'Ready to upload';
+        document.getElementById(`status-${key}`).className    = 'upload-status status-pending';
+        document.getElementById(`upload-btn-${key}`).disabled = false;
+    }
+
+    async function uploadFile(key) {
+        const input  = document.getElementById(`file-${key}`);
+        const upBtn  = document.getElementById(`upload-btn-${key}`);
+        const status = document.getElementById(`status-${key}`);
+        const zone   = document.getElementById(`zone-${key}`);
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+
+        upBtn.disabled     = true;
+        upBtn.innerHTML    = '<span class="spinner"></span>Uploading…';
+        status.textContent = 'Uploading…';
+        status.className   = 'upload-status status-pending';
+
+        try {
+            const fileData = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload  = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Could not read file'));
+                reader.readAsDataURL(file);
+            });
+
+            const fieldName = `docs_${key}`;
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                [fieldName]: fileData,
+                [`docs_${key}_filename`]:   file.name,
+                [`docs_${key}_uploadedAt`]: serverTimestamp()
+            });
+
+            currentEngineer[fieldName] = fileData;
+            status.textContent = '✓ Uploaded';
+            status.className   = 'upload-status status-saved';
+            zone.classList.add('has-file');
+            upBtn.textContent  = 'Re-upload';
+            upBtn.disabled     = false;
+            updateProgress();
+
+        } catch (err) {
+            status.textContent = '✗ Upload failed';
+            status.className   = 'upload-status status-none';
+            upBtn.textContent  = 'Retry';
+            upBtn.disabled     = false;
+            alert('Upload failed: ' + err.message);
+        }
+    }
+
+    document.getElementById('saveBankBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('saveBankBtn');
+        const msgEl = document.getElementById('bankMsg');
+
+        const bank_name      = document.getElementById('bankName').value.trim();
+        const bank_bankName  = document.getElementById('bankBankName').value.trim();
+        const bank_sortCode  = document.getElementById('bankSortCode').value.trim();
+        const bank_accountNo = document.getElementById('bankAccountNo').value.trim();
+
+        msgEl.textContent = '';
+        if (!bank_name || !bank_bankName || !bank_sortCode || !bank_accountNo) {
+            msgEl.className   = 'save-msg err';
+            msgEl.textContent = 'Please fill in all bank detail fields.';
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span>Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                bank_name, bank_bankName, bank_sortCode, bank_accountNo,
+                bank_savedAt: serverTimestamp()
+            });
+
+            Object.assign(currentEngineer, { bank_name, bank_bankName, bank_sortCode, bank_accountNo });
 
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                let msg = 'Login failed – check credentials';
-                if (err.code?.includes('invalid-credential') || err.code?.includes('wrong-password')) msg = 'Invalid email or password';
-                else if (err.code?.includes('user-not-found')) msg = 'No account with this email';
-                else if (err.code?.includes('too-many-requests')) msg = 'Too many attempts – wait a moment';
-                else msg = err.message || msg;
-                errorMsg.textContent = msg;
+                await emailjs.send(BANK_SERVICE_ID, BANK_TEMPLATE_ID, {
+                    engineer_name: currentEngineer.name,
+                    to_email:      'barryddixon@outlook.com',
+                    message:       `${currentEngineer.name} has uploaded their bank details to the onboarding platform.`
+                });
+            } catch (e) { console.warn('Bank email failed:', e); }
+
+            msgEl.className   = 'save-msg ok';
+            msgEl.textContent = '✓ Bank details saved securely';
+            updateProgress();
+
+        } catch (err) {
+            msgEl.className   = 'save-msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+        }
+
+        btn.disabled    = false;
+        btn.textContent = 'Save Bank Details';
+    });
+
+    function updateProgress() {
+        const d = currentEngineer;
+        const certsUploadDone = !!(d.certs_uploaded && d.certs_uploaded.length > 0);
+        const licenceDone     = !!(d['docs_licence-front'] && d['docs_licence-back']);
+        const passportDone    = !!(d['docs_passport-cover'] && d['docs_passport-info']);
+        const addressDone     = !!(d['docs_address'] && d['docs_ni-number']);
+        const bankDone        = !!(d.bank_name && d.bank_accountNo);
+
+        toggleProg('prog-certs-upload', certsUploadDone);
+        toggleProg('prog-licence',      licenceDone);
+        toggleProg('prog-passport',     passportDone);
+        toggleProg('prog-address',      addressDone);
+        toggleProg('prog-bank',         bankDone);
+
+        const allDone = certsUploadDone && licenceDone && passportDone && addressDone && bankDone;
+        document.getElementById('completeBanner').style.display = allDone ? 'block' : 'none';
+
+        if (allDone && !allCompleteEmailSent) {
+            allCompleteEmailSent = true;
+            sendAllCompleteEmail();
+        }
+    }
+
+    async function sendAllCompleteEmail() {
+        try {
+            await emailjs.send(COMPLETE_SERVICE_ID, COMPLETE_TEMPLATE_ID, {
+                to_email:       'barryddixon@outlook.com',
+                engineer_name:  currentEngineer.name,
+                engineer_email: currentEngineer.email,
+                contract_name:  currentEngineer.contract || '—',
+                message:        `${currentEngineer.name} has completed all onboarding document uploads. Their Driving Licence, Passport, Proof of Address, NI Number, Certificates, and Bank Details have all been submitted and are ready for review in the NGU onboarding platform.`
+            });
+            console.log('All-complete email sent for', currentEngineer.name);
+        } catch (err) {
+            console.warn('All-complete email failed:', err);
+        }
+    }
+
+    function toggleProg(id, done) {
+        const el = document.getElementById(id);
+        el.classList.toggle('done',   done);
+        el.classList.toggle('active', !done);
+    }
+
+    DOC_KEYS.forEach(key => {
+        const zone = document.getElementById(`zone-${key}`);
+        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            const input = document.getElementById(`file-${key}`);
+            if (e.dataTransfer.files[0]) {
+                const dt = new DataTransfer();
+                dt.items.add(e.dataTransfer.files[0]);
+                input.files = dt.files;
+                handleFileSelect(key, input);
             }
-
-            signInBtn.disabled = false;
-            signInBtn.textContent = 'Sign In';
         });
+    });
 
-        // Allow pressing Enter to sign in
-        document.getElementById('password').addEventListener('keydown', e => {
-            if (e.key === 'Enter') signInBtn.click();
-        });
+    document.getElementById('bankSortCode').addEventListener('input', function() {
+        let v = this.value.replace(/\D/g, '').slice(0,6);
+        if (v.length > 4) v = v.slice(0,2) + '-' + v.slice(2,4) + '-' + v.slice(4);
+        else if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+        this.value = v;
+    });
 
-        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
-        document.getElementById('newApplicantBtn').addEventListener('click', () => window.location.href = 'newapplicant.html');
-        document.getElementById('addEngineerBtn').addEventListener('click', () => window.location.href = 'engineerdatabase.html');
-        document.getElementById('documentsBtn').addEventListener('click', () => window.location.href = 'documents.html');
-        document.getElementById('personalDetailsBtn').addEventListener('click', () => window.location.href = 'personaldetails.html');
-        document.getElementById('contractBtn').addEventListener('click', () => window.location.href = 'contract.html');
-        document.getElementById('manageUsersBtn').addEventListener('click', () => window.location.href = 'userdatabase.html');
-    </script>
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+        currentEngineer      = null;
+        allCompleteEmailSent = false;
+        document.getElementById('portalScreen').style.display  = 'none';
+        document.getElementById('loginScreen').style.display   = 'flex';
+        document.getElementById('loginEmail').value    = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginError').textContent = '';
+    });
+</script>
 </body>
 </html>
