@@ -225,7 +225,7 @@
             </button>
             <button class="dash-btn dq" id="driverQuestionnaireBtn">
                 <span class="btn-icon">🚗</span>
-                <span class="btn-label">Driver Questionnaire</span>
+                <span class="btn-label">Driver Questionnaire<span class="lock-icon">🔒</span></span>
             </button>
         </div>
 
@@ -234,7 +234,7 @@
         <div class="btn-group">
             <button class="dash-btn admin" id="manageUsersBtn">
                 <span class="btn-icon">🔧</span>
-                <span class="btn-label">Manage Admin Users</span>
+                <span class="btn-label">Manage Admin Users<span class="lock-icon">🔒</span></span>
             </button>
             <button class="dash-btn signout" id="signOutBtn">Sign Out</button>
         </div>
@@ -268,9 +268,11 @@
         const signInBtn  = document.getElementById('signInBtn');
 
         const GATED_BTNS = {
-            documentsBtn:       'documents',
-            personalDetailsBtn: 'personaldetails',
-            contractBtn:        'contract'
+            documentsBtn:           'documents',
+            personalDetailsBtn:     'personaldetails',
+            contractBtn:            'contract',
+            driverQuestionnaireBtn: 'driverquestionnaire',
+            manageUsersBtn:         'manageusers'
         };
 
         async function applyPermissions(user) {
@@ -341,7 +343,7 @@
         document.getElementById('personalDetailsBtn').addEventListener('click',  () => window.location.href = 'personaldetails.html');
         document.getElementById('contractBtn').addEventListener('click',         () => window.location.href = 'contract.html');
         document.getElementById('manageUsersBtn').addEventListener('click',      () => window.location.href = 'userdatabase.html');
-        document.getElementById('driverQuestionnaireBtn').addEventListener('click', () => window.location.href = 'driverquestionnaireview.html');
+        document.getElementById('driverQuestionnaireBtn').addEventListener('click', () => window.location.href = 'view-driver-questionnaire-submissions.html');
     </script>
 </body>
 </html>
