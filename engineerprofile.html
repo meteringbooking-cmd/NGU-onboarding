@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Engineer Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005EB8; --accent: #00A3E0;
+            --bg-dark: #0A1628; --bg-card: #1a2942; --bg-input: #0d1f3a;
+            --text-light: #E8EDF2; --text-muted: #8B9AAE; --border: #2a3f5f;
+            --success: #10B981; --error: #EF4444; --warning: #F59E0B;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1f3a 100%);
+            color: var(--text-light); min-height: 100vh; padding: 2rem 1.5rem;
+        }
+        body::before {
+            content:''; position:fixed; inset:0;
+            background: radial-gradient(circle at 15% 20%, rgba(0,163,224,0.09) 0%, transparent 60%),
+                        radial-gradient(circle at 85% 75%, rgba(0,94,184,0.07) 0%, transparent 60%);
+            pointer-events:none; z-index:-1;
+        }
+
+        /* ── Layout ── */
+        .page { display:none; max-width:680px; margin:0 auto; }
+        .page.active { display:block; }
+        .logo { max-height:65px; display:block; margin:0 auto 2rem; }
+
+        /* ── Progress stepper ── */
+        .stepper {
+            display:flex; align-items:center; justify-content:center;
+            gap:0; margin-bottom:2.5rem; flex-wrap:nowrap; overflow-x:auto;
+        }
+        .step {
+            display:flex; flex-direction:column; align-items:center; gap:0.3rem;
+            min-width:52px;
+        }
+        .step-circle {
+            width:30px; height:30px; border-radius:50%;
+            border:2px solid var(--border); background:var(--bg-input);
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.72rem; font-weight:700; color:var(--text-muted);
+            transition:all 0.3s; flex-shrink:0;
+        }
+        .step.done .step-circle  { background:rgba(16,185,129,0.2); border-color:#10B981; color:#6ee7b7; }
+        .step.active .step-circle { background:rgba(0,163,224,0.2); border-color:var(--accent); color:var(--accent); }
+        .step-label { font-size:0.62rem; color:var(--text-muted); text-align:center; white-space:nowrap; font-weight:600; }
+        .step.active .step-label { color:var(--accent); }
+        .step.done .step-label   { color:#6ee7b7; }
+        .step-line { flex:1; height:2px; background:var(--border); min-width:16px; margin-bottom:1.2rem; transition:background 0.3s; }
+        .step-line.done { background:#10B981; }
+
+        /* ── Card ── */
+        .card {
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:16px; padding:2rem 2rem 2.2rem;
+            box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-bottom:1.5rem;
+        }
+        .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.6rem; flex-wrap:wrap; gap:1rem; }
+        .card-header-left { display:flex; align-items:center; gap:0.9rem; }
+        .card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; background:rgba(0,163,224,0.15); }
+        .card-icon.green  { background:rgba(16,185,129,0.15); }
+        .card-icon.orange { background:rgba(245,158,11,0.15); }
+        .card-icon.purple { background:rgba(129,140,248,0.15); }
+        .card-title { font-size:1.15rem; font-weight:700; }
+        .card-subtitle { font-size:0.82rem; color:var(--text-muted); margin-top:0.15rem; }
+
+        /* ── Divider ── */
+        .divider { border:none; border-top:1px solid var(--border); margin:0.4rem 0 1.4rem; }
+
+        /* ── Forms ── */
+        .form-group { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.1rem; }
+        .form-group label { font-weight:600; font-size:0.9rem; }
+        .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"],
+        input[type="number"], select, textarea {
+            width:100%; padding:0.85rem 1rem; background:var(--bg-input);
+            border:2px solid var(--border); border-radius:10px; color:var(--text-light);
+            font-size:0.95rem; font-family:inherit; transition:all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,0.15); }
+        select option { background:var(--bg-card); }
+        textarea { resize:vertical; min-height:80px; }
+
+        /* ── Buttons ── */
+        .btn {
+            padding:0.85rem 2rem; border:none; border-radius:12px;
+            font-size:0.97rem; font-weight:600; cursor:pointer;
+            transition:all 0.22s; font-family:inherit; display:inline-flex; align-items:center; gap:0.5rem;
+        }
+        .btn-primary { background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%); color:white; }
+        .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,163,224,0.35); }
+        .btn-secondary { background:var(--bg-input); border:2px solid var(--border); color:var(--text-light); }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-ghost { background:transparent; border:2px solid rgba(0,163,224,0.35); color:var(--accent); padding:0.65rem 1.4rem; font-size:0.88rem; border-radius:10px; }
+        .btn-ghost:hover { background:rgba(0,163,224,0.08); }
+        .btn-warn { background:rgba(245,158,11,0.12); border:2px solid rgba(245,158,11,0.4); color:#fcd34d; }
+        .btn-warn:hover { background:rgba(245,158,11,0.2); }
+        .btn-success-outline { background:rgba(16,185,129,0.1); border:2px solid rgba(16,185,129,0.4); color:#6ee7b7; }
+        .btn-success-outline:hover { background:rgba(16,185,129,0.2); }
+        .btn:disabled { opacity:0.45; cursor:not-allowed; transform:none !important; }
+        .btn-full { width:100%; justify-content:center; }
+
+        /* ── Top-right next button ── */
+        .top-nav { display:flex; justify-content:flex-end; margin-bottom:1rem; }
+
+        /* ── Spinner ── */
+        .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* ── Status / error ── */
+        .msg { font-size:0.88rem; margin-top:0.6rem; min-height:1.2rem; }
+        .msg.ok  { color:var(--success); }
+        .msg.err { color:var(--error); }
+        .err-text { color:var(--error); font-size:0.85rem; margin-top:0.3rem; }
+
+        /* ── Login screen ── */
+        #loginPage { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1rem; }
+        .login-card { background:var(--bg-card); border:1px solid var(--border); border-radius:20px; padding:2.8rem 2.2rem; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+        .login-card h1 { font-size:1.8rem; font-weight:700; text-align:center; margin-bottom:0.4rem; background:linear-gradient(90deg,var(--accent),#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .login-card .tagline { text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.82rem; margin-bottom:2rem; }
+
+        /* ── Pension viewer ── */
+        .pension-viewer {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:12px; padding:1.5rem; text-align:center;
+        }
+        .pension-viewer .doc-icon { font-size:3rem; margin-bottom:0.8rem; }
+        .pension-viewer p { color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem; }
+        .pension-viewer .filename { font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--accent); margin-bottom:1rem; word-break:break-all; }
+        .embed-container { width:100%; height:500px; border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:1rem; }
+        .embed-container iframe, .embed-container img { width:100%; height:100%; object-fit:contain; border:none; }
+
+        /* ── Upload zone ── */
+        .upload-zone {
+            border:2px dashed var(--border); border-radius:12px;
+            padding:2rem 1rem; text-align:center; cursor:pointer;
+            transition:all 0.22s; position:relative; background:var(--bg-input);
+            display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color:var(--accent); background:rgba(0,163,224,0.05); }
+        .upload-zone.has-file { border-style:solid; border-color:var(--success); background:rgba(16,185,129,0.04); }
+        .upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+        .upload-zone-icon { font-size:2rem; }
+        .upload-zone-label { font-weight:600; font-size:0.92rem; }
+        .upload-zone-hint  { font-size:0.78rem; color:var(--text-muted); }
+        .upload-zone-filename { font-size:0.8rem; color:#6ee7b7; font-family:'DM Mono',monospace; word-break:break-all; }
+        .upload-status { display:inline-block; font-size:0.75rem; font-weight:600; padding:0.18rem 0.6rem; border-radius:20px; }
+        .status-saved   { background:rgba(16,185,129,0.2); color:#6ee7b7; }
+        .status-pending { background:rgba(245,158,11,0.2); color:#fcd34d; }
+        .status-none    { background:rgba(139,154,174,0.1); color:var(--text-muted); }
+
+        /* ── Uniform grid ── */
+        .uniform-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+        .uniform-header { background:rgba(0,163,224,0.1); padding:0.7rem 0.5rem; text-align:center; font-size:0.8rem; font-weight:700; color:var(--accent); border-bottom:1px solid var(--border); }
+        .uniform-row { display:contents; }
+        .uniform-cell { padding:0.7rem 0.6rem; border-bottom:1px solid rgba(42,63,95,0.5); display:flex; align-items:center; justify-content:center; }
+        .uniform-cell.item-name { justify-content:flex-start; font-weight:600; font-size:0.88rem; color:var(--text-light); padding-left:1rem; }
+        .uniform-cell:last-child, .uniform-header:last-child { border-right:none; }
+        .uniform-header:not(:last-child), .uniform-cell:not(:last-child) { border-right:1px solid var(--border); }
+        .size-btn {
+            width:36px; height:36px; border-radius:8px; border:2px solid var(--border);
+            background:var(--bg-input); color:var(--text-muted); font-size:0.78rem;
+            font-weight:700; cursor:pointer; transition:all 0.18s; font-family:inherit;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .size-btn:hover { border-color:var(--accent); color:var(--text-light); }
+        .size-btn.selected { border-color:var(--accent); background:rgba(0,163,224,0.2); color:var(--accent); }
+
+        /* ── Address blocks ── */
+        .address-block {
+            background:var(--bg-input); border:1px solid var(--border);
+            border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:1rem;
+        }
+        .address-block-title { font-weight:700; font-size:0.88rem; color:var(--accent); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+
+        /* ── Holiday rows ── */
+        .holiday-row {
+            display:grid; grid-template-columns:1fr 1fr auto;
+            gap:0.8rem; align-items:end; margin-bottom:0.8rem;
+        }
+        .holiday-row .remove-btn {
+            padding:0.8rem; border-radius:8px; background:rgba(239,68,68,0.1);
+            border:1.5px solid rgba(239,68,68,0.3); color:#fca5a5;
+            cursor:pointer; font-size:0.9rem; transition:all 0.18s;
+        }
+        .holiday-row .remove-btn:hover { background:rgba(239,68,68,0.2); }
+
+        /* ── Thank you ── */
+        .thankyou-box { text-align:center; padding:3rem 1.5rem; }
+        .thankyou-box .ty-icon { font-size:4rem; margin-bottom:1rem; }
+        .thankyou-box h2 { font-size:1.8rem; font-weight:700; margin-bottom:0.8rem; background:linear-gradient(90deg,var(--accent),#6ee7b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .thankyou-box p { color:var(--text-muted); font-size:0.95rem; line-height:1.6; max-width:420px; margin:0 auto; }
+
+        /* ── Radio ── */
+        .radio-group { display:flex; gap:1rem; flex-wrap:wrap; }
+        .radio-option { display:flex; align-items:center; gap:0.45rem; cursor:pointer; font-size:0.92rem; font-weight:500; }
+        .radio-option input[type="radio"] { accent-color:var(--accent); width:17px; height:17px; cursor:pointer; }
+
+        /* ── Badge ── */
+        .badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.72rem; font-weight:700; }
+        .badge-blue { background:rgba(0,163,224,0.15); color:#7dd3fc; }
+
+        @media(max-width:580px) {
+            .form-grid { grid-template-columns:1fr; }
+            .uniform-grid { grid-template-columns:1fr 1fr 1fr 1fr; }
+            .holiday-row { grid-template-columns:1fr 1fr; }
+            .holiday-row .remove-btn { grid-column:span 2; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 0 — LOGIN
+══════════════════════════════════════════════════════ -->
+<div id="loginPage" class="active" style="display:flex;">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
+    <div class="login-card">
+        <h1>Engineer Profile</h1>
+        <p class="tagline">Complete your onboarding journey</p>
+        <div class="form-group" style="margin-bottom:1.4rem;">
+            <label>Your Email Address</label>
+            <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <button class="btn btn-primary btn-full" id="loginBtn">Continue</button>
+        <div class="msg err" id="loginMsg"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PORTAL WRAPPER (shown after login)
+══════════════════════════════════════════════════════ -->
+<div id="portalWrap" style="display:none; max-width:680px; margin:0 auto;">
+
+    <!-- Logo + sign out -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" style="max-height:48px;">
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <span id="welcomeLabel" style="font-family:'DM Mono',monospace; font-size:0.88rem; color:var(--accent);"></span>
+            <button class="btn btn-secondary" style="padding:0.4rem 1rem; font-size:0.82rem;" id="signOutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper" id="stepper"></div>
+
+    <!-- ── STEP 1: Driver Questionnaire ── -->
+    <div class="page active" id="step-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon">🚗</div>
+                    <div>
+                        <div class="card-title">Driver Questionnaire</div>
+                        <div class="card-subtitle">Complete the driving questionnaire to proceed</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
+                Please complete the driver questionnaire below. This covers your driving history, licence details, and any relevant information required for your role. Click <strong style="color:var(--text-light);">Submit Application</strong> when you're done — this will return you here automatically.
+            </p>
+            <div style="background:rgba(0,163,224,0.07); border:1px solid rgba(0,163,224,0.2); border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.7rem; margin-bottom:0.5rem;">
+                    <span style="font-size:1.3rem;">📋</span>
+                    <strong style="font-size:0.95rem;">Driver Questionnaire</strong>
+                </div>
+                <p style="font-size:0.83rem; color:var(--text-muted);">You'll be taken to the questionnaire form. After submitting, click the button below to continue your profile.</p>
+            </div>
+            <a href="https://ngu-onboarding.vercel.app/driverquestionnaire.html" target="_blank" class="btn btn-primary btn-full" style="text-decoration:none; margin-bottom:1rem;">
+                Open Driver Questionnaire ↗
+            </a>
+            <button class="btn btn-success-outline btn-full" id="driverDoneBtn">
+                ✓ I've Submitted the Questionnaire — Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- ── STEP 2: Pension Letter ── -->
+    <div class="page" id="step-2">
+        <div class="top-nav">
+            <button class="btn btn-ghost" id="pensionNextBtn">Next →</button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon green">🏦</div>
+                    <div>
+                        <div class="card-title">Your Pension Letter</div>
+                        <div class="card-subtitle">Uploaded by the NGU team for your reference</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="pension-viewer" id="pensionViewer">
+                <div class="doc-icon">⏳</div>
+                <p>Loading your pension letter…</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── STEP 3: P45 Form ── -->
+    <div class="page" id="step-3">
+        <div class="top-nav" id="p45TopNav" style="justify-content:space-between;">
+            <button class="btn btn-warn" id="noP45Btn">Don't have a P45 form?</button>
+            <button class="btn btn-ghost" id="p45NextBtn" style="display:none;">Next →</button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon orange">📝</div>
+                    <div>
+                        <div class="card-title">P45 Form</div>
+                        <div class="card-subtitle">Upload your P45 from your previous employer</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="upload-zone" id="zone-p45">
+                <input type="file" id="file-p45" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                <div class="upload-zone-icon">📄</div>
+                <div class="upload-zone-label">Drop your P45 here or click to browse</div>
+                <div class="upload-zone-hint">PDF, Word or image · max 20MB</div>
+                <div class="upload-zone-filename" id="fname-p45"></div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.7rem; margin-top:0.8rem;">
+                <span class="upload-status status-none" id="status-p45">Not uploaded</span>
+                <button class="btn btn-success-outline" id="upload-btn-p45" disabled>Upload P45</button>
+            </div>
+            <div class="msg" id="p45Msg"></div>
+        </div>
+    </div>
+
+    <!-- ── STEP 4: HMRC Form ── -->
+    <div class="page" id="step-4">
+        <div class="top-nav">
+            <button class="btn btn-ghost" id="hmrcNextBtn">Next →</button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon purple">🏛️</div>
+                    <div>
+                        <div class="card-title">HMRC Starter Checklist</div>
+                        <div class="card-subtitle">Complete in place of a P45</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.4rem;">As you don't have a P45, please complete the HMRC Starter Checklist. This helps NGU set up your tax correctly from day one.</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="hmrc-fname" placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="hmrc-lname" placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="hmrc-dob">
+                </div>
+                <div class="form-group">
+                    <label>National Insurance Number</label>
+                    <input type="text" id="hmrc-ni" placeholder="e.g. AB 12 34 56 C">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Home Address</label>
+                <input type="text" id="hmrc-address" placeholder="Full address">
+            </div>
+            <div class="form-group">
+                <label>Postcode</label>
+                <input type="text" id="hmrc-postcode" placeholder="Postcode" style="max-width:180px;">
+            </div>
+
+            <hr class="divider">
+            <div class="form-group">
+                <label>Employee Statement</label>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.8rem;">Choose the statement that applies to you:</p>
+                <div style="display:flex; flex-direction:column; gap:0.7rem;">
+                    <label class="radio-option">
+                        <input type="radio" name="hmrcStatement" value="A">
+                        <span><strong>Statement A</strong> — This is my first job since last 6 April and I have not been receiving taxable Jobseeker's Allowance, Employment and Support Allowance, taxable Incapacity Benefit, State or Occupational Pension.</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hmrcStatement" value="B">
+                        <span><strong>Statement B</strong> — This is now my only job but since last 6 April I have had another job, or received taxable Jobseeker's Allowance or Employment and Support Allowance, or taxable Incapacity Benefit.</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hmrcStatement" value="C">
+                        <span><strong>Statement C</strong> — I have another job or receive a State or Occupational Pension.</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:0.5rem;">
+                <label>Student Loan</label>
+                <div class="radio-group">
+                    <label class="radio-option"><input type="radio" name="hmrcStudentLoan" value="no"> No student loan</label>
+                    <label class="radio-option"><input type="radio" name="hmrcStudentLoan" value="plan1"> Plan 1</label>
+                    <label class="radio-option"><input type="radio" name="hmrcStudentLoan" value="plan2"> Plan 2</label>
+                    <label class="radio-option"><input type="radio" name="hmrcStudentLoan" value="plan4"> Plan 4</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Postgraduate Loan</label>
+                <div class="radio-group">
+                    <label class="radio-option"><input type="radio" name="hmrcPGLoan" value="no"> No</label>
+                    <label class="radio-option"><input type="radio" name="hmrcPGLoan" value="yes"> Yes</label>
+                </div>
+            </div>
+
+            <div class="msg" id="hmrcMsg"></div>
+            <div style="margin-top:1.2rem;">
+                <button class="btn btn-primary btn-full" id="saveHmrcBtn">Save &amp; Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── STEP 5: Uniform Order ── -->
+    <div class="page" id="step-5">
+        <div class="top-nav">
+            <button class="btn btn-ghost" id="uniformNextBtn" style="display:none;">Next →</button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon" style="background:rgba(129,140,248,0.15);">👕</div>
+                    <div>
+                        <div class="card-title">Uniform Order</div>
+                        <div class="card-subtitle">Select your size for each item</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Please choose your preferred size for each uniform item. You can only select one size per item.</p>
+
+            <div class="uniform-grid" id="uniformGrid">
+                <!-- header row -->
+                <div class="uniform-header">Item</div>
+                <div class="uniform-header">S</div>
+                <div class="uniform-header">M</div>
+                <div class="uniform-header">L</div>
+                <!-- Polo -->
+                <div class="uniform-cell item-name">👕 Polo Shirt</div>
+                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="S">S</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="M">M</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="L">L</button></div>
+                <!-- Gilet -->
+                <div class="uniform-cell item-name">🦺 Gilet</div>
+                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="S">S</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="M">M</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="L">L</button></div>
+                <!-- Coat -->
+                <div class="uniform-cell item-name">🧥 Coat</div>
+                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="S">S</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="M">M</button></div>
+                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="L">L</button></div>
+            </div>
+
+            <div id="uniformSummary" style="margin-top:1rem; display:none; background:rgba(0,163,224,0.07); border:1px solid rgba(0,163,224,0.2); border-radius:10px; padding:1rem 1.2rem;">
+                <p style="font-size:0.85rem; font-weight:600; color:var(--accent); margin-bottom:0.5rem;">Your selections:</p>
+                <div id="uniformSummaryText" style="font-size:0.85rem; color:var(--text-muted); font-family:'DM Mono',monospace;"></div>
+            </div>
+
+            <div class="msg" id="uniformMsg"></div>
+            <div style="margin-top:1.4rem;">
+                <button class="btn btn-primary btn-full" id="submitUniformBtn" disabled>Submit Choices</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── STEP 6: Address History ── -->
+    <div class="page" id="step-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon">🏠</div>
+                    <div>
+                        <div class="card-title">Address History</div>
+                        <div class="card-subtitle">We need a full 3-year address history</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.4rem;">Please provide your current address and the month/year you moved in. If it's less than 3 years ago, you'll be asked to add your previous address until we have a full 3-year history.</p>
+
+            <div id="addressBlocks"></div>
+
+            <div id="addressInfo" style="font-size:0.83rem; color:var(--text-muted); margin-bottom:1rem; font-family:'DM Mono',monospace;"></div>
+
+            <div class="msg" id="addressMsg"></div>
+            <button class="btn btn-primary btn-full" id="addAddressBtn" style="margin-top:0.5rem;">Add Current Address</button>
+            <button class="btn btn-success-outline btn-full" id="addressNextBtn" style="margin-top:0.8rem; display:none;">Next →</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 7: Pre-Booked Holidays ── -->
+    <div class="page" id="step-7">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon" style="background:rgba(245,158,11,0.15);">🏖️</div>
+                    <div>
+                        <div class="card-title">Pre-Booked Holidays</div>
+                        <div class="card-subtitle">Let us know about any existing bookings</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="form-group" style="margin-bottom:1.4rem;">
+                <label>Do you have any pre-booked holidays?</label>
+                <div class="radio-group" style="margin-top:0.5rem;">
+                    <label class="radio-option"><input type="radio" name="hasHolidays" value="yes" id="holidays-yes"> Yes</label>
+                    <label class="radio-option"><input type="radio" name="hasHolidays" value="no" id="holidays-no"> No</label>
+                </div>
+            </div>
+
+            <div id="holidayEntries" style="display:none;">
+                <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:1rem;">Enter your holiday dates below (up to 5):</p>
+                <div id="holidayRows"></div>
+                <button class="btn btn-ghost" id="addHolidayBtn" style="margin-top:0.3rem; font-size:0.84rem; padding:0.5rem 1.2rem;">+ Add Holiday</button>
+            </div>
+
+            <div class="msg" id="holidayMsg"></div>
+            <button class="btn btn-primary btn-full" id="holidayNextBtn" style="margin-top:1.4rem; display:none;">Next →</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 8: Emergency Contact ── -->
+    <div class="page" id="step-8">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="card-icon" style="background:rgba(239,68,68,0.15);">🆘</div>
+                    <div>
+                        <div class="card-title">Emergency Contact</div>
+                        <div class="card-subtitle">Who should we contact in an emergency?</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Contact Name</label>
+                    <input type="text" id="ec-name" placeholder="Full name">
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="ec-number" placeholder="Phone number">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Relationship to You</label>
+                <select id="ec-relationship">
+                    <option value="">— Select relationship —</option>
+                    <option>Spouse / Partner</option>
+                    <option>Parent</option>
+                    <option>Sibling</option>
+                    <option>Child</option>
+                    <option>Friend</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="msg" id="ecMsg"></div>
+            <button class="btn btn-primary btn-full" id="ecSubmitBtn" style="margin-top:1rem;">Submit &amp; Finish</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 9: Thank You ── -->
+    <div class="page" id="step-9">
+        <div class="card">
+            <div class="thankyou-box">
+                <div class="ty-icon">🎉</div>
+                <h2>Thank You!</h2>
+                <p>You've successfully completed your Engineer Profile. The NGU team will review your information and be in touch shortly with your next steps.</p>
+                <div style="margin-top:2rem;">
+                    <span class="badge badge-blue">Profile Complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /portalWrap -->
+
+<script type="module">
+    import { initializeApp }        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+        authDomain: "oesperformance-a54c0.firebaseapp.com",
+        projectId: "oesperformance-a54c0",
+        storageBucket: "oesperformance-a54c0.firebasestorage.app",
+        messagingSenderId: "484894102454",
+        appId: "1:484894102454:web:17535ee497eac2d90d6717"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
+
+    // ── Contract collection (for HR docs) ──
+    const contractCol = collection(db, "NGUO contract");
+    // ── Engineers collection ──
+    const engCol = collection(db, "NGUO - Engineers");
+
+    let currentEngineer = null;
+    let currentStep     = 1;
+    const TOTAL_STEPS   = 9;
+
+    const STEP_LABELS = ['Driver Q', 'Pension', 'P45', 'HMRC', 'Uniform', 'Address', 'Holidays', 'Emergency', 'Complete'];
+
+    // ── P45 file state ──
+    let p45File     = null;
+    let p45Uploaded = false;
+
+    // ── Address state ──
+    let addresses = [];
+
+    // ── Holiday state ──
+    let holidayCount = 0;
+
+    // ── Uniform state ──
+    const uniformChoices = {};
+
+    // ════════════════════════════════════════════════════
+    // LOGIN
+    // ════════════════════════════════════════════════════
+    document.getElementById('loginBtn').addEventListener('click', doLogin);
+    document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+    async function doLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const msgEl = document.getElementById('loginMsg');
+        const btn   = document.getElementById('loginBtn');
+        msgEl.textContent = '';
+        if (!email) { msgEl.textContent = 'Please enter your email address.'; return; }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span> Finding your profile…';
+
+        try {
+            const q    = query(engCol, where("email", "==", email));
+            const snap = await getDocs(q);
+            if (snap.empty) { msgEl.textContent = 'No account found for this email address.'; btn.disabled = false; btn.textContent = 'Continue'; return; }
+
+            const eDoc = snap.docs[0];
+            currentEngineer = { docId: eDoc.id, ...eDoc.data() };
+
+            document.getElementById('loginPage').style.display   = 'none';
+            document.getElementById('portalWrap').style.display  = 'block';
+            document.getElementById('welcomeLabel').textContent  = `👋 ${currentEngineer.name}`;
+
+            buildStepper();
+            loadPensionLetter();
+            initUniform();
+            initAddressSection();
+            showStep(1);
+
+        } catch (err) {
+            msgEl.textContent = 'Error: ' + err.message;
+        }
+        btn.disabled    = false;
+        btn.textContent = 'Continue';
+    }
+
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+        currentEngineer = null;
+        document.getElementById('portalWrap').style.display  = 'none';
+        document.getElementById('loginPage').style.display   = 'flex';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginMsg').textContent = '';
+        currentStep = 1;
+    });
+
+    // ════════════════════════════════════════════════════
+    // STEPPER
+    // ════════════════════════════════════════════════════
+    function buildStepper() {
+        const el = document.getElementById('stepper');
+        el.innerHTML = '';
+        STEP_LABELS.forEach((label, i) => {
+            const stepNum = i + 1;
+            const stepDiv = document.createElement('div');
+            stepDiv.className = 'step';
+            stepDiv.id = `stepper-${stepNum}`;
+            stepDiv.innerHTML = `<div class="step-circle">${stepNum}</div><div class="step-label">${label}</div>`;
+            el.appendChild(stepDiv);
+            if (stepNum < TOTAL_STEPS) {
+                const line = document.createElement('div');
+                line.className = 'step-line';
+                line.id = `line-${stepNum}`;
+                el.appendChild(line);
+            }
+        });
+    }
+
+    function updateStepper(active) {
+        for (let i = 1; i <= TOTAL_STEPS; i++) {
+            const s = document.getElementById(`stepper-${i}`);
+            if (!s) continue;
+            s.classList.remove('done', 'active');
+            if (i < active) s.classList.add('done');
+            else if (i === active) s.classList.add('active');
+            if (i < TOTAL_STEPS) {
+                const l = document.getElementById(`line-${i}`);
+                if (l) l.classList.toggle('done', i < active);
+            }
+        }
+    }
+
+    function showStep(n) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(`step-${n}`);
+        if (target) target.classList.add('active');
+        currentStep = n;
+        updateStepper(n);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ════════════════════════════════════════════════════
+    // STEP 1 — DRIVER QUESTIONNAIRE
+    // ════════════════════════════════════════════════════
+    document.getElementById('driverDoneBtn').addEventListener('click', () => showStep(2));
+
+    // ════════════════════════════════════════════════════
+    // STEP 2 — PENSION LETTER
+    // ════════════════════════════════════════════════════
+    async function loadPensionLetter() {
+        const viewer = document.getElementById('pensionViewer');
+        try {
+            const q    = query(contractCol, where("campaign", "==", "HR"), where("hrDocType", "==", "Pension Letter"));
+            const snap = await getDocs(q);
+            if (snap.empty) {
+                viewer.innerHTML = `<div class="doc-icon">📭</div><p>No pension letter has been uploaded yet. The NGU team will add this soon — you can continue your profile and come back later.</p>`;
+                return;
+            }
+            // Get the most recent
+            const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
+                const at = a.uploadedAt?.toMillis?.() || 0;
+                const bt = b.uploadedAt?.toMillis?.() || 0;
+                return bt - at;
+            });
+            const latest  = docs[0];
+            const url      = latest.downloadURL;
+            const fileName = latest.fileName || 'pension-letter';
+            const ext      = (fileName.split('.').pop() || '').toLowerCase();
+
+            let embedHtml = '';
+            if (ext === 'pdf') {
+                embedHtml = `<div class="embed-container"><iframe src="${url}" title="Pension Letter"></iframe></div>`;
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                embedHtml = `<div class="embed-container"><img src="${url}" alt="Pension Letter"></div>`;
+            } else {
+                embedHtml = `<p style="margin-top:0.8rem; font-size:0.85rem; color:var(--text-muted);">This file type cannot be previewed inline.</p>`;
+            }
+
+            viewer.innerHTML = `
+                <div class="doc-icon">📄</div>
+                <div class="filename">📎 ${fileName}</div>
+                <a href="${url}" target="_blank" rel="noopener" class="btn btn-ghost" style="margin-bottom:0.5rem;">⬇ Download / Open in New Tab</a>
+                ${embedHtml}
+            `;
+        } catch (err) {
+            viewer.innerHTML = `<div class="doc-icon">⚠️</div><p style="color:var(--error);">Could not load pension letter: ${err.message}</p>`;
+        }
+    }
+
+    document.getElementById('pensionNextBtn').addEventListener('click', () => showStep(3));
+
+    // ════════════════════════════════════════════════════
+    // STEP 3 — P45
+    // ════════════════════════════════════════════════════
+    const p45Input = document.getElementById('file-p45');
+
+    p45Input.addEventListener('change', function() {
+        if (!this.files[0]) return;
+        if (this.files[0].size > 20 * 1024 * 1024) { alert('Max 20MB.'); this.value=''; return; }
+        p45File = this.files[0];
+        document.getElementById('fname-p45').textContent   = `📎 ${p45File.name}`;
+        document.getElementById('status-p45').textContent  = 'Ready to upload';
+        document.getElementById('status-p45').className    = 'upload-status status-pending';
+        document.getElementById('upload-btn-p45').disabled = false;
+        document.getElementById('zone-p45').classList.remove('has-file');
+    });
+
+    document.getElementById('upload-btn-p45').addEventListener('click', async () => {
+        if (!p45File) return;
+        const btn   = document.getElementById('upload-btn-p45');
+        const msgEl = document.getElementById('p45Msg');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Uploading…';
+        msgEl.textContent = '';
+        try {
+            const safeName    = `${Date.now()}_${p45File.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+            const storagePath = `hr_documents/p45/${safeName}`;
+            const snapshot    = await uploadBytes(ref(storage, storagePath), p45File);
+            const url         = await getDownloadURL(snapshot.ref);
+
+            // Save to NGUO contract collection
+            const { addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+            await addDoc(contractCol, {
+                campaign:    'HR',
+                hrDocType:   'P45 Form',
+                engineerEmail: currentEngineer.email,
+                engineerName:  currentEngineer.name,
+                fileName:    p45File.name,
+                storagePath: storagePath,
+                downloadURL: url,
+                fileSize:    p45File.size,
+                uploadedAt:  serverTimestamp()
+            });
+
+            p45Uploaded = true;
+            document.getElementById('status-p45').textContent = '✓ Uploaded';
+            document.getElementById('status-p45').className   = 'upload-status status-saved';
+            document.getElementById('zone-p45').classList.add('has-file');
+            msgEl.className   = 'msg ok';
+            msgEl.textContent = '✓ P45 uploaded successfully';
+
+            // Show Next, hide "Don't have P45"
+            document.getElementById('noP45Btn').style.display   = 'none';
+            document.getElementById('p45NextBtn').style.display = 'inline-flex';
+            btn.textContent  = 'Re-upload';
+            btn.disabled     = false;
+
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Upload failed: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Upload P45';
+        }
+    });
+
+    document.getElementById('noP45Btn').addEventListener('click', () => showStep(4));
+    document.getElementById('p45NextBtn').addEventListener('click', () => showStep(5)); // skip HMRC if P45 uploaded
+
+    // ════════════════════════════════════════════════════
+    // STEP 4 — HMRC FORM
+    // ════════════════════════════════════════════════════
+    document.getElementById('saveHmrcBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('saveHmrcBtn');
+        const msgEl = document.getElementById('hmrcMsg');
+        msgEl.textContent = '';
+
+        const fields = {
+            fname:    document.getElementById('hmrc-fname').value.trim(),
+            lname:    document.getElementById('hmrc-lname').value.trim(),
+            dob:      document.getElementById('hmrc-dob').value,
+            ni:       document.getElementById('hmrc-ni').value.trim(),
+            address:  document.getElementById('hmrc-address').value.trim(),
+            postcode: document.getElementById('hmrc-postcode').value.trim(),
+            statement: document.querySelector('input[name="hmrcStatement"]:checked')?.value || '',
+            studentLoan: document.querySelector('input[name="hmrcStudentLoan"]:checked')?.value || '',
+            pgLoan: document.querySelector('input[name="hmrcPGLoan"]:checked')?.value || ''
+        };
+
+        if (!fields.fname || !fields.lname || !fields.dob || !fields.ni || !fields.statement) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Please fill in all required fields and select a statement.';
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                hmrc_form: fields,
+                hmrc_savedAt: serverTimestamp()
+            });
+            Object.assign(currentEngineer, { hmrc_form: fields });
+            showStep(5);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Save & Continue →';
+        }
+    });
+
+    document.getElementById('hmrcNextBtn').addEventListener('click', () => showStep(5));
+
+    // ════════════════════════════════════════════════════
+    // STEP 5 — UNIFORM ORDER
+    // ════════════════════════════════════════════════════
+    function initUniform() {
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.dataset.item;
+                const size = btn.dataset.size;
+                // Deselect others in same row
+                document.querySelectorAll(`.size-btn[data-item="${item}"]`).forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                uniformChoices[item] = size;
+                updateUniformSummary();
+                checkUniformComplete();
+            });
+        });
+    }
+
+    function updateUniformSummary() {
+        const summaryDiv  = document.getElementById('uniformSummary');
+        const summaryText = document.getElementById('uniformSummaryText');
+        const items = ['polo','gilet','coat'];
+        const labels = { polo:'Polo Shirt', gilet:'Gilet', coat:'Coat' };
+        const lines = items.filter(i => uniformChoices[i]).map(i => `${labels[i]}: ${uniformChoices[i]}`);
+        if (lines.length) {
+            summaryDiv.style.display  = 'block';
+            summaryText.textContent   = lines.join('  ·  ');
+        } else {
+            summaryDiv.style.display  = 'none';
+        }
+    }
+
+    function checkUniformComplete() {
+        const allSelected = ['polo','gilet','coat'].every(i => uniformChoices[i]);
+        document.getElementById('submitUniformBtn').disabled = !allSelected;
+    }
+
+    document.getElementById('submitUniformBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('submitUniformBtn');
+        const msgEl = document.getElementById('uniformMsg');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                uniform_choices: uniformChoices,
+                uniform_savedAt: serverTimestamp()
+            });
+            Object.assign(currentEngineer, { uniform_choices: uniformChoices });
+            showStep(6);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Submit Choices';
+        }
+    });
+
+    // ════════════════════════════════════════════════════
+    // STEP 6 — ADDRESS HISTORY
+    // ════════════════════════════════════════════════════
+    function initAddressSection() {
+        addresses = [];
+        renderAddressBlocks();
+        document.getElementById('addAddressBtn').addEventListener('click', addAddressBlock);
+        document.getElementById('addressNextBtn').addEventListener('click', saveAndNextAddress);
+    }
+
+    let addressBlockCount = 0;
+
+    function renderAddressBlocks() {
+        document.getElementById('addressBlocks').innerHTML = '';
+        addresses.forEach((a, i) => renderSavedAddress(a, i));
+        updateAddressInfo();
+    }
+
+    function renderSavedAddress(a, idx) {
+        const div = document.createElement('div');
+        div.className = 'address-block';
+        div.innerHTML = `
+            <div class="address-block-title">
+                <span>🏠</span>
+                ${idx === 0 ? 'Current Address' : `Previous Address ${idx}`}
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); font-family:'DM Mono',monospace; line-height:1.7;">
+                ${a.doorNumber} ${a.streetName}<br>
+                ${a.townCity}, ${a.postcode}<br>
+                From: ${a.monthFrom}/${a.yearFrom}
+            </div>
+        `;
+        document.getElementById('addressBlocks').appendChild(div);
+    }
+
+    function addAddressBlock() {
+        addressBlockCount++;
+        const existing = addresses.length;
+        const title    = existing === 0 ? 'Current Address' : `Previous Address ${existing}`;
+        const container = document.getElementById('addressBlocks');
+
+        // Remove any existing input form
+        const old = document.getElementById('addressInputForm');
+        if (old) old.remove();
+
+        const form = document.createElement('div');
+        form.id          = 'addressInputForm';
+        form.className   = 'address-block';
+        form.innerHTML = `
+            <div class="address-block-title"><span>✏️</span> ${title}</div>
+            <div class="form-grid" style="margin-bottom:0.8rem;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Door / House Number</label>
+                    <input type="text" id="addr-door" placeholder="e.g. 42 or Flat 3B">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Street Name</label>
+                    <input type="text" id="addr-street" placeholder="Street name">
+                </div>
+            </div>
+            <div class="form-grid" style="margin-bottom:0.8rem;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Town / City</label>
+                    <input type="text" id="addr-city" placeholder="Town or city">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Postcode</label>
+                    <input type="text" id="addr-postcode" placeholder="e.g. SW1A 1AA">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Month From</label>
+                    <select id="addr-month">
+                        <option value="">Month</option>
+                        ${['January','February','March','April','May','June','July','August','September','October','November','December']
+                            .map((m,i) => `<option value="${i+1}">${m}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:0.83rem;">Year From</label>
+                    <input type="number" id="addr-year" placeholder="${new Date().getFullYear()}" min="1960" max="${new Date().getFullYear()}">
+                </div>
+            </div>
+            <div class="msg" id="addrFormMsg"></div>
+            <button class="btn btn-primary" style="margin-top:1rem; padding:0.7rem 1.6rem;" id="saveAddressBtn">Save Address</button>
+        `;
+        container.appendChild(form);
+        document.getElementById('saveAddressBtn').addEventListener('click', saveCurrentAddressEntry);
+        document.getElementById('addAddressBtn').style.display = 'none';
+    }
+
+    function saveCurrentAddressEntry() {
+        const door     = document.getElementById('addr-door')?.value.trim();
+        const street   = document.getElementById('addr-street')?.value.trim();
+        const city     = document.getElementById('addr-city')?.value.trim();
+        const postcode = document.getElementById('addr-postcode')?.value.trim();
+        const month    = document.getElementById('addr-month')?.value;
+        const year     = document.getElementById('addr-year')?.value;
+        const msgEl    = document.getElementById('addrFormMsg');
+
+        if (!door || !street || !city || !postcode || !month || !year) {
+            msgEl.className = 'msg err'; msgEl.textContent = 'Please fill in all fields.'; return;
+        }
+
+        const entry = { doorNumber: door, streetName: street, townCity: city, postcode, monthFrom: parseInt(month), yearFrom: parseInt(year) };
+        addresses.push(entry);
+
+        document.getElementById('addressInputForm').remove();
+        renderSavedAddress(entry, addresses.length - 1);
+        updateAddressInfo();
+    }
+
+    function updateAddressInfo() {
+        const infoEl  = document.getElementById('addressInfo');
+        const nextBtn = document.getElementById('addressNextBtn');
+        const addBtn  = document.getElementById('addAddressBtn');
+
+        if (addresses.length === 0) {
+            infoEl.textContent = '';
+            nextBtn.style.display = 'none';
+            addBtn.style.display  = 'inline-flex';
+            addBtn.textContent    = 'Add Current Address';
+            return;
+        }
+
+        const oldest    = addresses[addresses.length - 1];
+        const fromDate  = new Date(oldest.yearFrom, oldest.monthFrom - 1, 1);
+        const now       = new Date();
+        const diffMs    = now - fromDate;
+        const diffYears = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+        const yearsText = diffYears >= 1 ? `${diffYears.toFixed(1)} years` : `${Math.round(diffYears * 12)} months`;
+
+        if (diffYears < 3) {
+            infoEl.textContent = `⚠️ History covers ${yearsText} — please add your previous address to reach 3 years.`;
+            nextBtn.style.display = 'none';
+            addBtn.style.display  = 'inline-flex';
+            addBtn.textContent    = '+ Add Previous Address';
+        } else {
+            infoEl.textContent    = `✓ History covers ${yearsText} — 3-year requirement met.`;
+            nextBtn.style.display = 'inline-flex';
+            addBtn.style.display  = 'none';
+        }
+    }
+
+    async function saveAndNextAddress() {
+        const btn   = document.getElementById('addressNextBtn');
+        const msgEl = document.getElementById('addressMsg');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                address_history: addresses,
+                address_savedAt: serverTimestamp()
+            });
+            Object.assign(currentEngineer, { address_history: addresses });
+            showStep(7);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Next →';
+        }
+    }
+
+    // ════════════════════════════════════════════════════
+    // STEP 7 — HOLIDAYS
+    // ════════════════════════════════════════════════════
+    document.querySelectorAll('input[name="hasHolidays"]').forEach(r => {
+        r.addEventListener('change', () => {
+            const hasHols = document.getElementById('holidays-yes').checked;
+            document.getElementById('holidayEntries').style.display = hasHols ? 'block' : 'none';
+            document.getElementById('holidayNextBtn').style.display = 'inline-flex';
+            if (hasHols && holidayCount === 0) addHolidayRow();
+        });
+    });
+
+    document.getElementById('addHolidayBtn').addEventListener('click', () => {
+        if (holidayCount < 5) addHolidayRow();
+        else { document.getElementById('holidayMsg').className = 'msg err'; document.getElementById('holidayMsg').textContent = 'Maximum 5 holidays.'; }
+    });
+
+    function addHolidayRow() {
+        holidayCount++;
+        const id  = holidayCount;
+        const row = document.createElement('div');
+        row.className = 'holiday-row';
+        row.id = `holiday-row-${id}`;
+        row.innerHTML = `
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:0.82rem;">From</label>
+                <input type="date" id="hol-from-${id}">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:0.82rem;">To</label>
+                <input type="date" id="hol-to-${id}">
+            </div>
+            <button class="remove-btn" onclick="removeHolidayRow(${id})">✕</button>
+        `;
+        document.getElementById('holidayRows').appendChild(row);
+        if (holidayCount >= 5) document.getElementById('addHolidayBtn').style.display = 'none';
+    }
+
+    window.removeHolidayRow = function(id) {
+        document.getElementById(`holiday-row-${id}`)?.remove();
+        holidayCount = Math.max(0, holidayCount - 1);
+        document.getElementById('addHolidayBtn').style.display = holidayCount < 5 ? 'inline-flex' : 'none';
+    };
+
+    document.getElementById('holidayNextBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('holidayNextBtn');
+        const msgEl = document.getElementById('holidayMsg');
+        const hasHols = document.getElementById('holidays-yes').checked;
+
+        let holidayData = { hasHolidays: hasHols, dates: [] };
+
+        if (hasHols) {
+            const rows = document.querySelectorAll('[id^="holiday-row-"]');
+            for (const row of rows) {
+                const idNum = row.id.split('-').pop();
+                const from  = document.getElementById(`hol-from-${idNum}`)?.value;
+                const to    = document.getElementById(`hol-to-${idNum}`)?.value;
+                if (from && to) holidayData.dates.push({ from, to });
+            }
+            if (holidayData.dates.length === 0) {
+                msgEl.className = 'msg err'; msgEl.textContent = 'Please enter at least one holiday date or select No.'; return;
+            }
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span> Saving…';
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                holidays: holidayData,
+                holidays_savedAt: serverTimestamp()
+            });
+            showStep(8);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Next →';
+        }
+    });
+
+    // ════════════════════════════════════════════════════
+    // STEP 8 — EMERGENCY CONTACT
+    // ════════════════════════════════════════════════════
+    document.getElementById('ecSubmitBtn').addEventListener('click', async () => {
+        const btn   = document.getElementById('ecSubmitBtn');
+        const msgEl = document.getElementById('ecMsg');
+        msgEl.textContent = '';
+
+        const name         = document.getElementById('ec-name').value.trim();
+        const number       = document.getElementById('ec-number').value.trim();
+        const relationship = document.getElementById('ec-relationship').value;
+
+        if (!name || !number || !relationship) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        btn.disabled  = true;
+        btn.innerHTML = '<span class="spinner"></span> Submitting…';
+
+        try {
+            await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
+                emergency_contact: { name, number, relationship },
+                profile_completedAt: serverTimestamp()
+            });
+            showStep(9);
+        } catch (err) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Error saving: ' + err.message;
+            btn.disabled      = false;
+            btn.textContent   = 'Submit & Finish';
+        }
+    });
+</script>
+</body>
+</html>
