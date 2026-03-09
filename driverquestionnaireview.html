@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Driver Questionnaire Submissions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary:#005EB8; --accent:#00A3E0; --bg-dark:#0A1628; --bg-card:#1a2942;
+            --bg-input:#0d1f3a; --text-light:#E8EDF2; --text-muted:#8B9AAE;
+            --border:#2a3f5f; --success:#10B981; --error:#EF4444; --warning:#F59E0B;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Work Sans',sans-serif;background:linear-gradient(135deg,var(--bg-dark) 0%,#0d1f3a 100%);color:var(--text-light);min-height:100vh;padding:2rem 1.5rem;}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(0,163,224,0.09) 0%,transparent 60%),radial-gradient(circle at 85% 75%,rgba(0,94,184,0.07) 0%,transparent 60%);pointer-events:none;z-index:-1;}
+
+        /* Login */
+        #loginScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;}
+        .logo{max-height:72px;display:block;margin:0 auto 2rem;}
+        .login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+        .login-card h1{font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:0.3rem;background:linear-gradient(90deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .login-card .tagline{text-align:center;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:0.82rem;margin-bottom:1.8rem;}
+        .form-group{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:1.1rem;}
+        .form-group label{font-weight:600;font-size:0.88rem;}
+        input[type="password"]{width:100%;padding:0.8rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;color:white;font-size:0.95rem;font-family:inherit;transition:all 0.2s;}
+        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,163,224,0.15);}
+        .btn{padding:0.85rem 2rem;border:none;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.22s;font-family:inherit;}
+        .btn-primary{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;width:100%;}
+        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,163,224,0.35);}
+        .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+        .error-msg{color:var(--error);font-size:0.85rem;margin-top:0.6rem;text-align:center;min-height:1.1rem;}
+
+        /* Main */
+        #mainScreen{display:none;max-width:1100px;margin:0 auto;}
+        .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+        .top-bar img{max-height:50px;}
+        .top-bar-right{display:flex;align-items:center;gap:1rem;}
+        .page-title{font-size:1.5rem;font-weight:700;background:linear-gradient(90deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .btn-sm{padding:0.5rem 1.1rem;border:2px solid var(--border);background:var(--bg-input);color:var(--text-light);border-radius:9px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+        .btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+        .btn-danger{border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+        .btn-danger:hover{border-color:var(--error);color:var(--error);}
+
+        /* Stats bar */
+        .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+        .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.3rem;}
+        .stat-card .stat-num{font-size:2rem;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent);}
+        .stat-card .stat-label{font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;}
+
+        /* Search & filter */
+        .toolbar{display:flex;gap:0.8rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;}
+        .search-box{flex:1;min-width:200px;padding:0.7rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;color:white;font-size:0.9rem;font-family:inherit;}
+        .search-box:focus{outline:none;border-color:var(--accent);}
+        .search-box::placeholder{color:var(--text-muted);}
+        select.filter-sel{padding:0.7rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;color:var(--text-light);font-size:0.85rem;font-family:inherit;cursor:pointer;}
+        select.filter-sel:focus{outline:none;border-color:var(--accent);}
+
+        /* Table */
+        .table-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+        table{width:100%;border-collapse:collapse;}
+        thead{background:rgba(0,163,224,0.08);border-bottom:1.5px solid var(--border);}
+        th{padding:0.9rem 1rem;text-align:left;font-size:0.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+        td{padding:0.85rem 1rem;font-size:0.88rem;border-bottom:1px solid rgba(42,63,95,0.6);vertical-align:middle;}
+        tr:last-child td{border-bottom:none;}
+        tr:hover td{background:rgba(0,163,224,0.04);}
+        .badge{display:inline-block;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.72rem;font-weight:700;}
+        .badge-yes{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
+        .badge-no{background:rgba(16,185,129,0.12);color:#6ee7b7;border:1px solid rgba(16,185,129,0.25);}
+        .badge-na{background:rgba(139,154,174,0.1);color:var(--text-muted);}
+        .view-btn{padding:0.35rem 0.9rem;background:rgba(0,163,224,0.12);border:1.5px solid rgba(0,163,224,0.35);color:var(--accent);border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+        .view-btn:hover{background:rgba(0,163,224,0.22);}
+        .empty-state{text-align:center;padding:4rem 2rem;color:var(--text-muted);}
+        .empty-state .em-icon{font-size:3rem;margin-bottom:1rem;}
+
+        /* Spinner */
+        .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+        .loading-wrap{text-align:center;padding:4rem;color:var(--text-muted);}
+        .big-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+
+        /* Modal / Detail view */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;overflow-y:auto;padding:2rem 1rem;}
+        .modal-overlay.open{display:block;}
+        .modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;max-width:800px;margin:0 auto;box-shadow:0 30px 70px rgba(0,0,0,0.7);}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.6rem;border-bottom:1px solid var(--border);}
+        .modal-header h2{font-size:1.15rem;font-weight:700;}
+        .modal-close{background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;line-height:1;}
+        .modal-close:hover{color:var(--text-light);}
+        .modal-body{padding:1.6rem;}
+
+        .detail-section{margin-bottom:1.6rem;}
+        .detail-section h3{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.9rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+        .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;}
+        .detail-row{display:flex;flex-direction:column;gap:0.2rem;}
+        .detail-row .dr-label{font-size:0.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;}
+        .detail-row .dr-val{font-size:0.88rem;font-weight:500;}
+        .detail-row .dr-val.mono{font-family:'DM Mono',monospace;}
+
+        .yn-display{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;font-weight:600;}
+        .yn-display.yes{color:#fca5a5;}
+        .yn-display.no{color:#6ee7b7;}
+        .yn-display.na{color:var(--text-muted);}
+
+        .yn-table{width:100%;border-collapse:collapse;}
+        .yn-table tr{border-bottom:1px solid rgba(42,63,95,0.5);}
+        .yn-table tr:last-child{border-bottom:none;}
+        .yn-table td{padding:0.6rem 0.5rem;font-size:0.84rem;}
+        .yn-table td:first-child{color:var(--text-muted);width:75%;}
+        .yn-table td:last-child{text-align:right;white-space:nowrap;}
+
+        .img-preview{width:100%;max-height:300px;object-fit:contain;border-radius:10px;border:1px solid var(--border);background:var(--bg-input);display:block;margin-top:0.5rem;}
+        .img-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+        .img-cell label{font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;}
+
+        .sig-preview{width:100%;border-radius:10px;border:1px solid var(--border);background:#0d1f3a;display:block;max-height:120px;object-fit:contain;}
+
+        @media(max-width:700px){
+            th:nth-child(3),th:nth-child(4),td:nth-child(3),td:nth-child(4){display:none;}
+            .img-grid{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="loginScreen">
+    <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo" class="logo">
+    <div class="login-card">
+        <h1>Submissions Viewer</h1>
+        <p class="tagline">Driver Questionnaire — Admin Access</p>
+        <div class="form-group">
+            <label>Admin Password</label>
+            <input type="password" id="adminPass" placeholder="Enter admin password" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" id="loginBtn">Access Submissions</button>
+        <div class="error-msg" id="loginError"></div>
+    </div>
+</div>
+
+<!-- Main -->
+<div id="mainScreen">
+    <div class="top-bar">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU Logo">
+        <div class="page-title">Driver Questionnaire Submissions</div>
+        <div class="top-bar-right">
+            <button class="btn-sm" id="refreshBtn">🔄 Refresh</button>
+            <button class="btn-sm btn-danger" id="signOutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total Submissions</div></div>
+        <div class="stat-card"><div class="stat-num" id="statYes">—</div><div class="stat-label">Have YES Answers</div></div>
+        <div class="stat-card"><div class="stat-num" id="statToday">—</div><div class="stat-label">Submitted Today</div></div>
+        <div class="stat-card"><div class="stat-num" id="statAvgAge">—</div><div class="stat-label">Average Age</div></div>
+    </div>
+
+    <div class="toolbar">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍  Search by name…">
+        <select class="filter-sel" id="filterYes">
+            <option value="">All submissions</option>
+            <option value="yes">Has YES answers</option>
+            <option value="clean">All NO / clean</option>
+        </select>
+    </div>
+
+    <div id="loadingWrap" class="loading-wrap">
+        <div class="big-spinner"></div>
+        <div>Loading submissions…</div>
+    </div>
+
+    <div class="table-wrap" id="tableWrap" style="display:none;">
+        <table id="submissionsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Date of Birth</th>
+                    <th>Age</th>
+                    <th>Test Passed</th>
+                    <th>Submitted</th>
+                    <th>Flags</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="em-icon">📭</div>
+            <div>No submissions found</div>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 id="modalTitle">Driver Details</h2>
+            <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, getDocs, orderBy, query }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+    authDomain: "oesperformance-a54c0.firebaseapp.com",
+    projectId: "oesperformance-a54c0",
+    storageBucket: "oesperformance-a54c0.firebasestorage.app",
+    messagingSenderId: "484894102454",
+    appId: "1:484894102454:web:17535ee497eac2d90d6717"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const ADMIN_PASSWORD = 'NextGen123';
+let allSubmissions = [];
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('adminPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_PASSWORD) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainScreen').style.display  = 'block';
+        loadSubmissions();
+    } else {
+        document.getElementById('loginError').textContent = 'Incorrect password.';
+    }
+}
+
+document.getElementById('signOutBtn').addEventListener('click', () => {
+    document.getElementById('mainScreen').style.display  = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminPass').value = '';
+});
+document.getElementById('refreshBtn').addEventListener('click', loadSubmissions);
+
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function loadSubmissions() {
+    document.getElementById('loadingWrap').style.display = 'block';
+    document.getElementById('tableWrap').style.display   = 'none';
+
+    try {
+        const q    = query(collection(db, "Driver Questionnaire"), orderBy("submittedAt", "desc"));
+        const snap = await getDocs(q);
+        allSubmissions = snap.docs.map((d, i) => ({ id: d.id, _idx: i + 1, ...d.data() }));
+        renderStats();
+        renderTable(allSubmissions);
+    } catch (err) {
+        console.error(err);
+        document.getElementById('loadingWrap').innerHTML = `<div style="color:var(--error)">Error loading: ${err.message}</div>`;
+    }
+}
+
+function hasYes(row) {
+    const yesFields = ['accidents','convictions','healthConditions','mechanical','dvlaCondition','dvlaRestricted',
+        'insDeclined','insCancelled','insRenew','insPremium','insTerms','otherBusiness'];
+    return yesFields.some(f => row[f] === 'yes');
+}
+
+function renderStats() {
+    const today = new Date().toDateString();
+    const total  = allSubmissions.length;
+    const yesCount = allSubmissions.filter(r => hasYes(r)).length;
+    const todayCount = allSubmissions.filter(r => {
+        if (!r.submittedAt) return false;
+        return new Date(r.submittedAt.seconds * 1000).toDateString() === today;
+    }).length;
+    const avgAge = total > 0 ? Math.round(allSubmissions.reduce((s, r) => s + (r.age || 0), 0) / total) : 0;
+
+    document.getElementById('statTotal').textContent  = total;
+    document.getElementById('statYes').textContent    = yesCount;
+    document.getElementById('statToday').textContent  = todayCount;
+    document.getElementById('statAvgAge').textContent = avgAge || '—';
+}
+
+function fmtDate(ts) {
+    if (!ts) return '—';
+    if (ts.seconds) return new Date(ts.seconds * 1000).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    return ts;
+}
+
+function renderTable(rows) {
+    document.getElementById('loadingWrap').style.display = 'none';
+    document.getElementById('tableWrap').style.display   = 'block';
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    if (rows.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+    }
+    document.getElementById('emptyState').style.display = 'none';
+
+    rows.forEach((row, i) => {
+        const yes = hasYes(row);
+        const tr  = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="color:var(--text-muted);font-family:'DM Mono',monospace;font-size:0.75rem;">${i + 1}</td>
+            <td style="font-weight:600;">${row.firstName || ''} ${row.lastName || ''}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${row.dob || '—'}</td>
+            <td>${row.age !== undefined ? row.age : '—'}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${row.testPassed || '—'}</td>
+            <td style="font-size:0.8rem;color:var(--text-muted);">${fmtDate(row.submittedAt)}</td>
+            <td>${yes ? '<span class="badge badge-yes">⚠ YES flags</span>' : '<span class="badge badge-no">✓ Clean</span>'}</td>
+            <td><button class="view-btn" data-id="${row.id}">View →</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // View buttons
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const sub = allSubmissions.find(r => r.id === btn.dataset.id);
+            if (sub) openModal(sub);
+        });
+    });
+}
+
+// ── Search & filter ───────────────────────────────────────────────────────────
+function applyFilters() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const filterYes = document.getElementById('filterYes').value;
+    let rows = allSubmissions.filter(r => {
+        const name = `${r.firstName || ''} ${r.lastName || ''}`.toLowerCase();
+        if (search && !name.includes(search)) return false;
+        if (filterYes === 'yes'   && !hasYes(r)) return false;
+        if (filterYes === 'clean' &&  hasYes(r)) return false;
+        return true;
+    });
+    renderTable(rows);
+}
+document.getElementById('searchBox').addEventListener('input', applyFilters);
+document.getElementById('filterYes').addEventListener('change', applyFilters);
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function ynDisplay(val) {
+    if (!val) return `<span class="yn-display na">— N/A</span>`;
+    if (val === 'yes') return `<span class="yn-display yes">⚠ Yes</span>`;
+    return `<span class="yn-display no">✓ No</span>`;
+}
+
+const YN_QUESTIONS = [
+    { key: 'accidents',        label: 'Involved in motoring accident (last 3 years)?' },
+    { key: 'convictions',      label: 'Convicted of motoring offences / prosecution pending?' },
+    { key: 'healthConditions', label: 'Defective vision/hearing, Epilepsy, Diabetes, Asthma, Heart Complaint or other infirmity?' },
+    { key: 'mechanical',       label: 'Disease/infirmity requiring mechanical aids or prolonged drug use?' },
+    { key: 'dvlaCondition',    label: 'Medical condition doctor advised to refer to DVLA?' },
+    { key: 'dvlaRestricted',   label: 'DVLA restricted licence in any way?' },
+    { key: 'insDeclined',      label: 'Insurance company declined proposal?' },
+    { key: 'insCancelled',     label: 'Insurance company cancelled policy?' },
+    { key: 'insRenew',         label: 'Insurance company refused to renew?' },
+    { key: 'insPremium',       label: 'Insurance company required increased premium?' },
+    { key: 'insTerms',         label: 'Insurance company imposed special terms or excesses?' },
+    { key: 'otherBusiness',    label: 'Might use vehicle for business other than this company?' },
+    { key: 'fleetPolicy',      label: 'Read & understood Fleet Policy & Handbook?' },
+    { key: 'licencePermission',label: 'Permission given for licence check?' },
+];
+
+function openModal(row) {
+    document.getElementById('modalTitle').textContent = `${row.firstName || ''} ${row.lastName || ''} — Questionnaire`;
+    const body = document.getElementById('modalBody');
+
+    const imgCell = (label, dataUrl, filename) => {
+        if (!dataUrl) return `<div class="img-cell"><label>${label}</label><div style="color:var(--text-muted);font-size:0.8rem;margin-top:0.4rem;">Not uploaded</div></div>`;
+        const isPdf = filename && filename.toLowerCase().endsWith('.pdf');
+        if (isPdf) return `<div class="img-cell"><label>${label}</label><div style="margin-top:0.5rem;"><a href="${dataUrl}" download="${filename}" style="color:var(--accent);font-size:0.85rem;font-weight:600;">📄 Download PDF</a></div></div>`;
+        return `<div class="img-cell"><label>${label}</label><img src="${dataUrl}" class="img-preview" alt="${label}"></div>`;
+    };
+
+    body.innerHTML = `
+        <div class="detail-section">
+            <h3>Personal Details</h3>
+            <div class="detail-grid">
+                <div class="detail-row"><span class="dr-label">Full Name</span><span class="dr-val">${row.firstName || '—'} ${row.lastName || '—'}</span></div>
+                <div class="detail-row"><span class="dr-label">Date of Birth</span><span class="dr-val mono">${row.dob || '—'}</span></div>
+                <div class="detail-row"><span class="dr-label">Age</span><span class="dr-val">${row.age !== undefined ? row.age : '—'}</span></div>
+                <div class="detail-row"><span class="dr-label">Test Passed Date</span><span class="dr-val mono">${row.testPassed || '—'}</span></div>
+                <div class="detail-row"><span class="dr-label">Submitted</span><span class="dr-val">${fmtDate(row.submittedAt)}</span></div>
+                <div class="detail-row"><span class="dr-label">Signed Date</span><span class="dr-val mono">${row.signDate || '—'}</span></div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3>Driving Licence &amp; DVLA</h3>
+            <div class="img-grid">
+                ${imgCell('Licence Front', row.licFront, row.licFrontFilename)}
+                ${imgCell('Licence Back',  row.licBack,  row.licBackFilename)}
+                ${imgCell('DVLA Screenshot', row.dvlaShot, row.dvlaShotFilename)}
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3>Declaration Answers</h3>
+            <table class="yn-table">
+                ${YN_QUESTIONS.map(q => `<tr><td>${q.label}</td><td>${ynDisplay(row[q.key])}</td></tr>`).join('')}
+            </table>
+        </div>
+
+        ${row.signature ? `
+        <div class="detail-section">
+            <h3>Signature</h3>
+            <img src="${row.signature}" class="sig-preview" alt="Signature">
+        </div>` : ''}
+    `;
+
+    document.getElementById('detailModal').classList.add('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('detailModal').classList.remove('open');
+});
+document.getElementById('detailModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('detailModal')) {
+        document.getElementById('detailModal').classList.remove('open');
+    }
+});
+</script>
+</body>
+</html>
