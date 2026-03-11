@@ -420,13 +420,6 @@
             font-family: 'DM Mono', monospace; margin-bottom: 0.5rem;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .hmrc-sig-canvas {
-            width: 100%; height: 100px;
-            background: var(--bg-input); border: 2px solid var(--border);
-            border-radius: 10px; display: block; cursor: crosshair;
-            touch-action: none; transition: border-color 0.2s;
-        }
-        .hmrc-sig-canvas:hover { border-color: var(--border-bright); }
         .hmrc-sig-hint { font-size: 0.73rem; color: var(--text-muted); margin-top: 0.3rem; }
         .hmrc-actions {
             display: flex; gap: 0.8rem; flex-wrap: wrap;
@@ -441,14 +434,6 @@
         }
         .btn-generate-pdf:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,163,224,0.3); }
         .btn-generate-pdf:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-clear-hmrc-sig {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            background: transparent; border: 1.5px solid var(--border-bright);
-            color: var(--text-muted); border-radius: 8px;
-            padding: 0.55rem 1rem; font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; font-family: inherit; transition: all 0.18s;
-        }
-        .btn-clear-hmrc-sig:hover { border-color: var(--error); color: #fca5a5; }
         .pdf-status { font-size: 0.8rem; color: var(--success); font-family: 'DM Mono', monospace; }
 
         @media (max-width: 860px) {
@@ -740,13 +725,11 @@ function renderDetail(eng, app) {
                     <div class="hmrc-sig-area">
                         <div class="hmrc-sig-label">
                             <span>Employee Signature</span>
-                            ${eng.hmrc_form.signature ? '<span style="color:#6ee7b7; font-size:0.72rem;">✓ Signed by engineer</span>' : '<button class="btn-clear-hmrc-sig" onclick="clearHmrcSig()">✕ Clear</button>'}
+                            ${eng.hmrc_form.signature ? '<span style="color:#6ee7b7; font-size:0.72rem;">✓ Signed by engineer</span>' : '<span style="color:var(--text-muted); font-size:0.72rem;">No signature saved</span>'}
                         </div>
                         ${eng.hmrc_form.signature
-                            ? `<div class="sig-display"><img src="${eng.hmrc_form.signature}" alt="Engineer signature" style="width:100%; display:block; border-radius:6px;"></div>
-                               <p class="hmrc-sig-hint" style="color:#6ee7b7;">Signature provided by engineer during onboarding</p>`
-                            : `<canvas class="hmrc-sig-canvas" id="hmrcSigCanvas" width="900" height="100"></canvas>
-                               <p class="hmrc-sig-hint">No signature saved — draw one above to include in the PDF</p>`
+                            ? `<div class="sig-display"><img src="${eng.hmrc_form.signature}" alt="Engineer signature" style="width:100%; display:block; border-radius:6px;"></div>`
+                            : `<p class="hmrc-sig-hint">Engineer has not yet signed the HMRC form</p>`
                         }
                         <div class="hmrc-actions">
                             <button class="btn-generate-pdf" id="generateHmrcBtn" onclick="generateHmrcPdf()">
@@ -836,10 +819,6 @@ function renderDetail(eng, app) {
             document.getElementById(`tab-${tab.dataset.tab}`)?.classList.add('active');
         });
     });
-
-    // Wire up HMRC signature canvas (if present)
-    const hmrcCanvas = document.getElementById('hmrcSigCanvas');
-    if (hmrcCanvas) setupHmrcCanvas(hmrcCanvas);
 }
 
 // ── Uniform renderer ─────────────────────────────────────────────────────────
@@ -1097,39 +1076,6 @@ function applyFilter() {
 }
 
 // ══════════════════════════════════════════════
-// HMRC SIGNATURE CANVAS
-// ══════════════════════════════════════════════
-function setupHmrcCanvas(canvas) {
-    const ctx = canvas.getContext('2d');
-    let drawing = false, lastX = 0, lastY = 0;
-    function getPos(e) {
-        const r = canvas.getBoundingClientRect();
-        const sx = canvas.width / r.width, sy = canvas.height / r.height;
-        if (e.touches) return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
-        return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
-    }
-    ctx.strokeStyle = '#00A3E0'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    canvas.addEventListener('mousedown',   e => { drawing = true; [lastX,lastY] = getPos(e); });
-    canvas.addEventListener('mousemove',   e => { if (!drawing) return; const [x,y] = getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; });
-    canvas.addEventListener('mouseup',    () => drawing = false);
-    canvas.addEventListener('mouseleave', () => drawing = false);
-    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX,lastY] = getPos(e); }, { passive: false });
-    canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const [x,y]=getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; }, { passive: false });
-    canvas.addEventListener('touchend', () => drawing = false);
-}
-
-function isCanvasBlank(canvas) {
-    const blank = document.createElement('canvas');
-    blank.width = canvas.width; blank.height = canvas.height;
-    return canvas.toDataURL() === blank.toDataURL();
-}
-
-window.clearHmrcSig = function() {
-    const c = document.getElementById('hmrcSigCanvas');
-    if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height);
-};
-
-// ══════════════════════════════════════════════
 // GENERATE HMRC PDF
 // ══════════════════════════════════════════════
 window.generateHmrcPdf = function() {
@@ -1348,11 +1294,8 @@ window.generateHmrcPdf = function() {
         doc.text('Signature', margin + 2.5, y + 4);
         y += 9;
 
-        // Signature image — prefer saved sig from engineer's onboarding, fall back to canvas
-        const savedSig  = f.signature || null;
-        const sigCanvas = document.getElementById('hmrcSigCanvas');
-        const sigBlank  = sigCanvas ? isCanvasBlank(sigCanvas) : true;
-        const sigData   = savedSig || (!sigBlank && sigCanvas ? sigCanvas.toDataURL('image/png') : null);
+        // Signature — use the one saved by the engineer during onboarding
+        const sigData = f.signature || null;
 
         const sigBoxH = 22;
         doc.setFillColor(252, 253, 255);
