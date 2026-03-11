@@ -156,22 +156,88 @@
         .status-pending { background:rgba(245,158,11,0.2); color:#fcd34d; }
         .status-none    { background:rgba(139,154,174,0.1); color:var(--text-muted); }
 
-        /* ── Uniform grid ── */
-        .uniform-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
-        .uniform-header { background:rgba(0,163,224,0.1); padding:0.7rem 0.5rem; text-align:center; font-size:0.8rem; font-weight:700; color:var(--accent); border-bottom:1px solid var(--border); }
-        .uniform-row { display:contents; }
-        .uniform-cell { padding:0.7rem 0.6rem; border-bottom:1px solid rgba(42,63,95,0.5); display:flex; align-items:center; justify-content:center; }
-        .uniform-cell.item-name { justify-content:flex-start; font-weight:600; font-size:0.88rem; color:var(--text-light); padding-left:1rem; }
-        .uniform-cell:last-child, .uniform-header:last-child { border-right:none; }
-        .uniform-header:not(:last-child), .uniform-cell:not(:last-child) { border-right:1px solid var(--border); }
-        .size-btn {
-            width:36px; height:36px; border-radius:8px; border:2px solid var(--border);
-            background:var(--bg-input); color:var(--text-muted); font-size:0.78rem;
-            font-weight:700; cursor:pointer; transition:all 0.18s; font-family:inherit;
-            display:flex; align-items:center; justify-content:center;
+        /* ── Uniform Items ── */
+        .uniform-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
         }
-        .size-btn:hover { border-color:var(--accent); color:var(--text-light); }
-        .size-btn.selected { border-color:var(--accent); background:rgba(0,163,224,0.2); color:var(--accent); }
+        .uniform-item.selected {
+            border-color: var(--accent);
+            background: rgba(0, 163, 224, 0.05);
+        }
+        .uniform-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+        .uniform-item-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .uniform-item-range {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+        }
+        .uniform-selection-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            background: rgba(0,163,224,0.2);
+            color: var(--accent);
+            display: none;
+        }
+        .uniform-item.selected .uniform-selection-badge { display: inline-block; }
+        .size-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .size-btn {
+            min-width: 44px;
+            height: 36px;
+            padding: 0 0.6rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        .size-btn:hover { border-color: var(--accent); color: var(--text-light); }
+        .size-btn.selected { border-color: var(--accent); background: rgba(0,163,224,0.2); color: var(--accent); }
+
+        /* Trousers special layout */
+        .trousers-selectors {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .trousers-selectors .size-sub-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
 
         /* ── Address blocks ── */
         .address-block {
@@ -207,11 +273,42 @@
         .badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.72rem; font-weight:700; }
         .badge-blue { background:rgba(0,163,224,0.15); color:#7dd3fc; }
 
+        /* Uniform progress bar */
+        .uniform-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+        }
+        .uniform-progress-bar-wrap {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .uniform-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 99px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .uniform-progress-text {
+            font-size: 0.78rem;
+            font-family: 'DM Mono', monospace;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
         @media(max-width:580px) {
             .form-grid { grid-template-columns:1fr; }
-            .uniform-grid { grid-template-columns:1fr 1fr 1fr 1fr; }
             .holiday-row { grid-template-columns:1fr 1fr; }
             .holiday-row .remove-btn { grid-column:span 2; }
+            .trousers-selectors { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -267,8 +364,6 @@
             <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin-bottom:1.2rem;">
                 Please complete the driver questionnaire below. Fill in all sections and click <strong style="color:var(--text-light);">Submit</strong> when done, then click Continue.
             </p>
-
-            <!-- Embedded iframe -->
             <div style="position:relative; width:100%; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:white;">
                 <iframe
                     id="driverIframe"
@@ -278,7 +373,6 @@
                     allow="fullscreen"
                 ></iframe>
             </div>
-
             <button class="btn btn-success-outline btn-full" id="driverDoneBtn" style="margin-top:1rem;">
                 ✓ I've Submitted the Questionnaire — Continue
             </button>
@@ -448,34 +542,168 @@
                 </div>
             </div>
             <hr class="divider">
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Please choose your preferred size for each uniform item. You can only select one size per item.</p>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Please choose your preferred size for each uniform item. Select one size per item — all 7 items must be completed.</p>
 
-            <div class="uniform-grid" id="uniformGrid">
-                <!-- header row -->
-                <div class="uniform-header">Item</div>
-                <div class="uniform-header">S</div>
-                <div class="uniform-header">M</div>
-                <div class="uniform-header">L</div>
-                <!-- Polo -->
-                <div class="uniform-cell item-name">👕 Polo Shirt</div>
-                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="S">S</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="M">M</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="polo" data-size="L">L</button></div>
-                <!-- Gilet -->
-                <div class="uniform-cell item-name">🦺 Gilet</div>
-                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="S">S</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="M">M</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="gilet" data-size="L">L</button></div>
-                <!-- Coat -->
-                <div class="uniform-cell item-name">🧥 Coat</div>
-                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="S">S</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="M">M</button></div>
-                <div class="uniform-cell"><button class="size-btn" data-item="coat" data-size="L">L</button></div>
+            <!-- Progress indicator -->
+            <div class="uniform-progress">
+                <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Progress</span>
+                <div class="uniform-progress-bar-wrap">
+                    <div class="uniform-progress-bar" id="uniformProgressBar"></div>
+                </div>
+                <span class="uniform-progress-text" id="uniformProgressText">0 / 7</span>
             </div>
 
+            <!-- 1. Uneek Classic T-Shirt -->
+            <div class="uniform-item" id="item-tshirt">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">👕 Uneek Classic T-Shirt <span class="uniform-selection-badge" id="badge-tshirt"></span></div>
+                    <div class="uniform-item-range">XS – 6XL</div>
+                </div>
+                <div class="size-buttons" id="sizes-tshirt">
+                    <button class="size-btn" data-item="tshirt" data-size="XS">XS</button>
+                    <button class="size-btn" data-item="tshirt" data-size="S">S</button>
+                    <button class="size-btn" data-item="tshirt" data-size="M">M</button>
+                    <button class="size-btn" data-item="tshirt" data-size="L">L</button>
+                    <button class="size-btn" data-item="tshirt" data-size="XL">XL</button>
+                    <button class="size-btn" data-item="tshirt" data-size="2XL">2XL</button>
+                    <button class="size-btn" data-item="tshirt" data-size="3XL">3XL</button>
+                    <button class="size-btn" data-item="tshirt" data-size="4XL">4XL</button>
+                    <button class="size-btn" data-item="tshirt" data-size="5XL">5XL</button>
+                    <button class="size-btn" data-item="tshirt" data-size="6XL">6XL</button>
+                </div>
+            </div>
+
+            <!-- 2. Uneek Classic Hooded Sweatshirt -->
+            <div class="uniform-item" id="item-hoodie">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">🧥 Uneek Classic Hooded Sweatshirt <span class="uniform-selection-badge" id="badge-hoodie"></span></div>
+                    <div class="uniform-item-range">XS – 6XL</div>
+                </div>
+                <div class="size-buttons" id="sizes-hoodie">
+                    <button class="size-btn" data-item="hoodie" data-size="XS">XS</button>
+                    <button class="size-btn" data-item="hoodie" data-size="S">S</button>
+                    <button class="size-btn" data-item="hoodie" data-size="M">M</button>
+                    <button class="size-btn" data-item="hoodie" data-size="L">L</button>
+                    <button class="size-btn" data-item="hoodie" data-size="XL">XL</button>
+                    <button class="size-btn" data-item="hoodie" data-size="2XL">2XL</button>
+                    <button class="size-btn" data-item="hoodie" data-size="3XL">3XL</button>
+                    <button class="size-btn" data-item="hoodie" data-size="4XL">4XL</button>
+                    <button class="size-btn" data-item="hoodie" data-size="5XL">5XL</button>
+                    <button class="size-btn" data-item="hoodie" data-size="6XL">6XL</button>
+                </div>
+            </div>
+
+            <!-- 3. Portwest FR25 Bizflame Plus Jacket -->
+            <div class="uniform-item" id="item-bizflame">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">🔥 Portwest FR25 Bizflame Plus Jacket <span class="uniform-selection-badge" id="badge-bizflame"></span></div>
+                    <div class="uniform-item-range">S – 4XL</div>
+                </div>
+                <div class="size-buttons" id="sizes-bizflame">
+                    <button class="size-btn" data-item="bizflame" data-size="S">S</button>
+                    <button class="size-btn" data-item="bizflame" data-size="M">M</button>
+                    <button class="size-btn" data-item="bizflame" data-size="L">L</button>
+                    <button class="size-btn" data-item="bizflame" data-size="XL">XL</button>
+                    <button class="size-btn" data-item="bizflame" data-size="2XL">2XL</button>
+                    <button class="size-btn" data-item="bizflame" data-size="3XL">3XL</button>
+                    <button class="size-btn" data-item="bizflame" data-size="4XL">4XL</button>
+                </div>
+            </div>
+
+            <!-- 4. Regatta Dover Bomber Jacket -->
+            <div class="uniform-item" id="item-regatta">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">🧤 Regatta Dover Fleece Lined Bomber Jacket <span class="uniform-selection-badge" id="badge-regatta"></span></div>
+                    <div class="uniform-item-range">XXS – 5XL</div>
+                </div>
+                <div class="size-buttons" id="sizes-regatta">
+                    <button class="size-btn" data-item="regatta" data-size="XXS">XXS</button>
+                    <button class="size-btn" data-item="regatta" data-size="XS">XS</button>
+                    <button class="size-btn" data-item="regatta" data-size="S">S</button>
+                    <button class="size-btn" data-item="regatta" data-size="M">M</button>
+                    <button class="size-btn" data-item="regatta" data-size="L">L</button>
+                    <button class="size-btn" data-item="regatta" data-size="XL">XL</button>
+                    <button class="size-btn" data-item="regatta" data-size="2XL">2XL</button>
+                    <button class="size-btn" data-item="regatta" data-size="3XL">3XL</button>
+                    <button class="size-btn" data-item="regatta" data-size="4XL">4XL</button>
+                    <button class="size-btn" data-item="regatta" data-size="5XL">5XL</button>
+                </div>
+            </div>
+
+            <!-- 5. Portwest PW3 Holster Work Trousers -->
+            <div class="uniform-item" id="item-trousers">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">👖 Portwest PW3 Holster Work Trousers <span class="uniform-selection-badge" id="badge-trousers"></span></div>
+                    <div class="uniform-item-range">Waist 28–48, Short/Reg</div>
+                </div>
+                <div class="trousers-selectors">
+                    <div>
+                        <div class="size-sub-label">Waist (inches)</div>
+                        <div class="size-buttons" id="sizes-trousers-waist">
+                            <button class="size-btn" data-item="trousers-waist" data-size="28">28</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="30">30</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="32">32</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="34">34</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="36">36</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="38">38</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="40">40</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="42">42</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="44">44</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="46">46</button>
+                            <button class="size-btn" data-item="trousers-waist" data-size="48">48</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="size-sub-label">Length</div>
+                        <div class="size-buttons" id="sizes-trousers-length">
+                            <button class="size-btn" data-item="trousers-length" data-size="Short">Short</button>
+                            <button class="size-btn" data-item="trousers-length" data-size="Reg">Reg</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Portwest Steelite Protector Boot -->
+            <div class="uniform-item" id="item-boots">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">🥾 Portwest Steelite Protector Boot S1P <span class="uniform-selection-badge" id="badge-boots"></span></div>
+                    <div class="uniform-item-range">UK Size 3 – 13</div>
+                </div>
+                <div class="size-buttons" id="sizes-boots">
+                    <button class="size-btn" data-item="boots" data-size="3">3</button>
+                    <button class="size-btn" data-item="boots" data-size="4">4</button>
+                    <button class="size-btn" data-item="boots" data-size="5">5</button>
+                    <button class="size-btn" data-item="boots" data-size="6">6</button>
+                    <button class="size-btn" data-item="boots" data-size="7">7</button>
+                    <button class="size-btn" data-item="boots" data-size="8">8</button>
+                    <button class="size-btn" data-item="boots" data-size="9">9</button>
+                    <button class="size-btn" data-item="boots" data-size="10">10</button>
+                    <button class="size-btn" data-item="boots" data-size="11">11</button>
+                    <button class="size-btn" data-item="boots" data-size="12">12</button>
+                    <button class="size-btn" data-item="boots" data-size="13">13</button>
+                </div>
+            </div>
+
+            <!-- 7. Presel GP-1 Insulating Gloves -->
+            <div class="uniform-item" id="item-gloves">
+                <div class="uniform-item-header">
+                    <div class="uniform-item-name">🧤 Presel GP-1 Insulating Dielectric Safety Gloves <span class="uniform-selection-badge" id="badge-gloves"></span></div>
+                    <div class="uniform-item-range">S – 3XL</div>
+                </div>
+                <div class="size-buttons" id="sizes-gloves">
+                    <button class="size-btn" data-item="gloves" data-size="S">S</button>
+                    <button class="size-btn" data-item="gloves" data-size="M">M</button>
+                    <button class="size-btn" data-item="gloves" data-size="L">L</button>
+                    <button class="size-btn" data-item="gloves" data-size="XL">XL</button>
+                    <button class="size-btn" data-item="gloves" data-size="2XL">2XL</button>
+                    <button class="size-btn" data-item="gloves" data-size="3XL">3XL</button>
+                </div>
+            </div>
+
+            <!-- Summary -->
             <div id="uniformSummary" style="margin-top:1rem; display:none; background:rgba(0,163,224,0.07); border:1px solid rgba(0,163,224,0.2); border-radius:10px; padding:1rem 1.2rem;">
-                <p style="font-size:0.85rem; font-weight:600; color:var(--accent); margin-bottom:0.5rem;">Your selections:</p>
-                <div id="uniformSummaryText" style="font-size:0.85rem; color:var(--text-muted); font-family:'DM Mono',monospace;"></div>
+                <p style="font-size:0.85rem; font-weight:600; color:var(--accent); margin-bottom:0.6rem;">Your selections:</p>
+                <div id="uniformSummaryText" style="font-size:0.82rem; color:var(--text-muted); font-family:'DM Mono',monospace; line-height:1.8;"></div>
             </div>
 
             <div class="msg" id="uniformMsg"></div>
@@ -646,10 +874,8 @@
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
-    // ── Contract collection (for HR docs) ──
     const contractCol = collection(db, "NGUO contract");
-    // ── Engineers collection ──
-    const engCol = collection(db, "NGUO - Engineers");
+    const engCol      = collection(db, "NGUO - Engineers");
 
     let currentEngineer = null;
     let currentStep     = 1;
@@ -657,18 +883,29 @@
 
     const STEP_LABELS = ['Driver Q', 'Pension', 'P45', 'HMRC', 'Uniform', 'Address', 'Holidays', 'Emergency', 'Personal', 'Complete'];
 
-    // ── P45 file state ──
     let p45File     = null;
     let p45Uploaded = false;
-
-    // ── Address state ──
-    let addresses = [];
-
-    // ── Holiday state ──
+    let addresses   = [];
     let holidayCount = 0;
 
-    // ── Uniform state ──
+    // ── Uniform state — tracks each selectable dimension ──
+    // Simple items: tshirt, hoodie, bizflame, regatta, boots, gloves
+    // Trousers has two sub-dimensions: trousers-waist, trousers-length
     const uniformChoices = {};
+
+    // All required keys to be "complete"
+    const UNIFORM_REQUIRED_KEYS = ['tshirt','hoodie','bizflame','regatta','trousers-waist','trousers-length','boots','gloves'];
+    // Display names for summary
+    const UNIFORM_LABELS = {
+        tshirt: 'Uneek T-Shirt',
+        hoodie: 'Uneek Hooded Sweatshirt',
+        bizflame: 'Portwest FR25 Bizflame Jacket',
+        regatta: 'Regatta Dover Bomber Jacket',
+        'trousers-waist': 'PW3 Trousers — Waist',
+        'trousers-length': 'PW3 Trousers — Length',
+        boots: 'Steelite Protector Boot (UK)',
+        gloves: 'Presel GP-1 Gloves',
+    };
 
     // ════════════════════════════════════════════════════
     // LOGIN
@@ -782,7 +1019,6 @@
                 viewer.innerHTML = `<div class="doc-icon">📭</div><p>No pension letter has been uploaded yet. The NGU team will add this soon — you can continue your profile and come back later.</p>`;
                 return;
             }
-            // Get the most recent
             const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
                 const at = a.uploadedAt?.toMillis?.() || 0;
                 const bt = b.uploadedAt?.toMillis?.() || 0;
@@ -843,7 +1079,6 @@
             const snapshot    = await uploadBytes(ref(storage, storagePath), p45File);
             const url         = await getDownloadURL(snapshot.ref);
 
-            // Save to NGUO contract collection
             const { addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
             await addDoc(contractCol, {
                 campaign:    'HR',
@@ -864,7 +1099,6 @@
             msgEl.className   = 'msg ok';
             msgEl.textContent = '✓ P45 uploaded successfully';
 
-            // Show Next, hide "Don't have P45"
             document.getElementById('noP45Btn').style.display   = 'none';
             document.getElementById('p45NextBtn').style.display = 'inline-flex';
             btn.textContent  = 'Re-upload';
@@ -879,7 +1113,7 @@
     });
 
     document.getElementById('noP45Btn').addEventListener('click', () => showStep(4));
-    document.getElementById('p45NextBtn').addEventListener('click', () => showStep(5)); // skip HMRC if P45 uploaded
+    document.getElementById('p45NextBtn').addEventListener('click', () => showStep(5));
 
     // ════════════════════════════════════════════════════
     // STEP 4 — HMRC FORM
@@ -928,40 +1162,75 @@
     document.getElementById('hmrcNextBtn').addEventListener('click', () => showStep(5));
 
     // ════════════════════════════════════════════════════
-    // STEP 5 — UNIFORM ORDER
+    // STEP 5 — UNIFORM ORDER (updated)
     // ════════════════════════════════════════════════════
     function initUniform() {
         document.querySelectorAll('.size-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = btn.dataset.item;
                 const size = btn.dataset.size;
-                // Deselect others in same row
+
+                // Deselect others in same item group
                 document.querySelectorAll(`.size-btn[data-item="${item}"]`).forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 uniformChoices[item] = size;
+
+                // For trousers, the parent item is "trousers"
+                const parentItem = item.startsWith('trousers') ? 'trousers' : item;
+                updateItemCard(parentItem);
                 updateUniformSummary();
                 checkUniformComplete();
             });
         });
     }
 
+    function updateItemCard(itemKey) {
+        const card = document.getElementById(`item-${itemKey}`);
+        if (!card) return;
+
+        let isComplete = false;
+        if (itemKey === 'trousers') {
+            isComplete = !!uniformChoices['trousers-waist'] && !!uniformChoices['trousers-length'];
+            const waist  = uniformChoices['trousers-waist'] || '–';
+            const length = uniformChoices['trousers-length'] || '–';
+            const badge  = document.getElementById('badge-trousers');
+            if (badge) {
+                badge.textContent = isComplete ? `W${waist} / ${length}` : `W${waist} / ${length}`;
+            }
+        } else {
+            isComplete = !!uniformChoices[itemKey];
+            const badge = document.getElementById(`badge-${itemKey}`);
+            if (badge && uniformChoices[itemKey]) badge.textContent = uniformChoices[itemKey];
+        }
+
+        card.classList.toggle('selected', isComplete);
+    }
+
     function updateUniformSummary() {
         const summaryDiv  = document.getElementById('uniformSummary');
         const summaryText = document.getElementById('uniformSummaryText');
-        const items = ['polo','gilet','coat'];
-        const labels = { polo:'Polo Shirt', gilet:'Gilet', coat:'Coat' };
-        const lines = items.filter(i => uniformChoices[i]).map(i => `${labels[i]}: ${uniformChoices[i]}`);
+        const lines = Object.entries(UNIFORM_LABELS)
+            .filter(([key]) => uniformChoices[key])
+            .map(([key, label]) => `${label}: <strong style="color:var(--text-light);">${uniformChoices[key]}</strong>`);
+
         if (lines.length) {
-            summaryDiv.style.display  = 'block';
-            summaryText.textContent   = lines.join('  ·  ');
+            summaryDiv.style.display = 'block';
+            summaryText.innerHTML    = lines.join('<br>');
         } else {
-            summaryDiv.style.display  = 'none';
+            summaryDiv.style.display = 'none';
         }
     }
 
     function checkUniformComplete() {
-        const allSelected = ['polo','gilet','coat'].every(i => uniformChoices[i]);
-        document.getElementById('submitUniformBtn').disabled = !allSelected;
+        const allDone = UNIFORM_REQUIRED_KEYS.every(k => uniformChoices[k]);
+        document.getElementById('submitUniformBtn').disabled = !allDone;
+
+        // Update progress bar
+        const done  = UNIFORM_REQUIRED_KEYS.filter(k => uniformChoices[k]).length;
+        const total = UNIFORM_REQUIRED_KEYS.length;
+        const pct   = Math.round((done / total) * 100);
+        document.getElementById('uniformProgressBar').style.width = `${pct}%`;
+        document.getElementById('uniformProgressText').textContent = `${done} / ${total}`;
     }
 
     document.getElementById('submitUniformBtn').addEventListener('click', async () => {
@@ -969,12 +1238,23 @@
         const msgEl = document.getElementById('uniformMsg');
         btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
 
+        // Build a clean choices object to save
+        const choicesToSave = {
+            tshirt:    uniformChoices['tshirt'],
+            hoodie:    uniformChoices['hoodie'],
+            bizflame:  uniformChoices['bizflame'],
+            regatta:   uniformChoices['regatta'],
+            trousers:  { waist: uniformChoices['trousers-waist'], length: uniformChoices['trousers-length'] },
+            boots:     uniformChoices['boots'],
+            gloves:    uniformChoices['gloves'],
+        };
+
         try {
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
-                uniform_choices: uniformChoices,
+                uniform_choices: choicesToSave,
                 uniform_savedAt: serverTimestamp()
             });
-            Object.assign(currentEngineer, { uniform_choices: uniformChoices });
+            Object.assign(currentEngineer, { uniform_choices: choicesToSave });
             showStep(6);
         } catch (err) {
             msgEl.className   = 'msg err';
@@ -1025,7 +1305,6 @@
         const title    = existing === 0 ? 'Current Address' : `Previous Address ${existing}`;
         const container = document.getElementById('addressBlocks');
 
-        // Remove any existing input form
         const old = document.getElementById('addressInputForm');
         if (old) old.remove();
 
@@ -1260,11 +1539,13 @@
             msgEl.className   = 'msg err';
             msgEl.textContent = 'Error saving: ' + err.message;
             btn.disabled      = false;
-            btn.textContent   = 'Next \u2192';
+            btn.textContent   = 'Next →';
         }
     });
 
-    // \u2550\u2550\u2550\u2550 STEP 9 \u2014 PERSONAL DETAILS (DOB & NI) \u2550\u2550\u2550\u2550
+    // ════════════════════════════════════════════════════
+    // STEP 9 — PERSONAL DETAILS
+    // ════════════════════════════════════════════════════
     document.getElementById('personalSubmitBtn').addEventListener('click', async () => {
         const btn   = document.getElementById('personalSubmitBtn');
         const msgEl = document.getElementById('personalMsg');
@@ -1280,7 +1561,7 @@
         }
 
         btn.disabled  = true;
-        btn.innerHTML = '<span class="spinner"></span> Submitting\u2026';
+        btn.innerHTML = '<span class="spinner"></span> Submitting…';
 
         try {
             await updateDoc(doc(db, "NGUO - Engineers", currentEngineer.docId), {
