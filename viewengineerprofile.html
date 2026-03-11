@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NGU — Engineer Profiles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005EB8;
+            --accent: #00A3E0;
+            --accent2: #00d4ff;
+            --bg: #07111f;
+            --bg-card: #0e1e32;
+            --bg-raised: #162840;
+            --bg-input: #0a1826;
+            --text: #edf2f7;
+            --text-muted: #6b8099;
+            --border: #1e3352;
+            --border-bright: #2d4d72;
+            --success: #10B981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --tag-bg: rgba(0,163,224,0.12);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        body::before {
+            content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+            background:
+                radial-gradient(ellipse 60% 40% at 10% 5%, rgba(0,163,224,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 60% at 90% 90%, rgba(0,94,184,0.05) 0%, transparent 70%);
+        }
+
+        /* ══ TOPBAR ══ */
+        .topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(7,17,31,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 2rem; gap: 1.5rem;
+        }
+        .topbar-left { display:flex; align-items:center; gap:1.2rem; }
+        .topbar img { height: 36px; }
+        .topbar-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--text); letter-spacing: 0.01em;
+        }
+        .topbar-title span { color: var(--accent); }
+        .topbar-right { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; }
+
+        .search-box {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-input); border: 1.5px solid var(--border);
+            border-radius: 10px; padding: 0.45rem 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus-within { border-color: var(--accent); }
+        .search-box input {
+            background: transparent; border: none; outline: none;
+            color: var(--text); font-family: 'Work Sans', sans-serif;
+            font-size: 0.88rem; width: 200px;
+        }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-icon { color: var(--text-muted); font-size: 0.9rem; }
+
+        .filter-select {
+            background: var(--bg-input); border: 1.5px solid var(--border);
+            border-radius: 10px; color: var(--text); font-family: 'Work Sans', sans-serif;
+            font-size: 0.85rem; padding: 0.45rem 0.9rem; cursor: pointer;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236b8099' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 0.7rem center;
+            padding-right: 2rem;
+        }
+        .filter-select:focus { outline: none; border-color: var(--accent); }
+        .filter-select option { background: var(--bg-card); }
+
+        .count-badge {
+            font-family: 'DM Mono', monospace; font-size: 0.75rem;
+            background: var(--tag-bg); color: var(--accent);
+            border: 1px solid rgba(0,163,224,0.25);
+            border-radius: 20px; padding: 0.2rem 0.7rem;
+            white-space: nowrap;
+        }
+
+        /* ══ LAYOUT ══ */
+        .layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            height: calc(100vh - 57px);
+            position: relative; z-index: 1;
+        }
+
+        /* ══ SIDEBAR / LIST ══ */
+        .sidebar {
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            background: var(--bg-card);
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 99px; }
+
+        .eng-card {
+            padding: 1rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+            animation: slideIn 0.3s ease both;
+        }
+        @keyframes slideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+        .eng-card:hover { background: var(--bg-raised); }
+        .eng-card.active {
+            background: rgba(0,163,224,0.08);
+            border-left: 3px solid var(--accent);
+        }
+        .eng-card-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem; font-weight: 700;
+            color: var(--text); margin-bottom: 0.25rem;
+        }
+        .eng-card-detail {
+            font-size: 0.78rem; color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            margin-bottom: 0.15rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .eng-card-tags { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.5rem; }
+        .tag {
+            font-size: 0.68rem; font-weight: 600; font-family: 'DM Mono', monospace;
+            padding: 0.15rem 0.55rem; border-radius: 20px;
+            background: var(--tag-bg); color: var(--accent);
+            border: 1px solid rgba(0,163,224,0.2);
+        }
+        .tag.green { background: rgba(16,185,129,0.1); color:#6ee7b7; border-color:rgba(16,185,129,0.2); }
+        .tag.orange { background: rgba(245,158,11,0.1); color:#fcd34d; border-color:rgba(245,158,11,0.2); }
+        .tag.red { background: rgba(239,68,68,0.1); color:#fca5a5; border-color:rgba(239,68,68,0.2); }
+        .tag.gray { background: rgba(107,128,153,0.1); color:var(--text-muted); border-color:rgba(107,128,153,0.2); }
+
+        .completion-bar {
+            height: 3px; background: var(--border);
+            border-radius: 99px; margin-top: 0.6rem; overflow:hidden;
+        }
+        .completion-fill {
+            height: 100%; border-radius: 99px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+        }
+
+        .sidebar-empty {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            height: 200px; color: var(--text-muted); gap:0.5rem; font-size:0.88rem;
+        }
+
+        /* ══ DETAIL PANEL ══ */
+        .detail {
+            overflow-y: auto;
+            background: var(--bg);
+        }
+        .detail::-webkit-scrollbar { width: 5px; }
+        .detail::-webkit-scrollbar-track { background: transparent; }
+        .detail::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 99px; }
+
+        .detail-empty {
+            display: flex; flex-direction:column; align-items:center; justify-content:center;
+            height: 100%; gap: 1rem; color: var(--text-muted);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+        .detail-empty-icon { font-size: 3.5rem; opacity:0.3; }
+        .detail-empty-text { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight:600; }
+        .detail-empty-sub { font-size: 0.85rem; }
+
+        /* ══ PROFILE HEADER ══ */
+        .profile-header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-raised) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 2.5rem 1.6rem;
+            position: relative; overflow: hidden;
+        }
+        .profile-header::after {
+            content:''; position:absolute; top:-40px; right:-40px;
+            width:180px; height:180px; border-radius:50%;
+            background: radial-gradient(circle, rgba(0,163,224,0.08) 0%, transparent 70%);
+        }
+        .profile-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem; font-weight: 800;
+            color: var(--text); margin-bottom: 0.4rem;
+        }
+        .profile-meta {
+            display: flex; gap: 1.5rem; flex-wrap: wrap;
+            font-family: 'DM Mono', monospace; font-size: 0.8rem;
+            color: var(--text-muted); margin-bottom: 1rem;
+        }
+        .profile-meta span { display:flex; align-items:center; gap:0.4rem; }
+        .profile-tags { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+        .profile-actions { display:flex; gap:0.8rem; flex-wrap:wrap; }
+
+        /* ══ SECTION TABS ══ */
+        .section-tabs {
+            display: flex; gap: 0;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-card);
+            padding: 0 2rem;
+            overflow-x: auto;
+        }
+        .section-tabs::-webkit-scrollbar { height: 2px; }
+        .section-tabs::-webkit-scrollbar-thumb { background: var(--accent); }
+        .tab {
+            padding: 0.85rem 1.2rem;
+            font-size: 0.82rem; font-weight: 600;
+            color: var(--text-muted); cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap; transition: all 0.18s;
+            font-family: 'Work Sans', sans-serif;
+        }
+        .tab:hover { color: var(--text); }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        /* ══ CONTENT AREA ══ */
+        .content-area { padding: 2rem 2.5rem; }
+
+        /* ══ DATA SECTIONS ══ */
+        .data-section {
+            display: none;
+            animation: fadeSlide 0.25s ease;
+        }
+        @keyframes fadeSlide { from {opacity:0; transform:translateY(6px);} to {opacity:1; transform:translateY(0);} }
+        .data-section.active { display: block; }
+
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1.8rem;
+            margin-bottom: 1.4rem;
+        }
+        .data-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.88rem; font-weight: 700;
+            color: var(--accent); text-transform: uppercase;
+            letter-spacing: 0.08em; margin-bottom: 1.2rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .data-field { display:flex; flex-direction:column; gap:0.3rem; }
+        .data-field.full { grid-column: 1 / -1; }
+        .data-label {
+            font-size: 0.72rem; font-weight: 600;
+            color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.06em; font-family: 'DM Mono', monospace;
+        }
+        .data-value {
+            font-size: 0.92rem; color: var(--text);
+            font-family: 'Work Sans', sans-serif; line-height: 1.5;
+        }
+        .data-value.mono { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+        .data-value.empty { color: var(--text-muted); font-style: italic; font-size: 0.82rem; }
+
+        /* Signature display */
+        .sig-display {
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.5rem;
+            max-width: 400px;
+        }
+        .sig-display img { width:100%; display:block; border-radius:6px; }
+
+        /* CV display */
+        .cv-link {
+            display: inline-flex; align-items:center; gap:0.5rem;
+            background: rgba(0,163,224,0.1); border: 1px solid rgba(0,163,224,0.25);
+            border-radius: 8px; padding: 0.5rem 1rem;
+            color: var(--accent); font-size: 0.85rem; font-weight:600;
+            text-decoration: none; transition: all 0.18s;
+            font-family: 'Work Sans', sans-serif;
+        }
+        .cv-link:hover { background: rgba(0,163,224,0.18); }
+
+        /* Uniform grid */
+        .uniform-display {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.8rem;
+        }
+        .uniform-item-display {
+            background: var(--bg-raised); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.8rem 1rem;
+        }
+        .uniform-item-display .item-name {
+            font-size: 0.75rem; color: var(--text-muted);
+            font-family: 'DM Mono', monospace; margin-bottom:0.3rem;
+        }
+        .uniform-item-display .item-size {
+            font-family: 'Syne', sans-serif; font-size: 1.1rem;
+            font-weight:800; color: var(--accent);
+        }
+
+        /* Address history */
+        .address-list { display:flex; flex-direction:column; gap:0.8rem; }
+        .address-entry {
+            background: var(--bg-raised); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.9rem 1.1rem;
+            display: flex; align-items: flex-start; gap: 1rem;
+        }
+        .address-idx {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--tag-bg); color: var(--accent);
+            font-size: 0.72rem; font-weight:700; font-family:'DM Mono',monospace;
+            display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .address-text { font-size: 0.88rem; line-height:1.6; }
+
+        /* Employment / References */
+        .entry-block {
+            background: var(--bg-raised); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem 1.2rem; margin-bottom:0.8rem;
+        }
+        .entry-block-label {
+            font-family:'DM Mono',monospace; font-size:0.72rem;
+            color:var(--accent); font-weight:600; margin-bottom:0.7rem;
+            text-transform: uppercase; letter-spacing:0.06em;
+        }
+
+        /* Holiday list */
+        .holiday-list { display:flex; flex-direction:column; gap:0.5rem; }
+        .holiday-row-display {
+            display: flex; align-items:center; gap:0.8rem;
+            background: var(--bg-raised); border:1px solid var(--border);
+            border-radius: 8px; padding: 0.6rem 1rem;
+            font-family: 'DM Mono', monospace; font-size:0.82rem;
+        }
+        .holiday-arrow { color:var(--text-muted); }
+
+        /* Badges for yes/no */
+        .yn-badge {
+            display:inline-block; padding:0.2rem 0.65rem; border-radius:6px;
+            font-size:0.78rem; font-weight:700; font-family:'DM Mono',monospace;
+        }
+        .yn-yes { background:rgba(239,68,68,0.12); color:#fca5a5; }
+        .yn-no  { background:rgba(16,185,129,0.12); color:#6ee7b7; }
+
+        /* Not submitted notice */
+        .not-submitted {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding: 3rem 2rem; gap:0.8rem; color:var(--text-muted);
+            background: var(--bg-card); border:1px dashed var(--border);
+            border-radius:14px; text-align:center;
+        }
+        .not-submitted .ns-icon { font-size:2.5rem; opacity:0.4; }
+        .not-submitted p { font-size:0.88rem; max-width:320px; line-height:1.6; }
+
+        /* Loading */
+        .loading {
+            display:flex; align-items:center; justify-content:center;
+            height:200px; gap:0.8rem; color:var(--text-muted); font-size:0.9rem;
+        }
+        .spin {
+            width:20px; height:20px;
+            border:2px solid var(--border); border-top-color:var(--accent);
+            border-radius:50%; animation:spin 0.7s linear infinite;
+        }
+        @keyframes spin { to {transform:rotate(360deg);} }
+
+        /* Print / export button */
+        .btn-action {
+            display:inline-flex; align-items:center; gap:0.4rem;
+            padding: 0.5rem 1rem; border-radius:8px; font-size:0.82rem;
+            font-weight:600; cursor:pointer; font-family:inherit;
+            transition:all 0.18s; border:none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border-bright);
+            color: var(--text-muted);
+        }
+        .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-blue {
+            background: rgba(0,163,224,0.12);
+            border: 1.5px solid rgba(0,163,224,0.3);
+            color: var(--accent);
+        }
+        .btn-blue:hover { background: rgba(0,163,224,0.2); }
+
+        /* No data fallback in tab */
+        .section-pending {
+            text-align:center; padding:2.5rem 1rem;
+            color:var(--text-muted); font-size:0.88rem;
+        }
+
+        /* Divider */
+        .divider { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
+
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; height:auto; }
+            .sidebar { max-height: 320px; }
+            .content-area { padding:1.2rem 1rem; }
+            .profile-header { padding:1.4rem 1.2rem 1.2rem; }
+            .section-tabs { padding:0 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="topbar-left">
+        <img src="https://www.dropbox.com/scl/fi/kkujm1u6y7vvnp7luq8d7/ngu-main-white.png?rlkey=kgq2uh48qh4xssh4vlbz868lr&raw=1" alt="NGU">
+        <div class="topbar-title">Engineer <span>Profiles</span></div>
+    </div>
+    <div class="topbar-right">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search engineers…">
+        </div>
+        <select class="filter-select" id="statusFilter">
+            <option value="">All profiles</option>
+            <option value="complete">Profile complete</option>
+            <option value="partial">In progress</option>
+            <option value="applied">Has application</option>
+        </select>
+        <span class="count-badge" id="countBadge">Loading…</span>
+    </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="loading" id="sidebarLoading">
+            <div class="spin"></div> Loading engineers…
+        </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="detail" id="detailPanel">
+        <div class="detail-empty" id="detailEmpty">
+            <div class="detail-empty-icon">👤</div>
+            <div class="detail-empty-text">Select an engineer</div>
+            <div class="detail-empty-sub">Click a name from the list to view their full profile</div>
+        </div>
+    </div>
+
+</div>
+
+<script type="module">
+import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, getDocs, query, where, orderBy }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCMmUOdW2uEIGVd6XQfWXKF8eaFmwEog1g",
+    authDomain: "oesperformance-a54c0.firebaseapp.com",
+    projectId: "oesperformance-a54c0",
+    storageBucket: "oesperformance-a54c0.firebasestorage.app",
+    messagingSenderId: "484894102454",
+    appId: "1:484894102454:web:17535ee497eac2d90d6717"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+let allEngineers  = [];
+let applications  = {}; // keyed by email (lowercase)
+let selectedId    = null;
+
+// ══════════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════════
+async function loadAll() {
+    // Load engineers
+    const engSnap = await getDocs(collection(db, 'NGUO - Engineers'));
+    allEngineers = engSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+
+    // Load applications (match by email)
+    const appSnap = await getDocs(collection(db, 'NGUO New Applicants'));
+    appSnap.docs.forEach(d => {
+        const data = d.data();
+        const email = (data.personalDetails?.email || data.email || '').toLowerCase().trim();
+        if (email) applications[email] = { docId: d.id, ...data };
+    });
+
+    renderSidebar(allEngineers);
+}
+
+// ══════════════════════════════════════════════
+// SIDEBAR RENDER
+// ══════════════════════════════════════════════
+function renderSidebar(list) {
+    const sb = document.getElementById('sidebar');
+    document.getElementById('sidebarLoading').remove();
+
+    document.getElementById('countBadge').textContent =
+        `${list.length} engineer${list.length !== 1 ? 's' : ''}`;
+
+    if (list.length === 0) {
+        sb.innerHTML = `<div class="sidebar-empty"><span>👤</span><span>No engineers found</span></div>`;
+        return;
+    }
+
+    sb.innerHTML = '';
+    list.forEach((eng, i) => {
+        const card = document.createElement('div');
+        card.className = 'eng-card';
+        card.dataset.id = eng.docId;
+        card.style.animationDelay = `${i * 30}ms`;
+
+        const email      = (eng.email || '').toLowerCase().trim();
+        const hasApp     = !!applications[email];
+        const isComplete = !!eng.profile_completedAt;
+        const pct        = profileCompletion(eng);
+
+        const phone   = eng.emergency_contact?.number || eng.phone || '—';
+        const address = formatAddress(eng.address_history?.[0]);
+
+        card.innerHTML = `
+            <div class="eng-card-name">${eng.name || '—'}</div>
+            <div class="eng-card-detail">📞 ${phone}</div>
+            <div class="eng-card-detail">📍 ${address}</div>
+            <div class="eng-card-tags">
+                ${isComplete ? '<span class="tag green">✓ Profile complete</span>' : '<span class="tag orange">In progress</span>'}
+                ${hasApp     ? '<span class="tag">Has application</span>'         : '<span class="tag gray">No application</span>'}
+            </div>
+            <div class="completion-bar"><div class="completion-fill" style="width:${pct}%"></div></div>
+        `;
+
+        card.addEventListener('click', () => selectEngineer(eng.docId));
+        sb.appendChild(card);
+    });
+}
+
+function formatAddress(a) {
+    if (!a) return '—';
+    return [a.doorNumber, a.streetName, a.townCity, a.postcode].filter(Boolean).join(', ');
+}
+
+function profileCompletion(eng) {
+    const checks = [
+        !!eng.email,
+        !!eng.hmrc_form || true, // optional
+        !!eng.uniform_choices,
+        !!eng.address_history?.length,
+        !!eng.emergency_contact,
+        !!eng.personal_dob,
+        !!eng.personal_ni,
+    ];
+    return Math.round(checks.filter(Boolean).length / checks.length * 100);
+}
+
+// ══════════════════════════════════════════════
+// SELECT ENGINEER
+// ══════════════════════════════════════════════
+function selectEngineer(docId) {
+    selectedId = docId;
+    const eng = allEngineers.find(e => e.docId === docId);
+    if (!eng) return;
+
+    // Highlight sidebar card
+    document.querySelectorAll('.eng-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.id === docId);
+    });
+
+    const email = (eng.email || '').toLowerCase().trim();
+    const app   = applications[email] || null;
+
+    renderDetail(eng, app);
+}
+
+// ══════════════════════════════════════════════
+// RENDER DETAIL
+// ══════════════════════════════════════════════
+function renderDetail(eng, app) {
+    const panel = document.getElementById('detailPanel');
+    document.getElementById('detailEmpty')?.remove();
+
+    const email      = (eng.email || '').toLowerCase().trim();
+    const isComplete = !!eng.profile_completedAt;
+    const pct        = profileCompletion(eng);
+
+    panel.innerHTML = `
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-name">${eng.name || '—'}</div>
+            <div class="profile-meta">
+                <span>✉️ ${eng.email || '—'}</span>
+                ${eng.personal_dob ? `<span>🎂 ${fmtDate(eng.personal_dob)}</span>` : ''}
+                ${eng.personal_ni  ? `<span>🪪 ${eng.personal_ni}</span>` : ''}
+                <span>📊 ${pct}% complete</span>
+            </div>
+            <div class="profile-tags">
+                ${isComplete ? '<span class="tag green">✓ Profile Complete</span>' : '<span class="tag orange">Profile In Progress</span>'}
+                ${app ? '<span class="tag green">✓ Application Received</span>' : '<span class="tag gray">No Application</span>'}
+                ${eng.uniform_choices ? '<span class="tag">Uniform Ordered</span>' : ''}
+                ${eng.holidays ? `<span class="tag ${eng.holidays.hasHolidays ? 'orange' : ''}">${eng.holidays.hasHolidays ? '🏖 Has Holidays' : 'No Pre-booked Holidays'}</span>` : ''}
+            </div>
+            <div class="profile-actions">
+                <button class="btn-action btn-outline" onclick="window.print()">🖨 Print</button>
+                <button class="btn-action btn-blue" onclick="copyEmail('${eng.email || ''}')">📋 Copy Email</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="section-tabs" id="tabs">
+            <div class="tab active" data-tab="overview">Overview</div>
+            <div class="tab" data-tab="profile">Engineer Profile</div>
+            <div class="tab" data-tab="application">Application</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-area">
+
+            <!-- ══ OVERVIEW TAB ══ -->
+            <div class="data-section active" id="tab-overview">
+                <div class="data-card">
+                    <div class="data-card-title">👤 Personal Details</div>
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Full Name</div><div class="data-value">${eng.name || '—'}</div></div>
+                        <div class="data-field"><div class="data-label">Email</div><div class="data-value mono">${eng.email || '—'}</div></div>
+                        <div class="data-field"><div class="data-label">Date of Birth</div><div class="data-value">${eng.personal_dob ? fmtDate(eng.personal_dob) : '<span class="empty">Not provided</span>'}</div></div>
+                        <div class="data-field"><div class="data-label">NI Number</div><div class="data-value mono">${eng.personal_ni || '<span class="empty">Not provided</span>'}</div></div>
+                    </div>
+                </div>
+
+                <div class="data-card">
+                    <div class="data-card-title">🏠 Current Address</div>
+                    ${eng.address_history?.length ? `
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Door / Number</div><div class="data-value">${eng.address_history[0].doorNumber} ${eng.address_history[0].streetName}</div></div>
+                        <div class="data-field"><div class="data-label">Town / City</div><div class="data-value">${eng.address_history[0].townCity}</div></div>
+                        <div class="data-field"><div class="data-label">Postcode</div><div class="data-value mono">${eng.address_history[0].postcode}</div></div>
+                        <div class="data-field"><div class="data-label">Moved In</div><div class="data-value">${monthName(eng.address_history[0].monthFrom)} ${eng.address_history[0].yearFrom}</div></div>
+                    </div>` : '<p class="data-value empty">No address provided yet</p>'}
+                </div>
+
+                <div class="data-card">
+                    <div class="data-card-title">🆘 Emergency Contact</div>
+                    ${eng.emergency_contact ? `
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Name</div><div class="data-value">${eng.emergency_contact.name}</div></div>
+                        <div class="data-field"><div class="data-label">Phone Number</div><div class="data-value mono">${eng.emergency_contact.number}</div></div>
+                        <div class="data-field full"><div class="data-label">Address</div><div class="data-value" style="white-space:pre-line;">${eng.emergency_contact.address}</div></div>
+                    </div>` : '<p class="data-value empty">Not provided yet</p>'}
+                </div>
+
+                ${app ? `
+                <div class="data-card">
+                    <div class="data-card-title">📋 Application Summary</div>
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Position Applied</div><div class="data-value">${app.position || '—'}</div></div>
+                        <div class="data-field"><div class="data-label">Submitted</div><div class="data-value">${fmtTimestamp(app.submittedAt)}</div></div>
+                        <div class="data-field"><div class="data-label">Work Permit Needed</div><div class="data-value">${ynBadge(app.workPermit)}</div></div>
+                        <div class="data-field"><div class="data-label">Convictions</div><div class="data-value">${ynBadge(app.convictions)}</div></div>
+                    </div>
+                </div>` : ''}
+            </div>
+
+            <!-- ══ PROFILE TAB ══ -->
+            <div class="data-section" id="tab-profile">
+
+                <!-- HMRC -->
+                <div class="data-card">
+                    <div class="data-card-title">🏛️ HMRC Starter Checklist</div>
+                    ${eng.hmrc_form ? `
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">First Name</div><div class="data-value">${eng.hmrc_form.fname}</div></div>
+                        <div class="data-field"><div class="data-label">Last Name</div><div class="data-value">${eng.hmrc_form.lname}</div></div>
+                        <div class="data-field"><div class="data-label">Date of Birth</div><div class="data-value">${fmtDate(eng.hmrc_form.dob)}</div></div>
+                        <div class="data-field"><div class="data-label">NI Number</div><div class="data-value mono">${eng.hmrc_form.ni}</div></div>
+                        <div class="data-field full"><div class="data-label">Home Address</div><div class="data-value">${eng.hmrc_form.address}, ${eng.hmrc_form.postcode}</div></div>
+                        <div class="data-field"><div class="data-label">Employee Statement</div><div class="data-value"><span class="tag">Statement ${eng.hmrc_form.statement}</span></div></div>
+                        <div class="data-field"><div class="data-label">Student Loan</div><div class="data-value">${eng.hmrc_form.studentLoan || 'None'}</div></div>
+                        <div class="data-field"><div class="data-label">Postgraduate Loan</div><div class="data-value">${eng.hmrc_form.pgLoan === 'yes' ? 'Yes' : 'No'}</div></div>
+                    </div>` : `<div class="section-pending">⏳ HMRC form not yet completed — engineer used P45</div>`}
+                </div>
+
+                <!-- Uniform -->
+                <div class="data-card">
+                    <div class="data-card-title">👕 Uniform Order</div>
+                    ${eng.uniform_choices ? renderUniform(eng.uniform_choices) : '<div class="section-pending">⏳ Uniform not yet selected</div>'}
+                </div>
+
+                <!-- Address History -->
+                <div class="data-card">
+                    <div class="data-card-title">🏠 Full Address History</div>
+                    ${eng.address_history?.length ? `
+                    <div class="address-list">
+                        ${eng.address_history.map((a, i) => `
+                        <div class="address-entry">
+                            <div class="address-idx">${i + 1}</div>
+                            <div>
+                                <div class="address-text">
+                                    <strong>${i === 0 ? 'Current Address' : 'Previous Address ' + i}</strong><br>
+                                    ${a.doorNumber} ${a.streetName}, ${a.townCity}, ${a.postcode}<br>
+                                    <span style="color:var(--text-muted); font-size:0.8rem; font-family:'DM Mono',monospace;">
+                                        From: ${monthName(a.monthFrom)} ${a.yearFrom}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>`).join('')}
+                    </div>` : '<div class="section-pending">⏳ Address history not yet provided</div>'}
+                </div>
+
+                <!-- Holidays -->
+                <div class="data-card">
+                    <div class="data-card-title">🏖️ Pre-Booked Holidays</div>
+                    ${eng.holidays ? renderHolidays(eng.holidays) : '<div class="section-pending">⏳ Holiday info not yet provided</div>'}
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="data-card">
+                    <div class="data-card-title">🆘 Emergency Contact</div>
+                    ${eng.emergency_contact ? `
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Name</div><div class="data-value">${eng.emergency_contact.name}</div></div>
+                        <div class="data-field"><div class="data-label">Phone Number</div><div class="data-value mono">${eng.emergency_contact.number}</div></div>
+                        <div class="data-field full"><div class="data-label">Address</div><div class="data-value" style="white-space:pre-line;">${eng.emergency_contact.address}</div></div>
+                    </div>` : '<div class="section-pending">⏳ Not yet provided</div>'}
+                </div>
+
+                <!-- Personal -->
+                <div class="data-card">
+                    <div class="data-card-title">🪪 Personal Details</div>
+                    <div class="data-grid">
+                        <div class="data-field"><div class="data-label">Date of Birth</div><div class="data-value">${eng.personal_dob ? fmtDate(eng.personal_dob) : '<span class="empty">Not provided</span>'}</div></div>
+                        <div class="data-field"><div class="data-label">NI Number</div><div class="data-value mono">${eng.personal_ni || '<span class="empty">Not provided</span>'}</div></div>
+                        <div class="data-field"><div class="data-label">Profile Completed</div><div class="data-value">${eng.profile_completedAt ? fmtTimestamp(eng.profile_completedAt) : '<span class="empty">Not complete</span>'}</div></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ APPLICATION TAB ══ -->
+            <div class="data-section" id="tab-application">
+                ${app ? renderApplication(app) : `
+                <div class="not-submitted">
+                    <div class="ns-icon">📋</div>
+                    <strong>No Application Found</strong>
+                    <p>This engineer hasn't submitted an application form yet, or the email address on their application doesn't match their engineer profile.</p>
+                </div>`}
+            </div>
+
+        </div>
+    `;
+
+    // Wire up tabs
+    panel.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            panel.querySelectorAll('.data-section').forEach(s => s.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(`tab-${tab.dataset.tab}`)?.classList.add('active');
+        });
+    });
+}
+
+// ── Uniform renderer ─────────────────────────────────────────────────────────
+function renderUniform(u) {
+    const items = [
+        { key: 'tshirt',   label: 'Uneek T-Shirt',       icon: '👕' },
+        { key: 'hoodie',   label: 'Uneek Hooded Sweat.',  icon: '🧥' },
+        { key: 'bizflame', label: 'Bizflame Jacket',      icon: '🔥' },
+        { key: 'regatta',  label: 'Regatta Bomber',       icon: '🧤' },
+        { key: 'boots',    label: 'Steelite Boot (UK)',   icon: '🥾' },
+        { key: 'gloves',   label: 'Presel GP-1 Gloves',   icon: '🧤' },
+    ];
+    const trousers = u.trousers || {};
+
+    let html = '<div class="uniform-display">';
+    items.forEach(({ key, label, icon }) => {
+        const val = u[key] || '—';
+        html += `<div class="uniform-item-display">
+            <div class="item-name">${icon} ${label}</div>
+            <div class="item-size">${val}</div>
+        </div>`;
+    });
+    // Trousers
+    if (trousers.waist || trousers.length) {
+        html += `<div class="uniform-item-display" style="grid-column:span 2;">
+            <div class="item-name">👖 PW3 Holster Trousers</div>
+            <div class="item-size">W${trousers.waist || '—'} / ${trousers.length || '—'}</div>
+        </div>`;
+    }
+    html += '</div>';
+    return html;
+}
+
+// ── Holidays renderer ─────────────────────────────────────────────────────────
+function renderHolidays(h) {
+    if (!h.hasHolidays) return '<p class="data-value" style="color:#6ee7b7;">✓ No pre-booked holidays</p>';
+    if (!h.dates?.length) return '<p class="data-value empty">Has holidays but no dates recorded</p>';
+    return `<div class="holiday-list">
+        ${h.dates.map(d => `
+        <div class="holiday-row-display">
+            <span>${fmtDate(d.from)}</span>
+            <span class="holiday-arrow">→</span>
+            <span>${fmtDate(d.to)}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ── Application renderer ─────────────────────────────────────────────────────
+function renderApplication(app) {
+    const pd = app.personalDetails || {};
+    const ra = app.reasonableAdjustments || {};
+
+    return `
+        <!-- Position + Personal -->
+        <div class="data-card">
+            <div class="data-card-title">📋 Position Applied For</div>
+            <div class="data-field"><div class="data-label">Position</div><div class="data-value" style="font-size:1.05rem; font-weight:600;">${app.position || '—'}</div></div>
+            <div class="data-field" style="margin-top:0.5rem;"><div class="data-label">Submitted</div><div class="data-value mono">${fmtTimestamp(app.submittedAt)}</div></div>
+        </div>
+
+        <div class="data-card">
+            <div class="data-card-title">👤 Applicant Personal Details</div>
+            <div class="data-grid">
+                <div class="data-field"><div class="data-label">Title</div><div class="data-value">${pd.title || '—'}</div></div>
+                <div class="data-field"><div class="data-label">Forename</div><div class="data-value">${pd.forename || '—'}</div></div>
+                <div class="data-field"><div class="data-label">Surname</div><div class="data-value">${pd.surname || '—'}</div></div>
+                <div class="data-field"><div class="data-label">Email</div><div class="data-value mono">${pd.email || '—'}</div></div>
+                <div class="data-field"><div class="data-label">Telephone</div><div class="data-value mono">${pd.phone || '—'}</div></div>
+                <div class="data-field full"><div class="data-label">Address</div><div class="data-value">${pd.address || '—'}, ${pd.postcode || ''}</div></div>
+            </div>
+        </div>
+
+        <!-- Adjustments + Legal -->
+        <div class="data-card">
+            <div class="data-card-title">⚖️ Reasonable Adjustments & Legal</div>
+            <div class="data-grid">
+                <div class="data-field">
+                    <div class="data-label">Disability Adjustment</div>
+                    <div class="data-value">${ynBadge(ra.disability)}</div>
+                    ${ra.disability === 'yes' && ra.disabilityText ? `<div class="data-value" style="margin-top:0.4rem; font-size:0.82rem; color:var(--text-muted);">${ra.disabilityText}</div>` : ''}
+                </div>
+                <div class="data-field">
+                    <div class="data-label">Medical Adjustment</div>
+                    <div class="data-value">${ynBadge(ra.medical)}</div>
+                    ${ra.medical === 'yes' && ra.medicalText ? `<div class="data-value" style="margin-top:0.4rem; font-size:0.82rem; color:var(--text-muted);">${ra.medicalText}</div>` : ''}
+                </div>
+                <div class="data-field">
+                    <div class="data-label">Criminal Convictions</div>
+                    <div class="data-value">${ynBadge(app.convictions)}</div>
+                    ${app.convictions === 'yes' && app.convictionsText ? `<div class="data-value" style="margin-top:0.4rem; font-size:0.82rem; color:var(--text-muted);">${app.convictionsText}</div>` : ''}
+                </div>
+                <div class="data-field">
+                    <div class="data-label">Work Permit Required</div>
+                    <div class="data-value">${ynBadge(app.workPermit)}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qualifications + CV -->
+        <div class="data-card">
+            <div class="data-card-title">🎓 Qualifications &amp; CV</div>
+            <div class="data-field" style="margin-bottom:1.2rem;">
+                <div class="data-label">Qualifications</div>
+                <div class="data-value" style="white-space:pre-line; line-height:1.6;">${app.qualifications || '—'}</div>
+            </div>
+            ${app.cv?.data ? `
+            <div class="data-field">
+                <div class="data-label">CV Document</div>
+                <div style="margin-top:0.4rem;">
+                    <a href="${app.cv.data}" download="${app.cv.filename || 'cv'}" class="cv-link">
+                        📄 Download CV — ${app.cv.filename || 'cv file'}
+                    </a>
+                </div>
+            </div>` : ''}
+        </div>
+
+        <!-- Employment History -->
+        <div class="data-card">
+            <div class="data-card-title">💼 Employment History</div>
+            ${app.employment?.length ? app.employment.map((e, i) => `
+            <div class="entry-block">
+                <div class="entry-block-label">Employment ${i + 1}</div>
+                <div class="data-grid">
+                    <div class="data-field"><div class="data-label">Company</div><div class="data-value">${e.company || '—'}</div></div>
+                    <div class="data-field"><div class="data-label">Position</div><div class="data-value">${e.position || '—'}</div></div>
+                    ${e.reason ? `<div class="data-field full"><div class="data-label">Reason for Leaving</div><div class="data-value">${e.reason}</div></div>` : ''}
+                </div>
+            </div>`).join('') : '<p class="data-value empty">No employment history recorded</p>'}
+        </div>
+
+        <!-- References -->
+        <div class="data-card">
+            <div class="data-card-title">📞 References</div>
+            ${app.references?.length ? app.references.map((r, i) => `
+            <div class="entry-block">
+                <div class="entry-block-label">${r.label || 'Referee ' + (i+1)}</div>
+                <div class="data-grid">
+                    <div class="data-field"><div class="data-label">Company</div><div class="data-value">${r.company || '—'}</div></div>
+                    <div class="data-field"><div class="data-label">Name</div><div class="data-value">${r.name || '—'}</div></div>
+                    <div class="data-field"><div class="data-label">Position</div><div class="data-value">${r.position || '—'}</div></div>
+                    <div class="data-field"><div class="data-label">Telephone</div><div class="data-value mono">${r.phone || '—'}</div></div>
+                    <div class="data-field"><div class="data-label">Email</div><div class="data-value mono">${r.email || '—'}</div></div>
+                </div>
+            </div>`).join('') : '<p class="data-value empty">No references recorded</p>'}
+        </div>
+
+        <!-- Interview Availability -->
+        ${app.unavailability ? `
+        <div class="data-card">
+            <div class="data-card-title">📅 Interview Unavailability</div>
+            <div class="data-value" style="white-space:pre-line;">${app.unavailability}</div>
+        </div>` : ''}
+
+        <!-- Signatures -->
+        <div class="data-card">
+            <div class="data-card-title">✍️ Declarations &amp; Signatures</div>
+            <div class="data-grid">
+                <div class="data-field">
+                    <div class="data-label">Declaration — Name</div>
+                    <div class="data-value">${app.declaration?.name || '—'}</div>
+                </div>
+                <div class="data-field">
+                    <div class="data-label">Declaration — Date</div>
+                    <div class="data-value">${fmtDate(app.declaration?.date)}</div>
+                </div>
+                ${app.declaration?.signature ? `
+                <div class="data-field full">
+                    <div class="data-label">Declaration Signature</div>
+                    <div class="sig-display" style="margin-top:0.4rem;">
+                        <img src="${app.declaration.signature}" alt="Declaration signature">
+                    </div>
+                </div>` : ''}
+            </div>
+            <hr class="divider">
+            <div class="data-grid">
+                <div class="data-field">
+                    <div class="data-label">Data Consent — Name</div>
+                    <div class="data-value">${app.consent?.name || '—'}</div>
+                </div>
+                <div class="data-field">
+                    <div class="data-label">Data Consent — Date</div>
+                    <div class="data-value">${fmtDate(app.consent?.date)}</div>
+                </div>
+                ${app.consent?.signature ? `
+                <div class="data-field full">
+                    <div class="data-label">Data Consent Signature</div>
+                    <div class="sig-display" style="margin-top:0.4rem;">
+                        <img src="${app.consent.signature}" alt="Consent signature">
+                    </div>
+                </div>` : ''}
+            </div>
+        </div>
+    `;
+}
+
+// ══════════════════════════════════════════════
+// SEARCH & FILTER
+// ══════════════════════════════════════════════
+document.getElementById('searchInput').addEventListener('input', applyFilter);
+document.getElementById('statusFilter').addEventListener('change', applyFilter);
+
+function applyFilter() {
+    const q      = document.getElementById('searchInput').value.toLowerCase().trim();
+    const status = document.getElementById('statusFilter').value;
+
+    let filtered = allEngineers.filter(eng => {
+        const name    = (eng.name || '').toLowerCase();
+        const email   = (eng.email || '').toLowerCase();
+        const phone   = eng.emergency_contact?.number || '';
+        const addr    = formatAddress(eng.address_history?.[0]).toLowerCase();
+        const matches = name.includes(q) || email.includes(q) || phone.includes(q) || addr.includes(q);
+        if (!matches) return false;
+
+        if (status === 'complete')  return !!eng.profile_completedAt;
+        if (status === 'partial')   return !eng.profile_completedAt;
+        if (status === 'applied')   return !!applications[(eng.email||'').toLowerCase().trim()];
+        return true;
+    });
+
+    const sb = document.getElementById('sidebar');
+    sb.innerHTML = '';
+    document.getElementById('countBadge').textContent = `${filtered.length} engineer${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+        sb.innerHTML = `<div class="sidebar-empty"><span>🔍</span><span>No results found</span></div>`;
+        return;
+    }
+
+    filtered.forEach((eng, i) => {
+        const card = document.createElement('div');
+        card.className = 'eng-card' + (eng.docId === selectedId ? ' active' : '');
+        card.dataset.id = eng.docId;
+        card.style.animationDelay = `${i * 20}ms`;
+
+        const email      = (eng.email || '').toLowerCase().trim();
+        const hasApp     = !!applications[email];
+        const isComplete = !!eng.profile_completedAt;
+        const pct        = profileCompletion(eng);
+        const phone      = eng.emergency_contact?.number || '—';
+        const address    = formatAddress(eng.address_history?.[0]);
+
+        card.innerHTML = `
+            <div class="eng-card-name">${eng.name || '—'}</div>
+            <div class="eng-card-detail">📞 ${phone}</div>
+            <div class="eng-card-detail">📍 ${address}</div>
+            <div class="eng-card-tags">
+                ${isComplete ? '<span class="tag green">✓ Profile complete</span>' : '<span class="tag orange">In progress</span>'}
+                ${hasApp     ? '<span class="tag">Has application</span>' : '<span class="tag gray">No application</span>'}
+            </div>
+            <div class="completion-bar"><div class="completion-fill" style="width:${pct}%"></div></div>
+        `;
+        card.addEventListener('click', () => selectEngineer(eng.docId));
+        sb.appendChild(card);
+    });
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function fmtDate(val) {
+    if (!val) return '—';
+    try {
+        const d = new Date(val + 'T12:00:00');
+        return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    } catch { return val; }
+}
+
+function fmtTimestamp(ts) {
+    if (!ts) return '—';
+    try {
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    } catch { return '—'; }
+}
+
+function monthName(n) {
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][n - 1] || n;
+}
+
+function ynBadge(val) {
+    if (val === 'yes') return '<span class="yn-badge yn-yes">Yes</span>';
+    if (val === 'no')  return '<span class="yn-badge yn-no">No</span>';
+    return '<span class="yn-badge" style="background:rgba(107,128,153,0.1);color:var(--text-muted);">—</span>';
+}
+
+window.copyEmail = function(email) {
+    navigator.clipboard.writeText(email).then(() => {
+        // brief visual feedback
+        const el = event.target;
+        el.textContent = '✓ Copied';
+        setTimeout(() => el.textContent = '📋 Copy Email', 1500);
+    });
+};
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadAll().catch(err => {
+    document.getElementById('sidebarLoading').innerHTML =
+        `<span style="color:var(--error); font-size:0.82rem; padding:1rem;">Error loading: ${err.message}</span>`;
+});
+</script>
+</body>
+</html>
