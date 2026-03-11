@@ -740,10 +740,14 @@ function renderDetail(eng, app) {
                     <div class="hmrc-sig-area">
                         <div class="hmrc-sig-label">
                             <span>Employee Signature</span>
-                            <button class="btn-clear-hmrc-sig" onclick="clearHmrcSig()">✕ Clear</button>
+                            ${eng.hmrc_form.signature ? '<span style="color:#6ee7b7; font-size:0.72rem;">✓ Signed by engineer</span>' : '<button class="btn-clear-hmrc-sig" onclick="clearHmrcSig()">✕ Clear</button>'}
                         </div>
-                        <canvas class="hmrc-sig-canvas" id="hmrcSigCanvas" width="900" height="100"></canvas>
-                        <p class="hmrc-sig-hint">Draw signature above before generating the PDF</p>
+                        ${eng.hmrc_form.signature
+                            ? `<div class="sig-display"><img src="${eng.hmrc_form.signature}" alt="Engineer signature" style="width:100%; display:block; border-radius:6px;"></div>
+                               <p class="hmrc-sig-hint" style="color:#6ee7b7;">Signature provided by engineer during onboarding</p>`
+                            : `<canvas class="hmrc-sig-canvas" id="hmrcSigCanvas" width="900" height="100"></canvas>
+                               <p class="hmrc-sig-hint">No signature saved — draw one above to include in the PDF</p>`
+                        }
                         <div class="hmrc-actions">
                             <button class="btn-generate-pdf" id="generateHmrcBtn" onclick="generateHmrcPdf()">
                                 📄 Generate &amp; Download HMRC PDF
@@ -1344,9 +1348,11 @@ window.generateHmrcPdf = function() {
         doc.text('Signature', margin + 2.5, y + 4);
         y += 9;
 
-        // Signature image from canvas
+        // Signature image — prefer saved sig from engineer's onboarding, fall back to canvas
+        const savedSig  = f.signature || null;
         const sigCanvas = document.getElementById('hmrcSigCanvas');
-        const sigBlank  = isCanvasBlank(sigCanvas);
+        const sigBlank  = sigCanvas ? isCanvasBlank(sigCanvas) : true;
+        const sigData   = savedSig || (!sigBlank && sigCanvas ? sigCanvas.toDataURL('image/png') : null);
 
         const sigBoxH = 22;
         doc.setFillColor(252, 253, 255);
@@ -1354,8 +1360,7 @@ window.generateHmrcPdf = function() {
         doc.setDrawColor(...MGRAY);
         doc.rect(margin, y, colW, sigBoxH, 'S');
 
-        if (!sigBlank) {
-            const sigData = sigCanvas.toDataURL('image/png');
+        if (sigData) {
             doc.addImage(sigData, 'PNG', margin + 2, y + 1, colW - 4, sigBoxH - 2);
         } else {
             doc.setFontSize(8); doc.setTextColor(...MGRAY);
