@@ -264,6 +264,31 @@
         .thankyou-box h2 { font-size:1.8rem; font-weight:700; margin-bottom:0.8rem; background:linear-gradient(90deg,var(--accent),#6ee7b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .thankyou-box p { color:var(--text-muted); font-size:0.95rem; line-height:1.6; max-width:420px; margin:0 auto; }
 
+        /* ── HMRC Signature ── */
+        .sig-box {
+            background: var(--bg-input); border: 2px solid var(--border);
+            border-radius: 12px; overflow: hidden; position: relative;
+            transition: border-color 0.2s;
+        }
+        .sig-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,163,224,0.15); }
+        .sig-canvas {
+            width: 100%; height: 120px; display: block;
+            cursor: crosshair; touch-action: none;
+        }
+        .sig-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.4rem 0.8rem; background: rgba(0,0,0,0.15);
+            border-top: 1px solid var(--border);
+        }
+        .sig-hint { font-size: 0.73rem; color: var(--text-muted); }
+        .sig-clear {
+            background: transparent; border: 1px solid rgba(239,68,68,0.35);
+            color: #fca5a5; border-radius: 6px; padding: 0.2rem 0.6rem;
+            font-size: 0.75rem; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: all 0.18s;
+        }
+        .sig-clear:hover { background: rgba(239,68,68,0.12); }
+
         /* ── Radio ── */
         .radio-group { display:flex; gap:1rem; flex-wrap:wrap; }
         .radio-option { display:flex; align-items:center; gap:0.45rem; cursor:pointer; font-size:0.92rem; font-weight:500; }
@@ -516,6 +541,21 @@
                 <div class="radio-group">
                     <label class="radio-option"><input type="radio" name="hmrcPGLoan" value="no"> No</label>
                     <label class="radio-option"><input type="radio" name="hmrcPGLoan" value="yes"> Yes</label>
+                </div>
+            </div>
+
+            <hr class="divider">
+            <div class="form-group">
+                <label>Your Signature <span style="color:var(--error);">*</span></label>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.6rem;">
+                    By signing below you confirm the information provided is correct to the best of your knowledge.
+                </p>
+                <div class="sig-box">
+                    <canvas class="sig-canvas" id="hmrcSigCanvas" width="1000" height="120"></canvas>
+                    <div class="sig-toolbar">
+                        <span class="sig-hint">✍️ Sign using your mouse or finger</span>
+                        <button type="button" class="sig-clear" id="hmrcSigClear">✕ Clear</button>
+                    </div>
                 </div>
             </div>
 
@@ -931,6 +971,7 @@
             loadPensionLetter();
             initUniform();
             initAddressSection();
+            initHmrcSignature();
             showStep(1);
 
         } catch (err) {
@@ -1110,6 +1151,56 @@
     // ════════════════════════════════════════════════════
     // STEP 4 — HMRC FORM
     // ════════════════════════════════════════════════════
+    function initHmrcSignature() {
+        const canvas = document.getElementById('hmrcSigCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let drawing = false, lastX = 0, lastY = 0;
+
+        function getPos(e) {
+            const r  = canvas.getBoundingClientRect();
+            const sx = canvas.width / r.width, sy = canvas.height / r.height;
+            if (e.touches) return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
+            return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
+        }
+
+        ctx.strokeStyle = '#00A3E0';
+        ctx.lineWidth   = 2.5;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+
+        canvas.addEventListener('mousedown',   e => { drawing = true; [lastX, lastY] = getPos(e); });
+        canvas.addEventListener('mousemove',   e => {
+            if (!drawing) return;
+            const [x, y] = getPos(e);
+            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+            [lastX, lastY] = [x, y];
+        });
+        canvas.addEventListener('mouseup',    () => drawing = false);
+        canvas.addEventListener('mouseleave', () => drawing = false);
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); }, { passive: false });
+        canvas.addEventListener('touchmove',  e => {
+            e.preventDefault();
+            if (!drawing) return;
+            const [x, y] = getPos(e);
+            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+            [lastX, lastY] = [x, y];
+        }, { passive: false });
+        canvas.addEventListener('touchend', () => drawing = false);
+
+        document.getElementById('hmrcSigClear').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+    }
+
+    function isHmrcSigBlank() {
+        const canvas = document.getElementById('hmrcSigCanvas');
+        if (!canvas) return true;
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width; blank.height = canvas.height;
+        return canvas.toDataURL() === blank.toDataURL();
+    }
+
     document.getElementById('saveHmrcBtn').addEventListener('click', async () => {
         const btn   = document.getElementById('saveHmrcBtn');
         const msgEl = document.getElementById('hmrcMsg');
@@ -1132,6 +1223,17 @@
             msgEl.textContent = 'Please fill in all required fields and select a statement.';
             return;
         }
+
+        if (isHmrcSigBlank()) {
+            msgEl.className   = 'msg err';
+            msgEl.textContent = 'Please add your signature before continuing.';
+            document.getElementById('hmrcSigCanvas').closest('.sig-box').style.borderColor = 'var(--error)';
+            return;
+        }
+
+        // Capture signature as base64
+        const signatureData = document.getElementById('hmrcSigCanvas').toDataURL('image/png');
+        fields.signature = signatureData;
 
         btn.disabled  = true;
         btn.innerHTML = '<span class="spinner"></span> Saving…';
