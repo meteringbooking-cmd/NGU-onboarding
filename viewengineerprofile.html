@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary: #005EB8;
@@ -407,6 +408,49 @@
         /* Divider */
         .divider { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
 
+        /* HMRC Signature + PDF */
+        .hmrc-sig-area {
+            margin-top: 1.4rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+        }
+        .hmrc-sig-label {
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--text-muted);
+            font-family: 'DM Mono', monospace; margin-bottom: 0.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .hmrc-sig-canvas {
+            width: 100%; height: 100px;
+            background: var(--bg-input); border: 2px solid var(--border);
+            border-radius: 10px; display: block; cursor: crosshair;
+            touch-action: none; transition: border-color 0.2s;
+        }
+        .hmrc-sig-canvas:hover { border-color: var(--border-bright); }
+        .hmrc-sig-hint { font-size: 0.73rem; color: var(--text-muted); margin-top: 0.3rem; }
+        .hmrc-actions {
+            display: flex; gap: 0.8rem; flex-wrap: wrap;
+            margin-top: 1.2rem; align-items: center;
+        }
+        .btn-generate-pdf {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; border-radius: 10px;
+            padding: 0.65rem 1.3rem; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .btn-generate-pdf:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,163,224,0.3); }
+        .btn-generate-pdf:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-clear-hmrc-sig {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: transparent; border: 1.5px solid var(--border-bright);
+            color: var(--text-muted); border-radius: 8px;
+            padding: 0.55rem 1rem; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+        }
+        .btn-clear-hmrc-sig:hover { border-color: var(--error); color: #fca5a5; }
+        .pdf-status { font-size: 0.8rem; color: var(--success); font-family: 'DM Mono', monospace; }
+
         @media (max-width: 860px) {
             .layout { grid-template-columns: 1fr; height:auto; }
             .sidebar { max-height: 320px; }
@@ -676,8 +720,12 @@ function renderDetail(eng, app) {
             <div class="data-section" id="tab-profile">
 
                 <!-- HMRC -->
-                <div class="data-card">
-                    <div class="data-card-title">🏛️ HMRC Starter Checklist</div>
+                <div class="data-card" id="hmrc-card">
+                    <div class="data-card-title">🏛️ HMRC Starter Checklist
+                        ${eng.hmrc_form ? `<span style="margin-left:auto;">
+                            <button class="btn-generate-pdf" id="generateHmrcBtn" onclick="generateHmrcPdf()">📄 Generate PDF</button>
+                        </span>` : ''}
+                    </div>
                     ${eng.hmrc_form ? `
                     <div class="data-grid">
                         <div class="data-field"><div class="data-label">First Name</div><div class="data-value">${eng.hmrc_form.fname}</div></div>
@@ -688,7 +736,22 @@ function renderDetail(eng, app) {
                         <div class="data-field"><div class="data-label">Employee Statement</div><div class="data-value"><span class="tag">Statement ${eng.hmrc_form.statement}</span></div></div>
                         <div class="data-field"><div class="data-label">Student Loan</div><div class="data-value">${eng.hmrc_form.studentLoan || 'None'}</div></div>
                         <div class="data-field"><div class="data-label">Postgraduate Loan</div><div class="data-value">${eng.hmrc_form.pgLoan === 'yes' ? 'Yes' : 'No'}</div></div>
-                    </div>` : `<div class="section-pending">⏳ HMRC form not yet completed — engineer used P45</div>`}
+                    </div>
+                    <div class="hmrc-sig-area">
+                        <div class="hmrc-sig-label">
+                            <span>Employee Signature</span>
+                            <button class="btn-clear-hmrc-sig" onclick="clearHmrcSig()">✕ Clear</button>
+                        </div>
+                        <canvas class="hmrc-sig-canvas" id="hmrcSigCanvas" width="900" height="100"></canvas>
+                        <p class="hmrc-sig-hint">Draw signature above before generating the PDF</p>
+                        <div class="hmrc-actions">
+                            <button class="btn-generate-pdf" id="generateHmrcBtn" onclick="generateHmrcPdf()">
+                                📄 Generate &amp; Download HMRC PDF
+                            </button>
+                            <span class="pdf-status" id="pdfStatus"></span>
+                        </div>
+                    </div>
+                    ` : `<div class="section-pending">⏳ HMRC form not yet completed — engineer used P45</div>`}
                 </div>
 
                 <!-- Uniform -->
@@ -769,6 +832,10 @@ function renderDetail(eng, app) {
             document.getElementById(`tab-${tab.dataset.tab}`)?.classList.add('active');
         });
     });
+
+    // Wire up HMRC signature canvas (if present)
+    const hmrcCanvas = document.getElementById('hmrcSigCanvas');
+    if (hmrcCanvas) setupHmrcCanvas(hmrcCanvas);
 }
 
 // ── Uniform renderer ─────────────────────────────────────────────────────────
@@ -1024,6 +1091,304 @@ function applyFilter() {
         sb.appendChild(card);
     });
 }
+
+// ══════════════════════════════════════════════
+// HMRC SIGNATURE CANVAS
+// ══════════════════════════════════════════════
+function setupHmrcCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    let drawing = false, lastX = 0, lastY = 0;
+    function getPos(e) {
+        const r = canvas.getBoundingClientRect();
+        const sx = canvas.width / r.width, sy = canvas.height / r.height;
+        if (e.touches) return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
+        return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
+    }
+    ctx.strokeStyle = '#00A3E0'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    canvas.addEventListener('mousedown',   e => { drawing = true; [lastX,lastY] = getPos(e); });
+    canvas.addEventListener('mousemove',   e => { if (!drawing) return; const [x,y] = getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; });
+    canvas.addEventListener('mouseup',    () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX,lastY] = getPos(e); }, { passive: false });
+    canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const [x,y]=getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); [lastX,lastY]=[x,y]; }, { passive: false });
+    canvas.addEventListener('touchend', () => drawing = false);
+}
+
+function isCanvasBlank(canvas) {
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width; blank.height = canvas.height;
+    return canvas.toDataURL() === blank.toDataURL();
+}
+
+window.clearHmrcSig = function() {
+    const c = document.getElementById('hmrcSigCanvas');
+    if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height);
+};
+
+// ══════════════════════════════════════════════
+// GENERATE HMRC PDF
+// ══════════════════════════════════════════════
+window.generateHmrcPdf = function() {
+    const eng = allEngineers.find(e => e.docId === selectedId);
+    if (!eng?.hmrc_form) return;
+    const f = eng.hmrc_form;
+
+    const statusEl = document.getElementById('pdfStatus');
+    const btn      = document.getElementById('generateHmrcBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating…'; }
+    if (statusEl) statusEl.textContent = '';
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        const W = 210, H = 297;
+        const margin = 18;
+        const colW   = W - margin * 2;
+
+        // ── Colour palette ──
+        const NAVY   = [0, 57, 107];
+        const TEAL   = [0, 131, 143];
+        const LGRAY  = [245, 247, 250];
+        const MGRAY  = [200, 210, 220];
+        const DGRAY  = [80, 95, 110];
+        const BLACK  = [20, 20, 30];
+        const WHITE  = [255, 255, 255];
+        const GREEN  = [16, 120, 80];
+
+        // ── Header band ──
+        doc.setFillColor(...NAVY);
+        doc.rect(0, 0, W, 28, 'F');
+
+        // HMRC crown-style decorative element
+        doc.setFillColor(...TEAL);
+        doc.rect(0, 0, 5, 28, 'F');
+
+        doc.setFontSize(17);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...WHITE);
+        doc.text('HMRC Starter Checklist', margin, 13);
+
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(180, 210, 230);
+        doc.text('Employment income — Employee information for new starters', margin, 20);
+
+        // Reference line top-right
+        doc.setFontSize(7.5);
+        doc.setTextColor(150, 190, 215);
+        doc.text(`Generated: ${new Date().toLocaleDateString('en-GB')}`, W - margin, 20, { align: 'right' });
+
+        let y = 36;
+
+        // ── Section helper functions ──
+        function sectionHeader(title, yPos) {
+            doc.setFillColor(...TEAL);
+            doc.rect(margin, yPos, colW, 7, 'F');
+            doc.setFontSize(8.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...WHITE);
+            doc.text(title.toUpperCase(), margin + 3, yPos + 4.8);
+            return yPos + 9;
+        }
+
+        function fieldRow(label, value, x, yPos, w, bgAlt) {
+            const rowH = 8;
+            if (bgAlt) {
+                doc.setFillColor(...LGRAY);
+                doc.rect(x, yPos, w, rowH, 'F');
+            }
+            doc.setDrawColor(...MGRAY);
+            doc.rect(x, yPos, w, rowH, 'S');
+
+            doc.setFontSize(6.8);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...DGRAY);
+            doc.text(label, x + 2.5, yPos + 3);
+
+            doc.setFontSize(8.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...BLACK);
+            doc.text(value || '—', x + 2.5, yPos + 6.8);
+            return yPos + rowH;
+        }
+
+        function twoColFields(pairs, yPos) {
+            const halfW = colW / 2;
+            let maxY = yPos;
+            pairs.forEach(([label, value], i) => {
+                const x   = margin + (i % 2) * halfW;
+                const row = yPos + Math.floor(i / 2) * 8;
+                fieldRow(label, value, x, row, halfW, Math.floor(i / 2) % 2 === 0);
+                maxY = Math.max(maxY, row + 8);
+            });
+            return maxY + 1;
+        }
+
+        // ── 1. Personal Details ──
+        y = sectionHeader('1. Personal Details', y);
+        y = twoColFields([
+            ['Title', f.title || ''],
+            ['First Name', f.fname],
+            ['Last Name (Surname)', f.lname],
+            ['Date of Birth', fmtDate(f.dob)],
+            ['National Insurance Number', f.ni],
+            ['Gender', ''],
+        ], y);
+
+        // Full-width address
+        doc.setFillColor(...LGRAY);
+        doc.rect(margin, y, colW, 8, 'F');
+        doc.setDrawColor(...MGRAY);
+        doc.rect(margin, y, colW, 8, 'S');
+        doc.setFontSize(6.8); doc.setFont('helvetica','normal'); doc.setTextColor(...DGRAY);
+        doc.text('Home Address', margin + 2.5, y + 3);
+        doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...BLACK);
+        doc.text(`${f.address}, ${f.postcode}`, margin + 2.5, y + 6.8);
+        y += 9;
+
+        // ── 2. Employment Details ──
+        y += 3;
+        y = sectionHeader('2. Employment Details', y);
+        y = twoColFields([
+            ['Employer Name', 'NGU'],
+            ['Employment Start Date', new Date().toLocaleDateString('en-GB')],
+        ], y);
+        y += 1;
+
+        // ── 3. Employee Statement ──
+        y += 2;
+        y = sectionHeader('3. Employee Statement', y);
+
+        const statements = {
+            A: 'Statement A — This is my first job since 6 April and I have not been receiving taxable benefits or a State/Occupational Pension.',
+            B: 'Statement B — This is my only job but I have had another job or received taxable benefits since 6 April.',
+            C: 'Statement C — I have another job or receive a State or Occupational Pension.',
+        };
+
+        ['A','B','C'].forEach((s, i) => {
+            const isSelected = f.statement === s;
+            const rowH = 10;
+            const bg = isSelected ? [220, 240, 230] : (i % 2 === 0 ? LGRAY : WHITE);
+            doc.setFillColor(...bg);
+            doc.rect(margin, y, colW, rowH, 'F');
+            doc.setDrawColor(...MGRAY);
+            doc.rect(margin, y, colW, rowH, 'S');
+
+            // Checkbox
+            const cbX = margin + 4, cbY = y + 2.5, cbSize = 5;
+            doc.setFillColor(...WHITE);
+            doc.rect(cbX, cbY, cbSize, cbSize, 'F');
+            doc.setDrawColor(...DGRAY);
+            doc.rect(cbX, cbY, cbSize, cbSize, 'S');
+            if (isSelected) {
+                doc.setDrawColor(...GREEN);
+                doc.setLineWidth(0.8);
+                doc.line(cbX + 1, cbY + 2.5, cbX + 2.2, cbY + 3.8);
+                doc.line(cbX + 2.2, cbY + 3.8, cbX + 4, cbY + 1.2);
+                doc.setLineWidth(0.2);
+            }
+
+            doc.setFontSize(8);
+            doc.setFont('helvetica', isSelected ? 'bold' : 'normal');
+            doc.setTextColor(isSelected ? 10 : 50, isSelected ? 80 : 70, isSelected ? 40 : 80);
+            const lines = doc.splitTextToSize(statements[s], colW - 16);
+            doc.text(lines, margin + 12, y + 4.5);
+            y += rowH;
+        });
+        y += 2;
+
+        // ── 4. Student Loans ──
+        y += 2;
+        y = sectionHeader('4. Student & Postgraduate Loans', y);
+
+        const loanMap = {
+            'no':    'No student loan',
+            'plan1': 'Plan 1',
+            'plan2': 'Plan 2',
+            'plan4': 'Plan 4 (Scottish)',
+        };
+        const loanVal  = loanMap[f.studentLoan] || f.studentLoan || 'None';
+        const pgLoan   = f.pgLoan === 'yes' ? 'Yes' : 'No';
+
+        y = twoColFields([
+            ['Student Loan', loanVal],
+            ['Postgraduate Loan', pgLoan],
+        ], y);
+        y += 2;
+
+        // ── 5. Declaration ──
+        y += 3;
+        y = sectionHeader('5. Employee Declaration', y);
+
+        // Declaration text
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...DGRAY);
+        const declText = 'I confirm that the information I have given on this form is correct and complete to the best of my knowledge and belief.';
+        const declLines = doc.splitTextToSize(declText, colW - 6);
+        doc.text(declLines, margin + 3, y + 4);
+        y += declLines.length * 4 + 6;
+
+        // Name + Date fields
+        y = twoColFields([
+            ['Full Name', `${f.fname} ${f.lname}`],
+            ['Date', new Date().toLocaleDateString('en-GB')],
+        ], y);
+        y += 2;
+
+        // Signature box
+        doc.setFillColor(...LGRAY);
+        doc.rect(margin, y, colW, 7, 'F');
+        doc.setFontSize(6.8); doc.setFont('helvetica','normal'); doc.setTextColor(...DGRAY);
+        doc.text('Signature', margin + 2.5, y + 4);
+        y += 9;
+
+        // Signature image from canvas
+        const sigCanvas = document.getElementById('hmrcSigCanvas');
+        const sigBlank  = isCanvasBlank(sigCanvas);
+
+        const sigBoxH = 22;
+        doc.setFillColor(252, 253, 255);
+        doc.rect(margin, y, colW, sigBoxH, 'F');
+        doc.setDrawColor(...MGRAY);
+        doc.rect(margin, y, colW, sigBoxH, 'S');
+
+        if (!sigBlank) {
+            const sigData = sigCanvas.toDataURL('image/png');
+            doc.addImage(sigData, 'PNG', margin + 2, y + 1, colW - 4, sigBoxH - 2);
+        } else {
+            doc.setFontSize(8); doc.setTextColor(...MGRAY);
+            doc.text('(No signature provided)', margin + colW / 2, y + sigBoxH / 2 + 1, { align: 'center' });
+        }
+        y += sigBoxH + 4;
+
+        // ── Footer ──
+        const footerY = H - 12;
+        doc.setFillColor(...NAVY);
+        doc.rect(0, footerY, W, 12, 'F');
+        doc.setFillColor(...TEAL);
+        doc.rect(0, footerY, 5, 12, 'F');
+        doc.setFontSize(7);
+        doc.setFont('helvetica','normal');
+        doc.setTextColor(170, 200, 220);
+        doc.text('HMRC Starter Checklist  |  Employment Income', margin, footerY + 5);
+        doc.text(`${f.fname} ${f.lname}  |  NI: ${f.ni}`, margin, footerY + 9);
+        doc.text('www.gov.uk/hmrc', W - margin, footerY + 7, { align: 'right' });
+
+        // ── Save ──
+        const filename = `HMRC_Starter_${f.lname}_${f.fname}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(filename);
+
+        if (statusEl) { statusEl.textContent = '✓ PDF downloaded'; }
+        if (btn) { btn.disabled = false; btn.innerHTML = '📄 Generate &amp; Download HMRC PDF'; }
+
+    } catch (err) {
+        console.error(err);
+        if (statusEl) { statusEl.style.color = '#ef4444'; statusEl.textContent = 'Error: ' + err.message; }
+        if (btn) { btn.disabled = false; btn.innerHTML = '📄 Generate &amp; Download HMRC PDF'; }
+    }
+};
 
 // ══════════════════════════════════════════════
 // HELPERS
